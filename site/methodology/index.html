@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" href="/favicon-48x48.png" sizes="48x48">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+    <link rel="manifest" href="/site.webmanifest">
+    <title>Our Methodology | Compare Factors Scotland</title>
+    <meta name="description" content="How we collect data, calculate tribunal risk scores, and rate Scottish property factors. Transparent methodology using official sources.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --font-display: 'Fraunces', Georgia, serif;
+            --font-body: 'Source Sans 3', system-ui, sans-serif;
+            --navy-950: #0a1628;
+            --navy-900: #0f2137;
+            --navy-800: #1a3a5c;
+            --navy-700: #234b73;
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+            --slate-500: #64748b;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --tier-clean: #10b981;
+            --tier-clean-bg: #ecfdf5;
+            --tier-green: #22c55e;
+            --tier-green-bg: #f0fdf4;
+            --tier-amber: #f59e0b;
+            --tier-amber-bg: #fffbeb;
+            --tier-orange: #f97316;
+            --tier-orange-bg: #fff7ed;
+            --tier-red: #ef4444;
+            --tier-red-bg: #fef2f2;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        body { margin: 0; font-family: var(--font-body); font-size: 16px; line-height: 1.6; color: var(--slate-700); background: var(--slate-50); }
+        a { color: var(--navy-900); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        
+        /* Header */
+        .site-header { background: white; border-bottom: 1px solid var(--slate-200); position: sticky; top: 0; z-index: 100; }
+        .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+        .logo { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: var(--navy-950); }
+        .logo-mark { width: 32px; height: 32px; background: var(--navy-950); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: 700; }
+        .nav { display: flex; align-items: center; gap: 24px; }
+        .nav-link { font-size: 0.9rem; font-weight: 500; color: var(--slate-600); }
+        .nav-link:hover { color: var(--navy-950); text-decoration: none; }
+        .nav-cta { -webkit-appearance: none; appearance: none; background: var(--navy-950); color: white !important; padding: 8px 16px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; border: none; }
+        .nav-cta:hover { background: var(--navy-800); color: white; text-decoration: none; }
+        .burger { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 28px; height: 28px; background: none; border: none; cursor: pointer; padding: 0; }
+        .burger span { display: block; width: 100%; height: 2px; background: var(--navy-900); border-radius: 2px; transition: all 0.3s; }
+        .burger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+        .mobile-nav { display: none; position: absolute; top: 64px; left: 0; right: 0; background: white; border-bottom: 1px solid var(--slate-200); padding: 16px 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .mobile-nav.active { display: block; }
+        .mobile-nav a { display: block; padding: 12px 0; color: var(--slate-700); font-size: 1rem; font-weight: 500; border-bottom: 1px solid var(--slate-100); }
+        .mobile-nav a:last-child { border-bottom: none; }
+        .mobile-nav a:hover { color: var(--navy-950); text-decoration: none; }
+        .mobile-nav .nav-cta { display: inline-block; margin-top: 12px; }
+        
+        /* Breadcrumb */
+        .breadcrumb { max-width: 1200px; margin: 0 auto; padding: 16px 24px; font-size: 0.85rem; color: var(--slate-500); }
+        .breadcrumb a { color: var(--slate-500); }
+        .breadcrumb-sep { margin: 0 8px; color: #cbd5e1; }
+        
+        /* Main Content */
+        .main { max-width: 800px; margin: 0 auto; padding: 32px 24px 96px; }
+        .page-title { font-family: var(--font-display); font-size: 2.5rem; font-weight: 700; color: var(--navy-950); margin: 0 0 16px 0; line-height: 1.2; }
+        .page-desc { font-size: 1.15rem; color: var(--slate-600); margin: 0 0 48px 0; line-height: 1.7; }
+        
+        /* Section Styling */
+        .section { margin-bottom: 56px; }
+        .section-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; color: var(--navy-950); margin: 0 0 20px 0; padding-bottom: 12px; border-bottom: 2px solid var(--slate-200); }
+        .section p { margin: 0 0 16px 0; }
+        .section p:last-child { margin-bottom: 0; }
+        
+        /* Data Sources Grid */
+        .sources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 24px; }
+        .source-card { background: white; border: 1px solid var(--slate-200); border-radius: 10px; padding: 20px; }
+        .source-icon { width: 40px; height: 40px; background: var(--slate-100); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; margin-bottom: 12px; }
+        .source-name { font-weight: 600; color: var(--navy-950); margin-bottom: 4px; }
+        .source-desc { font-size: 0.9rem; color: var(--slate-600); line-height: 1.5; }
+        
+        /* Formula Box */
+        .formula-box { background: var(--navy-950); color: white; border-radius: 12px; padding: 32px; margin: 24px 0; }
+        .formula-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; opacity: 0.9; }
+        .formula { font-family: 'SF Mono', 'Monaco', 'Consolas', monospace; font-size: 0.95rem; line-height: 2; }
+        .formula-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .formula-component { background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 6px; white-space: nowrap; }
+        .formula-weight { color: var(--tier-amber); font-weight: 600; }
+        .formula-operator { opacity: 0.6; }
+        .formula-equals { font-size: 1.25rem; margin: 0 8px; }
+        .formula-result { background: var(--tier-green); color: var(--navy-950); padding: 6px 14px; border-radius: 6px; font-weight: 600; }
+        
+        /* Component Cards */
+        .components { display: flex; flex-direction: column; gap: 16px; margin: 24px 0; }
+        .component-card { background: white; border: 1px solid var(--slate-200); border-radius: 10px; padding: 24px; display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: start; }
+        .component-weight { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; flex-shrink: 0; }
+        .component-weight.volume { background: #dbeafe; color: #1e40af; }
+        .component-weight.severity { background: #fce7f3; color: #9d174d; }
+        .component-weight.recency { background: #d1fae5; color: #065f46; }
+        .component-content h4 { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: var(--navy-950); margin: 0 0 8px 0; }
+        .component-content p { margin: 0; color: var(--slate-600); font-size: 0.95rem; }
+        .component-formula { margin-top: 12px; background: var(--slate-100); padding: 10px 14px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; color: var(--slate-700); }
+        
+        /* Tier Table */
+        .tier-table { width: 100%; border-collapse: collapse; margin: 24px 0; background: white; border-radius: 10px; overflow: hidden; border: 1px solid var(--slate-200); }
+        .tier-table th { text-align: left; padding: 14px 16px; background: var(--slate-100); font-weight: 600; color: var(--navy-950); font-size: 0.9rem; }
+        .tier-table td { padding: 14px 16px; border-top: 1px solid var(--slate-200); vertical-align: top; }
+        .tier-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; }
+        .tier-badge.clean { background: var(--tier-clean-bg); color: #047857; }
+        .tier-badge.green { background: var(--tier-green-bg); color: #15803d; }
+        .tier-badge.amber { background: var(--tier-amber-bg); color: #b45309; }
+        .tier-badge.orange { background: var(--tier-orange-bg); color: #c2410c; }
+        .tier-badge.red { background: var(--tier-red-bg); color: #b91c1c; }
+        .tier-badge::before { content: ''; width: 8px; height: 8px; border-radius: 50%; }
+        .tier-badge.clean::before { background: var(--tier-clean); }
+        .tier-badge.green::before { background: var(--tier-green); }
+        .tier-badge.amber::before { background: var(--tier-amber); }
+        .tier-badge.orange::before { background: var(--tier-orange); }
+        .tier-badge.red::before { background: var(--tier-red); }
+        .tier-meaning { font-size: 0.9rem; color: var(--slate-600); }
+        .tier-criteria { font-size: 0.85rem; color: var(--slate-500); }
+        
+        /* Rules List */
+        .rules-list { counter-reset: rule; list-style: none; padding: 0; margin: 24px 0; }
+        .rules-list li { position: relative; padding: 20px 20px 20px 72px; background: white; border: 1px solid var(--slate-200); border-radius: 10px; margin-bottom: 12px; }
+        .rules-list li::before { counter-increment: rule; content: counter(rule); position: absolute; left: 20px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; background: var(--navy-950); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 1rem; }
+        .rule-title { font-weight: 600; color: var(--navy-950); margin-bottom: 4px; }
+        .rule-desc { font-size: 0.9rem; color: var(--slate-600); }
+        .rule-always { background: var(--tier-red-bg); border-color: #fecaca; }
+        .rule-always::before { background: var(--tier-red); }
+        
+        /* Callout Box */
+        .callout { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 20px 24px; border-radius: 0 8px 8px 0; margin: 24px 0; }
+        .callout-title { font-weight: 600; color: var(--navy-950); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .callout p { margin: 0; font-size: 0.95rem; color: var(--slate-700); }
+        
+        /* Warning Callout */
+        .callout.warning { background: #fffbeb; border-left-color: var(--tier-amber); }
+        
+        /* Example Box */
+        .example-box { background: white; border: 1px solid var(--slate-200); border-radius: 10px; padding: 24px; margin: 24px 0; }
+        .example-title { font-family: var(--font-display); font-weight: 600; color: var(--navy-950); margin-bottom: 16px; font-size: 1rem; }
+        .example-calc { display: grid; gap: 8px; font-family: monospace; font-size: 0.9rem; background: var(--slate-100); padding: 16px; border-radius: 8px; }
+        .example-row { display: flex; justify-content: space-between; padding: 4px 0; }
+        .example-row.total { border-top: 2px solid var(--slate-300); margin-top: 8px; padding-top: 12px; font-weight: 600; }
+        .example-label { color: var(--slate-600); }
+        .example-value { color: var(--navy-950); }
+        .example-result { margin-top: 16px; padding: 12px 16px; background: var(--tier-green-bg); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .example-result-label { font-weight: 500; color: var(--slate-700); }
+        
+        /* Limitations */
+        .limitations-list { list-style: none; padding: 0; margin: 0; }
+        .limitations-list li { padding: 12px 0 12px 32px; position: relative; border-bottom: 1px solid var(--slate-200); }
+        .limitations-list li:last-child { border-bottom: none; }
+        .limitations-list li::before { content: '⚠'; position: absolute; left: 0; top: 12px; }
+        
+        /* Footer */
+        .site-footer { background: var(--navy-950); color: rgba(255,255,255,0.7); padding: 48px 0 24px; margin-top: 64px; }
+        .footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 32px; }
+        .footer-brand { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: white; margin-bottom: 8px; }
+        .footer-desc { font-size: 0.9rem; line-height: 1.6; }
+        .footer-title { font-weight: 600; color: white; margin-bottom: 12px; font-size: 0.9rem; }
+        .footer-links { list-style: none; padding: 0; margin: 0; }
+        .footer-links li { margin-bottom: 8px; }
+        .footer-links a { color: rgba(255,255,255,0.7); font-size: 0.9rem; }
+        .footer-links a:hover { color: white; }
+        .footer-bottom { padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; font-size: 0.8rem; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav { display: none; }
+            .burger { display: flex; }
+            .page-title { font-size: 2rem; }
+            .component-card { grid-template-columns: 1fr; }
+            .component-weight { width: 48px; height: 48px; font-size: 1rem; }
+            .rules-list li { padding-left: 60px; }
+            .rules-list li::before { width: 32px; height: 32px; font-size: 0.9rem; }
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+            .footer-bottom { flex-direction: column; gap: 8px; }
+            .tier-table { font-size: 0.9rem; }
+            .tier-table th, .tier-table td { padding: 10px 12px; }
+        }
+        
+        @media (max-width: 480px) {
+            .sources-grid { grid-template-columns: 1fr; }
+            .formula-box { padding: 20px; }
+            .formula { font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="/" class="logo"><div class="logo-mark">CF</div>Compare Factors</a>
+            <nav class="nav">
+                <a href="/factors/" class="nav-link">All Factors</a>
+                <a href="/areas/" class="nav-link">By Area</a>
+                <a href="/methodology/" class="nav-link">How We Score</a>
+                <a href="/guides/" class="nav-link">Guides</a>
+                <a href="/get-quotes/" class="nav-cta">Get Quotes</a>
+            </nav>
+            <button class="burger" aria-label="Menu" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div class="mobile-nav" id="mobileNav">
+            <a href="/factors/">All Factors</a>
+            <a href="/areas/">By Area</a>
+            <a href="/methodology/">How We Score</a>
+            <a href="/guides/">Guides</a>
+            <a href="/get-quotes/" class="nav-cta">Get Quotes</a>
+        </div>
+    </header>
+    
+    <nav class="breadcrumb">
+        <a href="/">Home</a><span class="breadcrumb-sep">›</span><span>Our Methodology</span>
+    </nav>
+    
+    <main class="main">
+        <h1 class="page-title">Our Methodology</h1>
+        <p class="page-desc">We believe homeowners deserve transparent, objective information about property factors. This page explains exactly how we collect data, calculate tribunal risk ratings, and determine the scores you see on each factor's profile.</p>
+        
+        <!-- Data Sources Section -->
+        <section class="section">
+            <h2 class="section-title">Our Data Sources</h2>
+            <p>Every data point on Compare Factors comes from official, verifiable sources. We don't rely on subjective assessments or anonymous tips—only information that can be independently verified.</p>
+            
+            <div class="sources-grid">
+                <div class="source-card">
+                    <div class="source-icon">📋</div>
+                    <div class="source-name">Property Factor Register</div>
+                    <div class="source-desc">Official Scottish Government register of all licensed property factors, updated regularly.</div>
+                </div>
+                <div class="source-card">
+                    <div class="source-icon">⚖️</div>
+                    <div class="source-name">Housing &amp; Property Chamber</div>
+                    <div class="source-desc">All published tribunal decisions involving property factors from Scotland's First-tier Tribunal.</div>
+                </div>
+                <div class="source-card">
+                    <div class="source-icon">🏢</div>
+                    <div class="source-name">Companies House</div>
+                    <div class="source-desc">Corporate information including incorporation dates, directors, and company status.</div>
+                </div>
+                <div class="source-card">
+                    <div class="source-icon">📊</div>
+                    <div class="source-name">FOI Releases</div>
+                    <div class="source-desc">Freedom of Information data on property counts and postcode coverage areas.</div>
+                </div>
+                <div class="source-card">
+                    <div class="source-icon">⭐</div>
+                    <div class="source-name">Google &amp; Trustpilot</div>
+                    <div class="source-desc">Public customer reviews and ratings from major review platforms.</div>
+                </div>
+                <div class="source-card">
+                    <div class="source-icon">📄</div>
+                    <div class="source-name">Written Statements</div>
+                    <div class="source-desc">Published Written Statements of Services detailing fees, response times, and terms.</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Tribunal Risk Rating Section -->
+        <section class="section">
+            <h2 class="section-title">Tribunal Risk Rating</h2>
+            <p>Our headline rating for each factor is based entirely on their history with the Housing and Property Chamber—Scotland's tribunal for disputes between homeowners and factors. This provides an objective measure based on official adjudicated outcomes, not opinion.</p>
+            
+            <p>The rating considers three key dimensions:</p>
+            
+            <div class="components">
+                <div class="component-card">
+                    <div class="component-weight volume">40%</div>
+                    <div class="component-content">
+                        <h4>Case Volume</h4>
+                        <p>How many tribunal cases has this factor faced, relative to the number of properties they manage? A factor managing 50,000 flats with 20 cases is performing better than one with 500 flats and 10 cases.</p>
+                        <div class="component-formula">Score = 100 − (cases per 10,000 properties × 20)</div>
+                    </div>
+                </div>
+                
+                <div class="component-card">
+                    <div class="component-weight severity">35%</div>
+                    <div class="component-content">
+                        <h4>Case Severity</h4>
+                        <p>How serious were the issues in each case? We analyse each tribunal decision to assess the severity of code breaches, from minor administrative failures to serious misconduct.</p>
+                        <div class="component-formula">Score = 100 − (average severity × 10)</div>
+                    </div>
+                </div>
+                
+                <div class="component-card">
+                    <div class="component-weight recency">25%</div>
+                    <div class="component-content">
+                        <h4>Recent Activity</h4>
+                        <p>What's happened in the last 3 years? Recent cases matter more than historical ones—a factor that cleaned up their act deserves credit, while recent problems are more relevant to today's homeowners.</p>
+                        <div class="component-formula">Score = 100 − (recent cases per 10,000 × 10)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="formula-box">
+                <div class="formula-title">Composite Score Formula</div>
+                <div class="formula">
+                    <div class="formula-line">
+                        <span class="formula-component">Volume Score</span>
+                        <span class="formula-operator">×</span>
+                        <span class="formula-weight">0.40</span>
+                        <span class="formula-operator">+</span>
+                        <span class="formula-component">Severity Score</span>
+                        <span class="formula-operator">×</span>
+                        <span class="formula-weight">0.35</span>
+                        <span class="formula-operator">+</span>
+                        <span class="formula-component">Recency Score</span>
+                        <span class="formula-operator">×</span>
+                        <span class="formula-weight">0.25</span>
+                        <span class="formula-operator">−</span>
+                        <span class="formula-component">PFEO Penalty</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="callout">
+                <div class="callout-title">📏 Why "per 10,000 properties"?</div>
+                <p>Using rates rather than raw counts ensures fair comparison. Scotland's largest factors manage tens of thousands of properties, while smaller firms might manage just a few hundred. Comparing absolute case numbers would unfairly penalise larger operations.</p>
+            </div>
+        </section>
+        
+        <!-- PFEO Section -->
+        <section class="section">
+            <h2 class="section-title">Enforcement Order Penalties</h2>
+            <p>A Property Factor Enforcement Order (PFEO) is the most serious sanction the tribunal can impose. It's a legally binding order requiring the factor to take specific action, and failure to comply can result in prosecution.</p>
+            
+            <p>Our scoring applies additional penalties for PFEOs:</p>
+            
+            <ul class="rules-list">
+                <li class="rule-always">
+                    <div class="rule-title">Unresolved PFEO + High Case Volume = RED</div>
+                    <div class="rule-desc">Factors with an unresolved enforcement order AND 3 or more tribunal cases in 5 years are rated RED. This combination indicates both non-compliance and a pattern of tribunal activity.</div>
+                </li>
+                <li>
+                    <div class="rule-title">Unresolved PFEO + Low Case Volume = ORANGE</div>
+                    <div class="rule-desc">Factors with an unresolved enforcement order but fewer than 3 cases are rated ORANGE, not RED. The low case volume suggests this may be an isolated issue rather than systemic problems.</div>
+                </li>
+                <li>
+                    <div class="rule-title">Multiple Resolved PFEOs = ORANGE Maximum</div>
+                    <div class="rule-desc">Factors with two or more PFEOs in the past 5 years are capped at ORANGE rating, even if all orders have been resolved. A pattern of enforcement indicates systemic issues.</div>
+                </li>
+                <li>
+                    <div class="rule-title">Score Penalty</div>
+                    <div class="rule-desc">Each PFEO deducts 15 points from the composite score, up to a maximum penalty of 40 points. This affects the final score even when tier rules don't apply.</div>
+                </li>
+            </ul>
+        </section>
+        
+        <!-- Tier Determination Section -->
+        <section class="section">
+            <h2 class="section-title">Rating Tiers Explained</h2>
+            <p>The final rating tier is determined by applying rules in priority order. This ensures that serious issues (like unresolved enforcement orders) always surface, regardless of overall score.</p>
+            
+            <table class="tier-table">
+                <thead>
+                    <tr>
+                        <th style="width: 120px;">Rating</th>
+                        <th>Meaning</th>
+                        <th>Criteria</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="tier-badge clean">CLEAN</span></td>
+                        <td class="tier-meaning">No significant tribunal history</td>
+                        <td class="tier-criteria">Fewer than 3 tribunal cases in the past 5 years (and no unresolved PFEO)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="tier-badge green">GREEN</span></td>
+                        <td class="tier-meaning">Minor tribunal activity</td>
+                        <td class="tier-criteria">Composite score of 65 or above (with 3+ cases)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="tier-badge amber">AMBER</span></td>
+                        <td class="tier-meaning">Some tribunal concerns</td>
+                        <td class="tier-criteria">Composite score between 40 and 64</td>
+                    </tr>
+                    <tr>
+                        <td><span class="tier-badge orange">ORANGE</span></td>
+                        <td class="tier-meaning">Significant tribunal issues</td>
+                        <td class="tier-criteria">Composite score 20–39, OR 2+ resolved PFEOs, OR unresolved PFEO with low case volume</td>
+                    </tr>
+                    <tr>
+                        <td><span class="tier-badge red">RED</span></td>
+                        <td class="tier-meaning">Serious tribunal record</td>
+                        <td class="tier-criteria">Composite score below 20, OR unresolved PFEO with 3+ cases</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="example-box">
+                <div class="example-title">📊 Example Calculation</div>
+                <p style="margin: 0 0 16px; color: var(--slate-600); font-size: 0.95rem;">A factor managing 8,000 properties with 5 tribunal cases (2 recent), average severity of 4, and no PFEOs:</p>
+                <div class="example-calc">
+                    <div class="example-row">
+                        <span class="example-label">Cases per 10k:</span>
+                        <span class="example-value">6.25 → Volume score: 100 − (6.25 × 20) = 0</span>
+                    </div>
+                    <div class="example-row">
+                        <span class="example-label">Average severity 4:</span>
+                        <span class="example-value">Severity score: 100 − (4 × 10) = 60</span>
+                    </div>
+                    <div class="example-row">
+                        <span class="example-label">Recent cases per 10k:</span>
+                        <span class="example-value">2.5 → Recency score: 100 − (2.5 × 10) = 75</span>
+                    </div>
+                    <div class="example-row total">
+                        <span class="example-label">Composite:</span>
+                        <span class="example-value">(0 × 0.4) + (60 × 0.35) + (75 × 0.25) = 39.75</span>
+                    </div>
+                </div>
+                <div class="example-result">
+                    <span class="example-result-label">Final Rating:</span>
+                    <span class="tier-badge amber">AMBER</span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Customer Reviews Section -->
+        <section class="section">
+            <h2 class="section-title">Customer Reviews</h2>
+            <p>We aggregate customer reviews from Google and Trustpilot where available. These are displayed separately from the tribunal rating because they measure different things—customer satisfaction vs. regulatory compliance.</p>
+            
+            <p>Review scores are weighted by review count when calculating combined ratings. A factor with 200 Google reviews at 4.2 stars carries more statistical weight than one with 5 reviews at 4.8 stars.</p>
+            
+            <div class="callout warning">
+                <div class="callout-title">⚠️ Reviews Have Limitations</div>
+                <p>Online reviews can be influenced by fake reviews, review solicitation practices, or selection bias (unhappy customers are more likely to leave reviews). We present this data for context but recommend focusing on the tribunal record for objective assessment.</p>
+            </div>
+        </section>
+        
+        <!-- Limitations Section -->
+        <section class="section">
+            <h2 class="section-title">Limitations &amp; Caveats</h2>
+            <p>We believe in transparency about what our methodology can and cannot tell you:</p>
+            
+            <ul class="limitations-list">
+                <li><strong>Property counts are estimates.</strong> For some factors, we don't have accurate property counts from FOI data. In these cases, we use a default estimate of 2,000 properties. This is flagged on affected profiles.</li>
+                <li><strong>Severity scores use AI analysis.</strong> We use AI to extract and assess severity from tribunal decisions. While we've validated this against human review, some edge cases may be imperfectly scored.</li>
+                <li><strong>Tribunal cases don't tell the whole story.</strong> A factor with zero tribunal cases isn't necessarily excellent—they might just have homeowners who don't know their rights. Conversely, some cases are dismissed or involve frivolous complaints.</li>
+                <li><strong>Data has a time lag.</strong> Tribunal decisions can take months to be published. Our data reflects published decisions, not ongoing cases.</li>
+                <li><strong>We only cover registered factors.</strong> Unregistered factors operating illegally won't appear in our database at all.</li>
+            </ul>
+        </section>
+        
+        <!-- Independence Section -->
+        <section class="section">
+            <h2 class="section-title">Editorial Independence</h2>
+            <p>Compare Factors Scotland is an independent service. Our ratings are calculated algorithmically from official data sources—no factor can pay for a better rating or to have negative information removed.</p>
+            
+            <p>We may earn referral fees when homeowners request quotes through our platform. This commercial relationship is kept entirely separate from our scoring methodology. The factors we recommend in our "Get Quotes" service are chosen based on user location and factor availability, not payment.</p>
+            
+            <p>If you believe any information on our site is inaccurate, please <a href="/contact/">contact us</a> with supporting evidence and we'll investigate promptly.</p>
+        </section>
+        
+        <a href="/" class="back-link">← Back to homepage</a>
+    </main>
+    
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-grid">
+                <div>
+                    <div class="footer-brand">Compare Factors</div>
+                    <p class="footer-desc">Independent comparison of Scottish property factors. Helping homeowners make informed decisions.</p>
+                </div>
+                <div>
+                    <div class="footer-title">Explore</div>
+                    <ul class="footer-links">
+                        <li><a href="/factors/">All Factors</a></li>
+                        <li><a href="/areas/">By Area</a></li>
+                        <li><a href="/rankings/">Rankings</a></li>
+                        <li><a href="/tribunal/">Tribunal Cases</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="footer-title">Guides</div>
+                    <ul class="footer-links">
+                        <li><a href="/guides/how-to-switch-factors-scotland/">Switching Factors</a></li>
+                        <li><a href="/guides/complaints/">Making a Complaint</a></li>
+                        <li><a href="/guides/history-of-property-factoring-scotland/">History</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="footer-title">About</div>
+                    <ul class="footer-links">
+                        <li><a href="/methodology/">Our Methodology</a></li>
+                        <li><a href="/about/">About Us</a></li>
+                        <li><a href="/contact/">Contact</a></li>
+                        <li><a href="/privacy/">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div>© 2026 Compare Factors Scotland. Not affiliated with the Scottish Government.</div>
+                <div>Data last updated: January 2026</div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+    function toggleMenu() {
+        document.querySelector('.burger').classList.toggle('active');
+        document.getElementById('mobileNav').classList.toggle('active');
+    }
+    </script>
+</body>
+</html>

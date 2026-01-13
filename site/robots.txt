@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Ensure favicons are crawlable
+Allow: /favicon.ico
+Allow: /favicon.svg
+Allow: /favicon-*.png
+Allow: /apple-touch-icon.png
+Allow: /site.webmanifest
+
+Sitemap: https://comparefactors.co.uk/sitemap.xml

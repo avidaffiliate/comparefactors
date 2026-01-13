@@ -1,0 +1,22 @@
+# Pretty URLs - redirect without trailing slash
+/factors        /factors/       301
+/areas          /areas/         301
+/guides         /guides/        301
+/about          /about/         301
+/contact        /contact/       301
+/methodology    /methodology/   301
+/privacy        /privacy/       301
+/terms          /terms/         301
+/rankings       /rankings/      301
+/tribunal       /tribunal/      301
+/compare        /compare/       301
+/get-quotes     /get-quotes/    301
+
+# Legacy redirects - if anyone used old /pf* URLs
+/pf:id          /factors/pf:id  301
+/pf:id/         /factors/pf:id/ 301
+
+# Guide URL aliases (homepage uses different slugs)
+/guides/switching-factors   /guides/how-to-switch-factors-scotland/    301
+/guides/how-to-choose       /guides/how-to-switch-factors-scotland/    301
+/guides/your-rights         /guides/complaints/                        301
