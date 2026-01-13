@@ -8,8 +8,9 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" href="/favicon-48x48.png" sizes="48x48">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
     <link rel="manifest" href="/site.webmanifest">
-    
     <title>Cleodius Limited | Compare Factors Scotland</title>
     
     <meta name="description" content="Independent profile for Cleodius Limited. Tribunal rating: CLEAN. Reviews, fees, and registration status. Compare Scottish property factors.">
@@ -23,7 +24,7 @@
     <meta property="og:image" content="https://comparefactors.co.uk/images/og-factor-profile.png">
     <meta name="twitter:card" content="summary_large_image">
 
-    <!-- ==================== DYNAMIC SEO SCHEMA (v5 Updated) ==================== -->
+    <!-- ==================== DYNAMIC SEO SCHEMA ==================== -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -116,54 +117,807 @@
     }
     </script>
 
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==================== CSS VARIABLES ==================== */
+        :root {
+            /* Navy scale - primary dark colors */
+            --navy-950: #0a0f1a;
+            --navy-900: #0f172a;
+            --navy-800: #1e293b;
+            --navy-700: #334155;
+            
+            /* Slate scale - neutral grays */
+            --slate-600: #475569;
+            --slate-500: #64748b;
+            --slate-400: #94a3b8;
+            --slate-300: #cbd5e1;
+            --slate-200: #e2e8f0;
+            --slate-100: #f1f5f9;
+            --slate-50: #f8fafc;
+            --white: #ffffff;
+            
+            /* Status colors */
+            --red-700: #b91c1c;
+            --red-600: #dc2626;
+            --red-100: #fee2e2;
+            --red-50: #fef2f2;
+            
+            --orange-600: #ea580c;
+            --orange-100: #ffedd5;
+            
+            --amber-600: #d97706;
+            --amber-100: #fef3c7;
+            
+            --green-700: #15803d;
+            --green-600: #16a34a;
+            --green-100: #dcfce7;
+            --green-50: #f0fdf4;
+            
+            --emerald-700: #047857;
+            --emerald-600: #059669;
+            --emerald-100: #d1fae5;
+            
+            --blue-700: #1d4ed8;
+            --blue-600: #2563eb;
+            --blue-100: #dbeafe;
+            
+            /* Semantic aliases (for page-specific styles) */
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --bg-muted: #f8fafc;
+            --bg-hover: #f1f5f9;
+            
+            /* Typography */
+            --font-display: 'Fraunces', Georgia, serif;
+            --font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
 
+        /* ==================== RESET & BASE ==================== */
+        *, *::before, *::after { 
+            box-sizing: border-box; 
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: var(--font-body);
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--navy-800);
+            background: var(--slate-50);
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        a { 
+            color: var(--blue-600); 
+            text-decoration: none;
+        }
+        a:hover { 
+            text-decoration: underline; 
+        }
+
+        /* ==================== HEADER ==================== */
+        .site-header {
+            background: var(--white);
+            border-bottom: 1px solid var(--slate-200);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--navy-950);
+            text-decoration: none;
+        }
+        .logo:hover {
+            text-decoration: none;
+        }
+        
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            background: var(--navy-950);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        .nav-link {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--slate-600);
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+        .nav-link:hover {
+            color: var(--navy-950);
+            text-decoration: none;
+        }
+        
+        .nav-cta {
+            background: var(--navy-950);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+        .nav-cta:hover {
+            background: var(--navy-800);
+            text-decoration: none;
+        }
+        
+        /* Mobile Menu */
+        .burger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            width: 28px;
+            height: 28px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .burger span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: var(--navy-800);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .burger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .burger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .burger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        .mobile-nav {
+            display: none;
+            position: absolute;
+            top: 68px;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border-bottom: 1px solid var(--slate-200);
+            padding: 16px 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .mobile-nav.active {
+            display: block;
+        }
+
+        .mobile-nav a {
+            display: block;
+            padding: 12px 0;
+            color: var(--slate-600);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            border-bottom: 1px solid var(--slate-100);
+        }
+
+        .mobile-nav a:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-nav a:hover {
+            color: var(--navy-900);
+        }
+
+        .mobile-nav .nav-cta {
+            display: inline-block;
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        /* ==================== BREADCRUMB ==================== */
+        .breadcrumb {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-md) 24px;
+            font-size: 0.85rem;
+            color: var(--slate-500);
+        }
+        .breadcrumb a {
+            color: var(--slate-500);
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            color: var(--navy-800);
+        }
+        .breadcrumb .sep {
+            margin: 0 0.5rem;
+            color: var(--slate-300);
+        }
+
+        /* ==================== MAIN CONTENT ==================== */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px var(--space-2xl);
+        }
+
+        /* ==================== TYPOGRAPHY ==================== */
+        h1, h2, h3, h4 {
+            font-family: var(--font-display);
+            color: var(--navy-950);
+            line-height: 1.3;
+        }
+        
+        h1 { font-size: 2rem; font-weight: 700; }
+        h2 { font-size: 1.5rem; font-weight: 600; }
+        h3 { font-size: 1.25rem; font-weight: 600; }
+        h4 { font-size: 1rem; font-weight: 600; }
+
+        /* ==================== CARDS ==================== */
+        .card {
+            background: var(--white);
+            border: 1px solid var(--slate-200);
+            border-radius: 16px;
+            padding: var(--space-lg);
+        }
+        
+        .card-sm {
+            border-radius: 8px;
+            padding: var(--space-md);
+        }
+
+        /* ==================== BUTTONS ==================== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 20px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+        
+        .btn-primary {
+            background: var(--navy-950);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--navy-800);
+            text-decoration: none;
+        }
+        
+        .btn-secondary {
+            background: var(--white);
+            color: var(--navy-800);
+            border: 1px solid var(--slate-200);
+        }
+        .btn-secondary:hover {
+            background: var(--slate-50);
+            border-color: var(--slate-300);
+            text-decoration: none;
+        }
+
+        /* ==================== RISK BADGES ==================== */
+        .risk-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 6px;
+        }
+        
+        .risk-badge--clean,
+        .risk-badge.clean {
+            background: var(--green-100);
+            color: var(--green-700);
+        }
+        .risk-badge--green,
+        .risk-badge.green {
+            background: var(--green-100);
+            color: var(--green-700);
+        }
+        .risk-badge--amber,
+        .risk-badge.amber {
+            background: var(--amber-100);
+            color: var(--amber-600);
+        }
+        .risk-badge--orange,
+        .risk-badge.orange {
+            background: var(--orange-100);
+            color: var(--orange-600);
+        }
+        .risk-badge--red,
+        .risk-badge.red {
+            background: var(--red-100);
+            color: var(--red-700);
+        }
+
+        /* ==================== UTILITIES ==================== */
+        .text-success { color: var(--green-600); }
+        .text-warning { color: var(--amber-600); }
+        .text-danger { color: var(--red-600); }
+        .text-muted { color: var(--slate-500); }
+        
+        .risk-clean { color: var(--green-600); }
+        .risk-green { color: var(--green-600); }
+        .risk-amber { color: var(--amber-600); }
+        .risk-orange { color: var(--orange-600); }
+        .risk-red { color: var(--red-600); }
+
+        /* ==================== FOOTER ==================== */
+        .site-footer {
+            background: var(--navy-950);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 48px 24px 24px;
+            margin-top: var(--space-2xl);
+        }
+        
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 32px;
+        }
+        
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 12px;
+        }
+        .footer-brand .logo-mark {
+            background: white;
+            color: var(--navy-950);
+        }
+        
+        .footer-about {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .footer-col h4 {
+            font-family: var(--font-body);
+            font-weight: 600;
+            color: white;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+        
+        .footer-col a {
+            display: block;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            text-decoration: none;
+        }
+        .footer-col a:hover {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .footer-bottom {
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .footer-bottom a {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .footer-bottom a:hover {
+            color: white;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+            .burger {
+                display: flex;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 32px;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+            h1 { font-size: 1.75rem; }
+            h2 { font-size: 1.35rem; }
+        }
+        
+        @media (max-width: 480px) {
+            .header-inner {
+                padding: 0 16px;
+            }
+            .main-content {
+                padding: 0 16px var(--space-xl);
+            }
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+        }
+
+        /* ==================== COOKIE CONSENT ==================== */
+        .cf-cookie-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: 9998;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .cf-cookie-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .cf-cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border-top: 1px solid var(--slate-200);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+            z-index: 9999;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .cf-cookie-banner.active {
+            transform: translateY(0);
+        }
+
+        .cf-cookie-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        .cf-cookie-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .cf-cookie-title {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            margin: 0;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--navy-950);
+        }
+
+        .cf-cookie-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .cf-cookie-text {
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            color: var(--navy-800);
+            margin: 0 0 1.25rem 0;
+        }
+
+        .cf-cookie-text a {
+            color: var(--blue-600);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .cf-cookie-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .cf-btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            font-family: inherit;
+        }
+
+        .cf-btn-accept {
+            background: var(--green-600);
+            color: white;
+        }
+        .cf-btn-accept:hover {
+            background: var(--green-700);
+            transform: translateY(-1px);
+        }
+
+        .cf-btn-reject {
+            background: var(--white);
+            color: var(--navy-800);
+            border: 1.5px solid var(--slate-200);
+        }
+        .cf-btn-reject:hover {
+            background: var(--slate-50);
+            border-color: var(--slate-300);
+        }
+
+        .cf-btn-settings {
+            background: transparent;
+            color: var(--slate-500);
+            padding: 0.75rem 1rem;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+        .cf-btn-settings:hover {
+            color: var(--navy-800);
+        }
+
+        .cf-cookie-settings {
+            display: none;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--slate-200);
+        }
+        .cf-cookie-settings.active {
+            display: block;
+            animation: cfSlideDown 0.3s ease;
+        }
+
+        @keyframes cfSlideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .cf-settings-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--navy-950);
+            margin: 0 0 1rem 0;
+        }
+
+        .cf-cookie-category {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--slate-50);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+        .cf-cookie-category:last-of-type {
+            margin-bottom: 1.25rem;
+        }
+
+        .cf-category-info { flex: 1; }
+        .cf-category-name {
+            font-weight: 600;
+            color: var(--navy-800);
+            margin: 0 0 0.25rem 0;
+            font-size: 0.9375rem;
+        }
+        .cf-category-desc {
+            font-size: 0.8125rem;
+            color: var(--slate-500);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .cf-toggle {
+            position: relative;
+            flex-shrink: 0;
+        }
+        .cf-toggle input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .cf-toggle-slider {
+            display: block;
+            width: 48px;
+            height: 26px;
+            background: var(--slate-300);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            position: relative;
+        }
+        .cf-toggle-slider::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+        }
+        .cf-toggle input:checked + .cf-toggle-slider {
+            background: var(--green-600);
+        }
+        .cf-toggle input:checked + .cf-toggle-slider::after {
+            transform: translateX(22px);
+        }
+        .cf-toggle input:disabled + .cf-toggle-slider {
+            background: var(--green-600);
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .cf-required-badge {
+            display: inline-block;
+            font-size: 0.6875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--slate-500);
+            background: var(--slate-200);
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+        }
+
+        .cf-btn-save {
+            background: var(--navy-950);
+            color: white;
+        }
+        .cf-btn-save:hover {
+            background: var(--navy-800);
+            transform: translateY(-1px);
+        }
+
+        .cf-cookie-settings-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 44px;
+            height: 44px;
+            background: var(--navy-950);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            z-index: 9990;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .cf-cookie-settings-btn:hover {
+            background: var(--navy-800);
+            transform: scale(1.05);
+        }
+        .cf-cookie-settings-btn svg {
+            width: 22px;
+            height: 22px;
+            color: white;
+        }
+        .cf-cookie-settings-btn.active {
+            display: flex;
+        }
+
+        @media (max-width: 640px) {
+            .cf-cookie-inner { padding: 1.25rem; }
+            .cf-cookie-header { flex-direction: column; }
+            .cf-cookie-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            .cf-btn {
+                width: 100%;
+                text-align: center;
+            }
+            .cf-btn-settings { order: 3; }
+            .cf-cookie-category {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            .cf-toggle { align-self: flex-start; }
+        }
+
+    </style>
+    
 <style>
-    /* ==================== CSS VARIABLES ==================== */
+    /* ==================== PAGE-SPECIFIC CSS VARIABLES ==================== */
     :root {
-        /* Navy scale - primary dark colors */
-        --navy-950: #0a0f1a;
-        --navy-900: #0f172a;
-        --navy-800: #1e293b;
-        --navy-700: #334155;
-        
-        /* Slate scale - neutral grays */
-        --slate-600: #475569;
-        --slate-500: #64748b;
-        --slate-400: #94a3b8;
-        --slate-300: #cbd5e1;
-        --slate-200: #e2e8f0;
-        --slate-100: #f1f5f9;
-        --slate-50: #f8fafc;
-        --white: #ffffff;
-        
-        /* Status colors */
-        --red-700: #b91c1c;
-        --red-600: #dc2626;
-        --red-100: #fee2e2;
-        --red-50: #fef2f2;
-        
-        --orange-600: #ea580c;
-        --orange-100: #ffedd5;
-        
-        --amber-600: #d97706;
-        --amber-100: #fef3c7;
-        
-        --green-700: #15803d;
-        --green-600: #16a34a;
-        --green-100: #dcfce7;
-        --green-50: #f0fdf4;
-        
-        --emerald-700: #047857;
-        --emerald-600: #059669;
-        --emerald-100: #d1fae5;
-        
-        --blue-700: #1d4ed8;
-        --blue-600: #2563eb;
-        --blue-100: #dbeafe;
-        
+        /* Additional status colors not in base */
         --indigo-600: #4f46e5;
         --indigo-100: #e0e7ff;
         --indigo-50: #eef2ff;
@@ -173,17 +927,10 @@
         --gray-500: #6b7280;
         --gray-100: #f3f4f6;
         
-        /* Typography */
-        --font-display: 'Fraunces', Georgia, serif;
-        --font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
-        
-        /* Spacing */
-        --space-xs: 0.25rem;
-        --space-sm: 0.5rem;
-        --space-md: 1rem;
-        --space-lg: 1.5rem;
-        --space-xl: 2rem;
-        --space-2xl: 3rem;
+        /* Amber additions */
+        --amber-50: #fffbeb;
+        --amber-200: #fde68a;
+        --amber-800: #92400e;
         
         /* Text sizes */
         --text-xs: 0.75rem;
@@ -194,39 +941,11 @@
         --text-2xl: 1.5rem;
         --text-3xl: 1.875rem;
         
-        /* Shadows */
-        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
-        --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.04);
-        --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
-        
         /* Borders */
         --radius-sm: 8px;
         --radius-md: 10px;
         --radius-lg: 16px;
     }
-    
-    /* ==================== RESET & BASE ==================== */
-    *, *::before, *::after { box-sizing: border-box; }
-    
-    body {
-        font-family: var(--font-body);
-        font-size: var(--text-base);
-        line-height: 1.6;
-        color: var(--navy-800);
-        background: var(--slate-50);
-        margin: 0;
-        padding: 0;
-        -webkit-font-smoothing: antialiased;
-    }
-    
-    h1, h2, h3, h4 { 
-        font-family: var(--font-display);
-        line-height: 1.3; 
-        margin: 0;
-    }
-    
-    a { color: var(--blue-600); text-decoration: none; }
-    a:hover { text-decoration: underline; }
     
     /* ==================== LAYOUT ==================== */
     .container {
@@ -251,159 +970,7 @@
         .main-content { order: 1; }
     }
     
-    /* ==================== HEADER ==================== */
-    .site-header {
-        background: var(--white);
-        border-bottom: 1px solid var(--slate-200);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-    }
-    
-    .header-inner {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 24px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        height: 68px;
-    }
-    
-    .logo {
-        font-family: var(--font-display);
-        font-size: 1.35rem;
-        font-weight: 600;
-        color: var(--navy-900);
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    .logo:hover { text-decoration: none; }
-    
-    .logo-mark {
-        width: 36px;
-        height: 36px;
-        background: var(--navy-900);
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--white);
-        font-weight: 700;
-        font-size: 1.1rem;
-        letter-spacing: -0.5px;
-    }
-    
-    .nav {
-        display: flex;
-        align-items: center;
-        gap: 32px;
-    }
-    .nav-link {
-        color: var(--slate-600);
-        font-weight: 500;
-        font-size: 0.95rem;
-        transition: color 0.15s;
-        text-decoration: none;
-    }
-    .nav-link:hover { color: var(--navy-900); text-decoration: none; }
-    
-    .nav-cta {
-        background: var(--navy-900);
-        color: var(--white) !important;
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: background 0.15s;
-        text-decoration: none;
-    }
-    .nav-cta:hover { background: var(--navy-800); text-decoration: none; }
-    
-    /* Mobile Menu */
-    .burger {
-        display: none;
-        flex-direction: column;
-        justify-content: center;
-        gap: 5px;
-        width: 28px;
-        height: 28px;
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 0;
-    }
-
-    .burger span {
-        display: block;
-        width: 100%;
-        height: 2px;
-        background: var(--navy-900);
-        border-radius: 2px;
-        transition: all 0.3s;
-    }
-
-    .burger.active span:nth-child(1) {
-        transform: rotate(45deg) translate(5px, 5px);
-    }
-
-    .burger.active span:nth-child(2) {
-        opacity: 0;
-    }
-
-    .burger.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(5px, -5px);
-    }
-
-    .mobile-nav {
-        display: none;
-        position: absolute;
-        top: 68px;
-        left: 0;
-        right: 0;
-        background: var(--white);
-        border-bottom: 1px solid var(--slate-200);
-        padding: 16px 24px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    .mobile-nav.active {
-        display: block;
-    }
-
-    .mobile-nav a {
-        display: block;
-        padding: 12px 0;
-        color: var(--slate-600);
-        text-decoration: none;
-        font-size: 1rem;
-        font-weight: 500;
-        border-bottom: 1px solid var(--slate-100);
-    }
-
-    .mobile-nav a:last-child {
-        border-bottom: none;
-    }
-
-    .mobile-nav a:hover {
-        color: var(--navy-900);
-    }
-
-    .mobile-nav .nav-cta {
-        display: inline-block;
-        margin-top: 12px;
-        text-align: center;
-    }
-    
-    @media (max-width: 768px) {
-        .nav { display: none; }
-        .burger {
-            display: flex;
-        }
-    }
-    
-    /* ==================== BREADCRUMB ==================== */
+    /* ==================== BREADCRUMB OVERRIDE ==================== */
     .breadcrumb {
         padding: var(--space-md) 0;
         font-size: var(--text-sm);
@@ -490,12 +1057,7 @@
         gap: var(--space-xs);
     }
     
-    /* Risk Badge */
-    /* Dynamic classes based on band */
-    
-    
-    
-    
+    /* Risk Badge - Page-specific override */
     .risk-badge {
         display: inline-flex;
         flex-direction: column;
@@ -532,7 +1094,7 @@
     .risk-badge.red, .risk-badge--red { background: var(--red-100); color: var(--red-700); }
     .risk-badge.expired, .risk-badge--expired { background: var(--gray-100); color: var(--gray-500); }
     
-    /* ==================== VERDICT BOX (NEW) ==================== */
+    /* ==================== VERDICT BOX ==================== */
     .verdict-box {
         background: var(--slate-50);
         border: 1px solid var(--slate-200);
@@ -552,7 +1114,7 @@
         background: var(--navy-700);
         border-radius: 0 4px 4px 0;
     }
-    /* Dynamic Verdict Colors */
+    
     .verdict-box.red::before { background: var(--red-600); }
     .verdict-box.orange::before { background: var(--orange-600); }
     .verdict-box.amber::before { background: var(--amber-600); }
@@ -646,120 +1208,80 @@
         border: 1px solid var(--slate-200);
         border-radius: var(--radius-lg);
         padding: var(--space-lg);
+        margin-bottom: var(--space-lg);
     }
     
-    .glance-title {
+    .at-a-glance-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        margin-bottom: var(--space-md);
+    }
+    
+    .at-a-glance-title {
         font-family: var(--font-display);
-        font-size: var(--text-lg);
+        font-size: 1.1rem;
         font-weight: 600;
         color: var(--navy-900);
-        margin-bottom: var(--space-md);
-        display: flex;
+    }
+    
+    .at-a-glance-badge {
+        display: inline-flex;
         align-items: center;
-        gap: var(--space-sm);
-    }
-    
-    /* Key Stats Grid */
-    .key-stats {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: var(--space-md);
-        margin-bottom: var(--space-lg);
-        padding-bottom: var(--space-lg);
-        border-bottom: 1px solid var(--slate-200);
-    }
-    
-    @media (max-width: 640px) {
-        .key-stats { grid-template-columns: repeat(2, 1fr); }
-    }
-    
-    .key-stat {
-        text-align: center;
-    }
-    
-    .key-stat-value {
-        font-family: var(--font-display);
-        font-size: var(--text-xl);
-        font-weight: 700;
-        color: var(--navy-800);
-    }
-    .key-stat-value.clean, .key-stat-value.green { color: var(--green-600); }
-    .key-stat-value.amber { color: var(--amber-600); }
-    .key-stat-value.orange { color: var(--orange-600); }
-    .key-stat-value.red { color: var(--red-600); }
-    .key-stat-value.muted { color: var(--slate-400); }
-    
-    .key-stat-label {
+        gap: 4px;
         font-size: var(--text-xs);
         color: var(--slate-500);
-        margin-top: var(--space-xs);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
+        background: var(--white);
+        padding: 2px 8px;
+        border-radius: 100px;
+        border: 1px solid var(--slate-200);
     }
     
-    .key-stat-benchmark {
-        font-size: 10px;
-        color: var(--slate-400);
-        margin-top: 2px;
+    .at-a-glance-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
     }
     
-    /* Glance Grid (insights) */
-    .glance-grid {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-sm);
-    }
-    
-    .glance-item {
+    .at-a-glance-item {
         display: flex;
         align-items: flex-start;
         gap: var(--space-sm);
-        font-size: var(--text-sm);
-        color: var(--slate-600);
         padding: var(--space-sm) 0;
+        font-size: var(--text-sm);
+        color: var(--slate-700);
+        border-bottom: 1px solid var(--slate-200);
     }
     
-    .glance-icon {
+    .at-a-glance-item:last-child {
+        border-bottom: none;
+    }
+    
+    .at-a-glance-icon {
         flex-shrink: 0;
-        width: 18px;
-        height: 18px;
         margin-top: 2px;
     }
-    .glance-icon.green { color: var(--green-600); }
-    .glance-icon.amber { color: var(--amber-600); }
-    .glance-icon.red { color: var(--red-600); }
-    .glance-icon.muted { color: var(--slate-400); }
+    
+    .at-a-glance-icon.positive { color: var(--green-600); }
+    .at-a-glance-icon.neutral { color: var(--slate-400); }
+    .at-a-glance-icon.negative { color: var(--red-600); }
     
     /* ==================== CARDS ==================== */
     .card {
         background: var(--white);
-        border: 1px solid var(--slate-200);
         border-radius: var(--radius-lg);
+        border: 1px solid var(--slate-200);
         margin-bottom: var(--space-lg);
         overflow: hidden;
-        box-shadow: var(--shadow-sm);
     }
     
     .card-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: var(--space-lg) var(--space-lg) 0;
-    }
-    
-    .card-title {
-        font-size: var(--text-lg);
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: var(--space-sm);
-    }
-    
-    .card-link {
-        font-size: var(--text-sm);
-        font-weight: 500;
+        padding: var(--space-md) var(--space-lg);
+        border-bottom: 1px solid var(--slate-100);
+        background: var(--slate-50);
     }
     
     .card-header-links {
@@ -768,8 +1290,19 @@
         align-items: center;
     }
     
-    .card-header-links .card-link {
-        white-space: nowrap;
+    .card-title {
+        font-family: var(--font-display);
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: var(--navy-900);
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+    }
+    
+    .card-link {
+        font-size: var(--text-sm);
+        color: var(--blue-600);
     }
     
     .card-body {
@@ -782,493 +1315,52 @@
         border-top: 1px solid var(--slate-100);
         font-size: var(--text-xs);
         color: var(--slate-500);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: var(--space-md);
     }
     
-    .card-footer-timestamp {
-        white-space: nowrap;
-    }
-    
-    /* Empty state */
-    .empty-state {
-        text-align: center;
-        padding: var(--space-xl);
-        color: var(--slate-500);
-    }
-    
-    .empty-state-icon {
-        width: 48px;
-        height: 48px;
-        margin: 0 auto var(--space-md);
-        color: var(--slate-300);
-    }
-    
-    /* ==================== REVIEWS ==================== */
-    .review-platforms {
+    /* ==================== DATA GRID ==================== */
+    .data-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: var(--space-md);
-        margin-bottom: var(--space-lg);
-    }
-    
-    @media (max-width: 480px) {
-        .review-platforms { grid-template-columns: 1fr; }
-    }
-    
-    .review-platform {
-        display: flex;
-        align-items: flex-start;
-        gap: var(--space-md);
-        padding: var(--space-md);
-        background: var(--slate-50);
-        border-radius: var(--radius-md);
-    }
-    
-    .platform-logo {
-        width: 40px;
-        height: 40px;
-        border-radius: var(--radius-sm);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 1.2rem;
-        flex-shrink: 0;
-    }
-    
-    .platform-logo.google {
-        background: #fff;
-        border: 1px solid var(--slate-200);
-        color: #4285f4;
-    }
-    
-    .platform-logo.trustpilot {
-        background: #00b67a;
-        color: white;
-    }
-    
-    .platform-rating {
-        font-family: var(--font-display);
-        font-size: var(--text-xl);
-        font-weight: 700;
-        color: var(--navy-800);
-    }
-    
-    .platform-stars {
-        color: #fbbf24;
-        font-size: var(--text-sm);
-        letter-spacing: -1px;
-    }
-    
-    .platform-count {
-        font-size: var(--text-xs);
-        color: var(--slate-500);
-    }
-    
-    .platform-empty {
-        font-size: var(--text-sm);
-        color: var(--slate-400);
-        font-style: italic;
-    }
-    
-    .rating-explanation {
-        display: flex;
-        align-items: center;
-        gap: var(--space-sm);
-        padding: var(--space-sm) var(--space-md);
-        background: var(--blue-100);
-        border-radius: var(--radius-sm);
-        font-size: var(--text-sm);
-        color: var(--blue-700);
-        margin-bottom: var(--space-md);
-    }
-    
-    .review-snippets {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-md);
-    }
-    
-    .review-snippet {
-        padding: var(--space-md);
-        background: var(--slate-50);
-        border-radius: var(--radius-md);
-        border-left: 3px solid var(--slate-300);
-    }
-    
-    .review-snippet-text {
-        font-size: var(--text-sm);
-        color: var(--slate-600);
-        font-style: italic;
-        margin-bottom: var(--space-sm);
-    }
-    
-    .review-snippet-meta {
-        display: flex;
-        justify-content: space-between;
-        font-size: var(--text-xs);
-        color: var(--slate-500);
-    }
-    
-    /* Review Snippets - actual review text */
-    .review-snippets {
-        margin-bottom: var(--space-lg);
-    }
-    
-    .review-snippets-title {
-        font-size: var(--text-sm);
-        font-weight: 600;
-        color: var(--slate-700);
-        margin-bottom: var(--space-md);
-    }
-    
-    .review-snippet {
-        padding: var(--space-md);
-        background: var(--slate-50);
-        border-radius: var(--radius-md);
-        border-left: 3px solid var(--slate-300);
-        margin-bottom: var(--space-sm);
-    }
-    
-    .review-snippet-header {
-        display: flex;
-        align-items: center;
-        gap: var(--space-sm);
-        margin-bottom: var(--space-sm);
-    }
-    
-    .review-rating {
-        font-weight: 700;
-        color: var(--amber-600);
-        font-size: var(--text-sm);
-    }
-    
-    .review-snippet-text {
-        font-size: var(--text-sm);
-        color: var(--slate-700);
-        line-height: 1.6;
-        font-style: italic;
-        margin-bottom: var(--space-sm);
-    }
-    
-    .review-snippet-meta {
-        display: flex;
-        justify-content: space-between;
-        font-size: var(--text-xs);
-        color: var(--slate-500);
-    }
-    
-    .review-author {
-        font-weight: 500;
-    }
-    
-    /* Review Locations - linked review sources */
-    .review-locations {
-        margin-top: var(--space-lg);
-        padding-top: var(--space-lg);
-        border-top: 1px solid var(--slate-200);
-    }
-    
-    .review-locations-title {
-        font-size: var(--text-sm);
-        font-weight: 600;
-        color: var(--slate-700);
-        margin-bottom: var(--space-md);
-    }
-    
-    .review-locations-list {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-sm);
-    }
-    
-    .review-location-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: var(--space-sm) var(--space-md);
-        background: var(--slate-50);
-        border-radius: var(--radius-md);
-        gap: var(--space-md);
-    }
-    
-    .review-location-info {
-        display: flex;
-        align-items: center;
-        gap: var(--space-md);
-        flex-wrap: wrap;
-    }
-    
-    .review-location-rating {
-        font-weight: 700;
-        color: var(--navy-800);
-        font-size: var(--text-sm);
-    }
-    
-    .review-location-count {
-        color: var(--slate-500);
-        font-size: var(--text-sm);
-    }
-    
-    .read-reviews-link {
-        font-size: var(--text-sm);
-        font-weight: 500;
-        color: var(--blue-600);
-        text-decoration: none;
-        white-space: nowrap;
-    }
-    
-    .read-reviews-link:hover {
-        text-decoration: underline;
-    }
-    
-    .platform-badge {
-        display: inline-flex;
-        align-items: center;
-        padding: 4px 8px;
-        border-radius: var(--radius-sm);
-        font-size: var(--text-xs);
-        font-weight: 600;
-        text-transform: uppercase;
-    }
-    
-    .platform-badge--google {
-        background: #f1f3f4;
-        color: #4285f4;
-    }
-    
-    .platform-badge--trustpilot {
-        background: #00b67a;
-        color: white;
-    }
-    
-    @media (max-width: 480px) {
-        .review-location-item {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: var(--space-sm);
-        }
-        
-        .review-location-link {
-            width: 100%;
-        }
-        
-        .read-reviews-link {
-            display: block;
-            text-align: center;
-            padding: var(--space-xs) var(--space-sm);
-            background: var(--blue-50);
-            border-radius: var(--radius-sm);
-        }
-    }
-    
-    /* ==================== TRIBUNAL ==================== */
-    .tribunal-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-lg);
-        margin-bottom: var(--space-lg);
     }
     
     @media (max-width: 640px) {
-        .tribunal-grid { grid-template-columns: 1fr; }
+        .data-grid { grid-template-columns: repeat(2, 1fr); }
     }
     
-    .tribunal-period {
-        background: var(--slate-50);
-        padding: var(--space-md);
-        border-radius: var(--radius-md);
-    }
-    
-    .tribunal-period-title {
-        font-weight: 600;
-        font-size: var(--text-sm);
-        color: var(--navy-800);
-        margin-bottom: var(--space-md);
-        padding-bottom: var(--space-sm);
-        border-bottom: 1px solid var(--slate-200);
-    }
-    
-    .tribunal-stat-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: var(--space-xs) 0;
-        font-size: var(--text-sm);
-    }
-    
-    .tribunal-stat-label {
-        color: var(--slate-500);
-        display: flex;
-        align-items: center;
-        gap: 4px;
-    }
-    
-    .tribunal-stat-value {
-        font-weight: 600;
-        color: var(--navy-800);
-    }
-    .tribunal-stat-value.red { color: var(--red-600); }
-    
-    .benchmark-indicator {
-        font-size: var(--text-xs);
-        font-weight: 400;
-        color: var(--slate-400);
-        margin-left: 4px;
-    }
-    
-    /* Complaint categories */
-    .complaint-categories {
-        margin-bottom: var(--space-lg);
+    .data-item {
+        text-align: center;
         padding: var(--space-md);
         background: var(--slate-50);
-        border-radius: var(--radius-md);
+        border-radius: var(--radius-sm);
     }
     
-    .complaint-categories-title {
-        font-size: var(--text-sm);
-        font-weight: 600;
-        color: var(--navy-800);
-        margin-bottom: var(--space-md);
+    .data-value {
+        font-family: var(--font-display);
+        font-size: var(--text-xl);
+        font-weight: 700;
+        color: var(--navy-900);
     }
     
-    .complaint-bar-list {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-sm);
-    }
+    .data-value.green { color: var(--green-600); }
+    .data-value.amber { color: var(--amber-600); }
+    .data-value.red { color: var(--red-600); }
     
-    .complaint-bar-item {
-        display: grid;
-        grid-template-columns: 120px 1fr 40px;
-        align-items: center;
-        gap: var(--space-sm);
-        font-size: var(--text-sm);
-    }
-    
-    .complaint-bar-label {
-        color: var(--slate-600);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    
-    .complaint-bar-track {
-        height: 8px;
-        background: var(--slate-200);
-        border-radius: 4px;
-        overflow: hidden;
-    }
-    
-    .complaint-bar-fill {
-        height: 100%;
-        background: var(--amber-600);
-        border-radius: 4px;
-    }
-    
-    .complaint-bar-pct {
-        font-weight: 600;
-        color: var(--slate-500);
-        text-align: right;
-    }
-    
-    /* Trend chart */
-    .tribunal-trend {
-        margin-top: var(--space-md);
-    }
-    
-    .trend-title {
-        font-size: var(--text-sm);
-        font-weight: 600;
-        color: var(--navy-800);
-        margin-bottom: var(--space-sm);
-        display: flex;
-        align-items: center;
-        gap: var(--space-sm);
-    }
-    
-    .trend-context {
+    .data-label {
         font-size: var(--text-xs);
-        color: var(--slate-500);
-        margin-bottom: var(--space-md);
-    }
-    
-    .trend-chart-wrapper {
-        display: flex;
-        gap: var(--space-sm);
-    }
-    
-    .trend-y-axis {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        font-size: 10px;
-        color: var(--slate-400);
-        text-align: right;
-        padding: 4px 0 20px;
-        width: 24px;
-    }
-    
-    .trend-chart {
-        flex: 1;
-        display: flex;
-        align-items: flex-end;
-        gap: 4px;
-        padding-bottom: 20px;
-        border-bottom: 1px solid var(--slate-200);
-        min-height: 100px;
-    }
-    
-    .trend-bar-wrapper {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 2px;
-    }
-    
-    .trend-bar-wrapper.highlight .trend-bar {
-        background: var(--red-600);
-    }
-    
-    .trend-bar-value {
-        font-size: 10px;
-        font-weight: 600;
-        color: var(--slate-500);
-    }
-    
-    .trend-bar {
-        width: 100%;
-        max-width: 32px;
-        background: var(--blue-600);
-        border-radius: 2px 2px 0 0;
-        min-height: 4px;
-    }
-    
-    .trend-bar.pfeo {
-        background: var(--red-600);
-    }
-    
-    .trend-label {
-        font-size: 10px;
         color: var(--slate-500);
         margin-top: var(--space-xs);
-    }
-    /* ==================== CASE CARDS ==================== */
-    .cases-list {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-md);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
     }
     
+    /* ==================== CASE LIST ==================== */
     .case-card {
-        padding: var(--space-md);
-        background: var(--slate-50);
+        border: 1px solid var(--slate-200);
         border-radius: var(--radius-md);
-        border: 1px solid var(--slate-100);
+        padding: var(--space-md);
+        margin-bottom: var(--space-sm);
+        background: var(--white);
     }
     
     .case-card.hidden {
@@ -1279,7 +1371,6 @@
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        gap: var(--space-md);
         margin-bottom: var(--space-sm);
     }
     
@@ -1294,156 +1385,85 @@
         color: var(--slate-500);
     }
     
-    .case-badges {
-        display: flex;
-        gap: var(--space-xs);
-        flex-wrap: wrap;
-    }
-    
-    .outcome-badge {
-        display: inline-flex;
-        align-items: center;
+    .case-outcome {
+        display: inline-block;
         padding: 2px 8px;
         border-radius: var(--radius-sm);
         font-size: var(--text-xs);
         font-weight: 600;
     }
     
-    .outcome-badge--upheld { background: var(--red-100); color: var(--red-700); }
-    .outcome-badge--partial { background: var(--amber-100); color: var(--amber-600); }
-    .outcome-badge--dismissed { background: var(--green-100); color: var(--green-700); }
-    .outcome-badge--withdrawn { background: var(--slate-100); color: var(--slate-600); }
-    .outcome-badge--other { background: var(--slate-100); color: var(--slate-600); }
-    
-    .severity-badge {
-        display: inline-flex;
-        align-items: center;
-        padding: 2px 8px;
-        border-radius: var(--radius-sm);
-        font-size: var(--text-xs);
-        font-weight: 600;
-    }
-    
-    .severity-badge--low { background: var(--green-100); color: var(--green-700); }
-    .severity-badge--medium { background: var(--amber-100); color: var(--amber-700); }
-    .severity-badge--high { background: var(--orange-100); color: var(--orange-700); }
-    .severity-badge--critical { background: var(--red-100); color: var(--red-700); }
+    .case-outcome.upheld { background: var(--red-100); color: var(--red-700); }
+    .case-outcome.dismissed { background: var(--green-100); color: var(--green-700); }
+    .case-outcome.partial { background: var(--amber-100); color: var(--amber-600); }
+    .case-outcome.withdrawn { background: var(--slate-100); color: var(--slate-600); }
+    .case-outcome.settled { background: var(--blue-100); color: var(--blue-700); }
+    .case-outcome.neutral { background: var(--slate-100); color: var(--slate-600); }
     
     .case-summary {
         font-size: var(--text-sm);
         color: var(--slate-600);
-        margin-bottom: var(--space-sm);
-    }
-    
-    .case-quote {
-        font-size: var(--text-sm);
-        font-style: italic;
-        color: var(--slate-500);
-        padding-left: var(--space-md);
-        border-left: 2px solid var(--slate-300);
-        margin-bottom: var(--space-sm);
-    }
-    
-    .case-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: var(--text-xs);
-        color: var(--slate-500);
+        line-height: 1.5;
     }
     
     .case-meta {
         display: flex;
         gap: var(--space-md);
-    }
-    
-    .pfeo-indicator {
+        margin-top: var(--space-sm);
         font-size: var(--text-xs);
-        font-weight: 600;
-        color: var(--amber-600);
+        color: var(--slate-500);
     }
     
-    .case-links {
-        display: flex;
-        gap: var(--space-sm);
-        margin-left: auto;
-    }
-    
-    .case-link {
-        font-size: var(--text-xs);
-        font-weight: 500;
-        color: var(--blue-600);
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-    }
-    
-    .cases-toggle {
+    .case-toggle {
         display: flex;
         align-items: center;
         justify-content: center;
         gap: var(--space-sm);
-        padding: var(--space-sm) var(--space-md);
-        background: var(--white);
+        padding: var(--space-sm);
+        margin-top: var(--space-sm);
+        background: var(--slate-50);
         border: 1px solid var(--slate-200);
         border-radius: var(--radius-sm);
-        font-size: var(--text-sm);
-        font-weight: 500;
-        color: var(--slate-600);
         cursor: pointer;
-        margin-top: var(--space-md);
-        width: 100%;
+        font-size: var(--text-sm);
+        color: var(--slate-600);
+        transition: background 0.15s;
     }
     
-    .cases-toggle:hover {
-        background: var(--slate-50);
+    .case-toggle:hover {
+        background: var(--slate-100);
+    }
+    
+    .case-toggle svg {
+        transition: transform 0.2s;
+    }
+    
+    .case-toggle.expanded svg {
+        transform: rotate(180deg);
     }
     
     /* ==================== FEES ==================== */
-    .fee-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: var(--space-md);
-        margin-bottom: var(--space-md);
-    }
-    
-    @media (max-width: 640px) {
-        .fee-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    
-    .fee-item {
-        text-align: center;
-        padding: var(--space-md);
+    .fee-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-sm) var(--space-md);
         background: var(--slate-50);
-        border-radius: var(--radius-md);
+        border-radius: var(--radius-sm);
+        margin-bottom: var(--space-xs);
+        font-size: var(--text-sm);
     }
     
-    .fee-value {
-        font-family: var(--font-display);
-        font-size: var(--text-xl);
-        font-weight: 700;
-        color: var(--navy-800);
-    }
-    .fee-value.red { color: var(--red-600); }
-    
-    .fee-label {
+    .fee-label { color: var(--slate-700); }
+    .fee-value { font-weight: 600; color: var(--navy-800); }
+    .fee-frequency {
         font-size: var(--text-xs);
         color: var(--slate-500);
-        margin-top: var(--space-xs);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: var(--space-xs);
-    }
-    
-    .fee-benchmark {
-        font-size: 10px;
-        color: var(--slate-400);
-        margin-top: 2px;
+        margin-left: var(--space-sm);
     }
     
     .fee-note {
-        font-size: 11px;
+        font-size: var(--text-sm);
         color: var(--slate-500);
         margin-top: 4px;
         line-height: 1.3;
@@ -1601,149 +1621,86 @@
         display: block;
     }
     
-    .tribunal-fee-item-row {
+    .tribunal-fee-detail-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: var(--space-sm) var(--space-md);
-        font-size: var(--text-sm);
+        padding: var(--space-xs) var(--space-md);
+        font-size: var(--text-xs);
         border-bottom: 1px solid var(--slate-100);
     }
     
-    .tribunal-fee-item-row:last-child {
+    .tribunal-fee-detail-row:last-child {
         border-bottom: none;
     }
     
-    .tribunal-fee-case {
-        font-size: var(--text-xs);
+    .tribunal-fee-case-link {
         color: var(--blue-600);
-        text-decoration: none;
     }
     
-    .tribunal-fee-case:hover {
-        text-decoration: underline;
-    }
-    
-    .tribunal-fee-item-details {
-        display: flex;
-        align-items: center;
-        gap: var(--space-sm);
-    }
-    
-    .tribunal-fee-item-amount {
-        font-weight: 500;
-        color: var(--slate-700);
-        min-width: 70px;
-        text-align: right;
-    }
-    
-    .tribunal-fee-item-freq {
-        font-size: var(--text-xs);
+    .tribunal-fee-detail-amount {
         color: var(--slate-600);
-        background: var(--slate-100);
-        padding: 2px 8px;
-        border-radius: var(--radius-sm);
-        min-width: 65px;
-        text-align: center;
     }
     
-    .tribunal-fee-single-case {
-        padding: 0 var(--space-md) var(--space-sm);
-    }
-    
-    .fees-source-attribution {
-        margin-top: var(--space-md);
-        padding-top: var(--space-sm);
-        border-top: 1px dashed var(--slate-200);
-        font-size: var(--text-xs);
-        color: var(--slate-400);
-    }
-    
-    /* ==================== REVIEW SOURCES ==================== */
-    .review-sources {
-        margin-top: var(--space-lg);
-        padding-top: var(--space-lg);
-        border-top: 1px solid var(--slate-200);
-    }
-    
-    .review-sources-title {
-        font-size: var(--text-sm);
-        font-weight: 600;
-        color: var(--navy-800);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin: 0 0 var(--space-md) 0;
-    }
-    
-    .review-sources-list {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-sm);
-    }
-    
-    .review-source-link {
-        display: flex;
-        align-items: center;
-        gap: var(--space-md);
+    /* ==================== REVIEWS ==================== */
+    .review-snippet {
         padding: var(--space-md);
         background: var(--slate-50);
-        border: 1px solid var(--slate-200);
         border-radius: var(--radius-md);
-        text-decoration: none;
-        transition: all 0.2s ease;
+        margin-bottom: var(--space-sm);
+        border-left: 3px solid var(--slate-300);
     }
     
-    .review-source-link:hover {
-        background: var(--white);
-        border-color: var(--slate-300);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    }
-    
-    .review-source-link--google svg { color: #4285F4; }
-    .review-source-link--trustpilot svg { color: #00B67A; }
-    
-    .review-source-text {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-    }
-    
-    .review-source-platform {
-        font-weight: 600;
-        color: var(--navy-800);
-        font-size: var(--text-base);
-    }
-    
-    .review-source-count {
+    .review-snippet-text {
         font-size: var(--text-sm);
+        color: var(--slate-700);
+        line-height: 1.5;
+        font-style: italic;
+        margin-bottom: var(--space-sm);
+    }
+    
+    .review-snippet-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: var(--text-xs);
         color: var(--slate-500);
     }
     
-    .review-source-arrow {
-        color: var(--slate-400);
-        flex-shrink: 0;
+    .review-rating {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        color: var(--amber-500);
     }
     
-    .review-source-link:hover .review-source-arrow {
-        color: var(--blue-600);
+    /* Review Source Links */
+    .review-sources {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);
     }
     
-    /* Review Locations Breakdown (multiple Google locations) */
-    .review-locations-breakdown {
+    .review-source-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--space-sm) var(--space-md);
         background: var(--slate-50);
-        border: 1px solid var(--slate-200);
-        border-radius: var(--radius-md);
-        overflow: hidden;
+        border-radius: var(--radius-sm);
+        text-decoration: none;
+        transition: background 0.15s;
     }
     
-    .review-locations-header {
+    .review-source-row:hover {
+        background: var(--slate-100);
+        text-decoration: none;
+    }
+    
+    .review-source-info {
         display: flex;
         align-items: center;
         gap: var(--space-sm);
-        padding: var(--space-md);
-        background: var(--white);
-        border-bottom: 1px solid var(--slate-200);
     }
     
     .platform-icon {
@@ -1946,78 +1903,41 @@
         border-radius: var(--radius-sm);
         font-size: 10px;
         font-weight: 600;
-        margin-bottom: var(--space-sm);
+        text-transform: uppercase;
     }
     
-    .similar-factor-badge.clean { background: var(--emerald-100); color: var(--emerald-700); }
-    .similar-factor-badge.green { background: var(--green-100); color: var(--green-700); }
-    
-    .similar-factor-stats {
+    .similar-factor-meta {
         font-size: var(--text-xs);
         color: var(--slate-500);
+        margin-top: var(--space-xs);
     }
-    
-    /* ==================== FAQs ==================== */
-    .faq-list {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-md);
-    }
-    
-    .faq-item {
-        border: 1px solid var(--slate-100);
-        border-radius: var(--radius-md);
-        overflow: hidden;
-    }
-    
-    .faq-question {
-        padding: var(--space-md);
-        font-weight: 600;
-        font-size: var(--text-sm);
-        background: var(--slate-50);
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .faq-question:hover { background: var(--slate-100); }
-    
-    .faq-answer {
-        padding: var(--space-md);
-        font-size: var(--text-sm);
-        color: var(--slate-500);
-        line-height: 1.6;
-        display: none;
-    }
-    
-    .faq-item.open .faq-answer { display: block; }
-    .faq-item.open .faq-question svg { transform: rotate(180deg); }
     
     /* ==================== SIDEBAR ==================== */
     .sidebar {
-        position: sticky;
-        top: 84px;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
     }
     
     .sidebar-card {
         background: var(--white);
         border: 1px solid var(--slate-200);
         border-radius: var(--radius-lg);
-        margin-bottom: var(--space-lg);
         overflow: hidden;
-        box-shadow: var(--shadow-md);
     }
     
     .sidebar-section {
         padding: var(--space-lg);
         border-bottom: 1px solid var(--slate-100);
     }
-    .sidebar-section:last-child { border-bottom: none; }
+    
+    .sidebar-section:last-child {
+        border-bottom: none;
+    }
     
     .sidebar-title {
         font-family: var(--font-display);
-        font-size: var(--text-base);
+        font-size: 0.95rem;
         font-weight: 600;
         color: var(--navy-900);
         margin-bottom: var(--space-md);
@@ -2027,23 +1947,26 @@
         display: flex;
         align-items: flex-start;
         gap: var(--space-sm);
-        padding: var(--space-sm) 0;
+        padding: var(--space-xs) 0;
         font-size: var(--text-sm);
     }
     
     .contact-icon {
-        flex-shrink: 0;
-        width: 16px;
-        height: 16px;
-        color: var(--slate-500);
+        color: var(--slate-400);
         margin-top: 2px;
+        flex-shrink: 0;
     }
     
     .contact-value {
-        color: var(--navy-800);
+        color: var(--slate-700);
         word-break: break-word;
     }
     
+    .contact-value a {
+        color: var(--blue-600);
+    }
+    
+    /* Source List */
     .source-list {
         list-style: none;
         padding: 0;
@@ -2140,64 +2063,7 @@
         body.has-mobile-cta { padding-bottom: 70px; }
     }
     
-    /* ==================== FOOTER ==================== */
-    .site-footer {
-        background: var(--navy-950);
-        color: rgba(255,255,255,0.8);
-        padding: 64px 24px 32px;
-        margin-top: var(--space-2xl);
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .footer-grid {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1fr;
-        gap: 48px;
-    }
-    
-    @media (max-width: 768px) {
-        .footer-grid {
-            grid-template-columns: 1fr 1fr;
-            gap: 32px;
-        }
-    }
-    
-    @media (max-width: 480px) {
-        .footer-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-    
-    .footer-col h4 {
-        font-size: var(--text-sm);
-        font-weight: 600;
-        color: white;
-        margin-bottom: var(--space-md);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-    
-    .footer-col a {
-        display: block;
-        color: rgba(255,255,255,0.7);
-        font-size: var(--text-sm);
-        padding: var(--space-xs) 0;
-        transition: color 0.15s;
-    }
-    
-    .footer-col a:hover {
-        color: white;
-        text-decoration: none;
-    }
-    
-    .footer-about {
-        font-size: var(--text-sm);
-        line-height: 1.6;
-        opacity: 0.8;
-    }
-    
+    /* ==================== FOOTER ADDITIONS ==================== */
     .footer-disclaimer {
         max-width: 1200px;
         margin: 32px auto 0;
@@ -2214,62 +2080,53 @@
         text-decoration: underline;
     }
     
-    .footer-bottom {
-        max-width: 1200px;
-        margin: 48px auto 0;
-        padding-top: 24px;
-        border-top: 1px solid rgba(255,255,255,0.1);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: var(--text-sm);
-        color: rgba(255,255,255,0.5);
-    }
-    
-    @media (max-width: 640px) {
-        .footer-bottom {
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 768px) {
+        .profile-header-top {
             flex-direction: column;
-            gap: var(--space-sm);
-            text-align: center;
+        }
+        .profile-identity h1 {
+            font-size: var(--text-xl);
+        }
+        .risk-badge {
+            align-self: flex-start;
         }
     }
 </style>
 
 </head>
-<body class="has-mobile-cta">
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="/" class="logo">
+                <div class="logo-mark">CF</div>
+                Compare Factors
+            </a>
+            <nav class="nav">
+                <a href="/factors/" class="nav-link">All Factors</a>
+                <a href="/areas/" class="nav-link">By Area</a>
+                <a href="/methodology/" class="nav-link">How We Score</a>
+                <a href="/guides/" class="nav-link">Guides</a>
+                <a href="/get-quotes/" class="nav-link nav-cta">Get Quotes</a>
+            </nav>
+            <button class="burger" onclick="toggleMenu()" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div class="mobile-nav" id="mobileNav">
+            <a href="/factors/">All Factors</a>
+            <a href="/areas/">By Area</a>
+            <a href="/methodology/">How We Score</a>
+            <a href="/guides/">Guides</a>
+            <a href="/get-quotes/" class="nav-cta">Get Quotes</a>
+        </div>
+    </header>
 
-<!-- ==================== SITE HEADER ==================== -->
-
-<header class="site-header">
-    <div class="header-inner">
-        <a href="/" class="logo">
-            <div class="logo-mark">CF</div>
-            Compare Factors
-        </a>
-        <nav class="nav">
-            <a href="/factors/" class="nav-link">All Factors</a>
-            <a href="/areas/" class="nav-link">By Area</a>
-            <a href="/methodology/" class="nav-link">How We Score</a>
-            <a href="/guides/" class="nav-link">Guides</a>
-            <a href="/get-quotes/" class="nav-link nav-cta">Get Quotes</a>
-        </nav>
-        <button class="burger" onclick="toggleMenu()" aria-label="Menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-    </div>
-    <div class="mobile-nav" id="mobileNav">
-        <a href="/factors/">All Factors</a>
-        <a href="/areas/">By Area</a>
-        <a href="/methodology/">How We Score</a>
-        <a href="/guides/">Guides</a>
-        <a href="/get-quotes/" class="nav-cta">Get Quotes</a>
-    </div>
-</header>
-
+    
 <!-- ==================== BREADCRUMB ==================== -->
-
 <div class="container">
     <nav class="breadcrumb" aria-label="Breadcrumb">
         <a href="/">Home</a>
@@ -2281,7 +2138,6 @@
 </div>
 
 <!-- ==================== MAIN CONTENT ==================== -->
-
 <div class="container">
     <div class="profile-layout">
 
@@ -2293,6 +2149,10 @@
         
         
         <!-- ==================== PROFILE HEADER ==================== -->
+        
+        
+        
+        
         <div class="profile-header">
             <div class="profile-header-top">
                 <div class="profile-identity">
@@ -2323,9 +2183,6 @@
                 
                 <!-- Risk Badge with Composite Score -->
                 
-                
-                
-                
                 <div class="risk-badge clean" role="status" aria-label="Tribunal risk rating: CLEAN">
                     <div class="risk-badge-main">
                         
@@ -2339,7 +2196,7 @@
                 </div>
             </div>
             
-            <!-- ==================== NEW: VERDICT BOX ==================== -->
+            <!-- ==================== VERDICT BOX ==================== -->
             <div class="verdict-box clean">
                 <div class="verdict-header">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
@@ -2347,7 +2204,6 @@
                 </div>
                 <p class="verdict-text">
                     
-                        <!-- Fallback Logic if AI missing -->
                         Cleodius Limited is a <strong>
                         small
                         </strong> factor.
@@ -2361,264 +2217,102 @@
             </div>
             
             <!-- ==================== AT A GLANCE ==================== -->
-            <div class="at-a-glance">
-                <h2 class="glance-title">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                    At a Glance
+            
+        </div>
+        
+        <!-- ==================== REST OF CONTENT ==================== -->
+        <!-- TRIBUNAL RECORD CARD -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Tribunal Record (Last 5 Years)
                 </h2>
-                
-                <!-- Key Stats Grid -->
-                <div class="key-stats">
-                    <div class="key-stat">
-                        <div class="key-stat-value">—</div>
-                        <div class="key-stat-label">
-                            Properties
-                            <span class="tooltip-trigger" tabindex="0" role="button" aria-describedby="properties-tooltip">i<span class="tooltip-content" id="properties-tooltip">Number of properties managed according to the Scottish Property Factor Register.</span></span>
-                        </div>
-                    </div>
+                <div class="card-header-links">
                     
-                    <div class="key-stat">
-                        <div class="key-stat-value clean">CLEAN</div>
-                        <div class="key-stat-label">
-                            Tribunal Rating
-                            <span class="tooltip-trigger" tabindex="0" role="button" aria-describedby="tribunal-score-tooltip">i<span class="tooltip-content" id="tribunal-score-tooltip">Risk rating based on tribunal case history. CLEAN = no upheld cases, GREEN = minimal issues, AMBER = some concerns, ORANGE = significant issues, RED = serious concerns.</span></span>
-                        </div>
+                    <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions" class="card-link" target="_blank" rel="noopener">View on HPC →</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="data-grid">
+                    <div class="data-item">
+                        <div class="data-value">0</div>
+                        <div class="data-label">Cases</div>
                     </div>
-                    
-                    <div class="key-stat">
-                        
-                        <div class="key-stat-value ">0</div>
-                        <div class="key-stat-label">
-                            Cases (5yr)
-                            <span class="tooltip-trigger" tabindex="0" role="button" aria-describedby="cases-tooltip">i<span class="tooltip-content" id="cases-tooltip">Tribunal cases in the last 5 years. Includes all case types and outcomes.</span></span>
-                        </div>
+                    <div class="data-item">
+                        <div class="data-value ">0</div>
+                        <div class="data-label">PFEOs Issued</div>
                     </div>
-                    
-                    <div class="key-stat">
-                        
-                        
-                        <div class="key-stat-value ">
-                            —
-                        </div>
-                        <div class="key-stat-label">
-                            Avg Rating
-                            <span class="tooltip-trigger" tabindex="0" role="button" aria-describedby="rating-tooltip">i<span class="tooltip-content" id="rating-tooltip">Weighted average from Google Reviews and Trustpilot based on review count.</span></span>
-                        </div>
-                        
-                        
+                    <div class="data-item">
+                        <div class="data-value green">0%</div>
+                        <div class="data-label">Upheld Rate</div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-value">£0</div>
+                        <div class="data-label">Compensation</div>
                     </div>
                 </div>
-                
-                <!-- Detailed Insights -->
-                <div class="glance-grid">
-                    
-                    
-                        <!-- Fallback Insights -->
-                        <!-- Tribunal insight -->
-                        <div class="glance-item">
-                            
-                            <svg class="glance-icon green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                            <span><strong>No tribunal cases</strong> on record</span>
-                            
-                        </div>
-                        
-                        <!-- PFEO insight -->
-                        <div class="glance-item">
-                            
-                            <svg class="glance-icon green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                            <span><strong>No enforcement orders</strong> on record</span>
-                            
-                        </div>
-                        
-                        <!-- TPI membership -->
-                        <div class="glance-item">
-                            
-                            <svg class="glance-icon muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                            <span>No professional body membership on record</span>
-                            
-                        </div>
-                    
-                </div>
+            </div>
+            <div class="card-footer">
+                Data extracted by AI from official Housing & Property Chamber records. <a href="/methodology/#tribunal" target="_blank">Learn about our methodology</a>.
             </div>
         </div>
         
-        <!-- ==================== REVIEWS ==================== -->
-        <section class="card" id="reviews">
-            <div class="card-header">
-                <h2 class="card-title">
-                    Ratings & Reviews
-                    <span class="tooltip-trigger" tabindex="0" role="button" aria-describedby="reviews-tooltip">i<span class="tooltip-content" id="reviews-tooltip">Public reviews collected from Google Maps and Trustpilot. We weight the average by review count.</span></span>
-                </h2>
-            </div>
-            <div class="card-body">
-                <div class="review-platforms">
-                    <!-- Google -->
-                    <div class="review-platform">
-                        <div class="platform-logo google">G</div>
-                        <div>
-                            
-                            <div class="platform-empty">No Google listing found</div>
-                            
-                        </div>
-                    </div>
-                    
-                    <!-- Trustpilot -->
-                    <div class="review-platform">
-                        <div class="platform-logo trustpilot">★</div>
-                        <div>
-                            
-                            <div class="platform-empty">No Trustpilot listing found</div>
-                            
-                        </div>
-                    </div>
-                </div>
-                
-                
-                
-                
-                
-            </div>
-            
-        </section>
-        
-        <!-- ==================== TRIBUNAL RECORD ==================== -->
-        <section class="card" id="tribunal">
-            <div class="card-header">
-                <h2 class="card-title">
-                    Tribunal Record
-                    <span class="tooltip-trigger" tabindex="0" role="button" aria-describedby="tribunal-tooltip">i<span class="tooltip-content" id="tribunal-tooltip">Cases heard by the Housing & Property Chamber. Homeowners can raise complaints about code breaches, fees, or service failures.</span></span>
-                </h2>
-                
-            </div>
-            <div class="card-body">
-                
-                
-                <div class="empty-state">
-                    <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                    </svg>
-                    <p>No tribunal cases on record for this factor.</p>
-                </div>
-                
-            </div>
-            <div class="card-footer">
-                <span>Case summaries and statistics are AI-generated from official HPC decisions. <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions" target="_blank" rel="noopener">Verify with official records ↗</a></span>
-                
-                <span class="card-footer-timestamp">Updated: 2026-01-12</span>
-                
-            </div>
-        </section>
-        
-        <!-- ==================== RECENT TRIBUNAL DECISIONS ==================== -->
+        <!-- RECENT DECISIONS -->
         
         
-        <!-- ==================== FEES & CHARGES ==================== -->
+        <!-- REVIEWS CARD -->
         
         
-        <!-- ==================== WRITTEN STATEMENT OF SERVICES ==================== -->
-        <section class="card" id="wss">
-            <div class="card-header">
-                <h2 class="card-title">
-                    Written Statement of Services
-                    <span class="tooltip-trigger" tabindex="0" role="button">i<span class="tooltip-content">Property factors are legally required to provide a WSS detailing fees, response times, and service standards.</span></span>
-                </h2>
-                
-            </div>
-            <div class="card-body">
-                
-                <div style="text-align: center; padding: var(--space-xl); color: var(--slate-500);">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto var(--space-md);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-                    <p style="margin: 0 0 var(--space-sm);"><strong>Written Statement not available</strong></p>
-                    <p style="margin: 0; font-size: var(--text-sm);">We have not been able to source a WSS for Cleodius Limited. Reach out to them directly to request a copy.</p>
-                    <p style="margin: var(--space-md) 0 0; font-size: var(--text-sm);"><a href="/guides/request-wss/">How to request a Written Statement →</a></p>
-                </div>
-                
-            </div>
-        </section>
+        <!-- FEES CARD -->
         
-        <!-- ==================== FAQs ==================== -->
-        <section class="card" id="faqs">
-            <div class="card-header">
-                <h2 class="card-title">Frequently Asked Questions</h2>
-            </div>
-            <div class="card-body">
-                <div class="faq-list">
-                    <div class="faq-item open">
-                        <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
-                            Has Cleodius Limited had any tribunal cases?
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                        </div>
-                        <div class="faq-answer">
-                            No, Cleodius Limited has no tribunal cases on record.
-                        </div>
-                    </div>
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
-                            How do I make a complaint about Cleodius Limited?
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                        </div>
-                        <div class="faq-answer">First, raise your complaint directly with Cleodius Limited using their formal complaints procedure. If unresolved after 8 weeks, apply to the Housing & Property Chamber at <a href="https://housingandpropertychamber.scot">housingandpropertychamber.scot</a>.</div>
-                    </div>
-                    
-                    <div class="faq-item">
-                        <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
-                            How do I switch away from Cleodius Limited?
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                        </div>
-                        <div class="faq-answer">You'll need a majority vote from property owners (typically at an AGM or EGM). The new factor must be registered. Our <a href="/guides/switching-factors/">switching guide</a> explains the full process.</div>
-                    </div>
-                    
-                </div>
-            </div>
-        </section>
         
-        <!-- ==================== COVERAGE AREA ==================== -->
-        <section class="card" id="coverage">
-            <div class="card-header">
-                <h2 class="card-title">Coverage Area</h2>
-            </div>
-            <div class="card-body">
-                
-                <p style="color: var(--slate-500);">No coverage data available for this factor.</p>
-                
-            </div>
-        </section>
+        <!-- COVERAGE CARD -->
         
-        <!-- ==================== SIMILAR FACTORS ==================== -->
+        
+        <!-- QUICK ACTIONS CTA -->
+        
+        <div class="card" style="background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-950) 100%); color: white; border: none;">
+            <div class="card-body" style="text-align: center; padding: var(--space-xl);">
+                <h3 style="font-family: var(--font-display); font-size: 1.25rem; margin-bottom: var(--space-sm); color: white;">Considering a switch?</h3>
+                <p style="margin-bottom: var(--space-lg); opacity: 0.9;">Compare quotes from vetted factors serving your area. Free, no obligation.</p>
+                <a href="/get-quotes/?from=PF000966" class="cta-button">Get Free Quotes →</a>
+            </div>
+        </div>
         
         
     </main>
     
     <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar">
-        
-        <!-- CTA Box (hidden for non-switchable factor types and expired registrations) -->
-        
         <div class="sidebar-card">
+            <!-- CTA Box (if switchable) -->
+            
             <div class="cta-box">
-                <h3 class="cta-title">Unhappy with your factor?</h3>
-                
-                <p class="cta-text">Get free, no-obligation quotes from better-rated factors.</p>
-                <a href="/quote/?from=PF000966" class="cta-button">Get Quotes →</a>
+                <h3 class="cta-title">Unhappy with Cleodius?</h3>
+                <p class="cta-text">Compare quotes from better-rated factors in your area</p>
+                <a href="/get-quotes/?from=PF000966" class="cta-button">Get Free Quotes</a>
             </div>
-            <a href="/contact/?subject=correction&factor=PF000966" class="correction-link">See something wrong? Submit a correction →</a>
-        </div>
-        
-        
-        <!-- Contact Information -->
-        <div class="sidebar-card">
+            
+            
+            <!-- Quick Links -->
             <div class="sidebar-section">
-                <h3 class="sidebar-title">Contact</h3>
-                
-                
-                
-                
-                
-                <p style="color: var(--slate-500); font-size: var(--text-sm);">No contact information available.</p>
-                
-                
+                <h3 class="sidebar-title">Quick Links</h3>
+                <ul class="source-list">
+                    <li class="source-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue-600)" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        <a href="https://www.gov.scot/publications/property-factor-register/" target="_blank" rel="noopener">View on Official Register</a>
+                    </li>
+                    
+                    <li class="source-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue-600)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                        <a href="/guides/how-to-switch-factors-scotland/">How to Switch Factors</a>
+                    </li>
+                </ul>
             </div>
+            
+            <!-- Contact Info -->
+            
             
             <!-- Data Sources -->
             <div class="sidebar-section">
@@ -2675,63 +2369,62 @@
 
 <!-- Mobile Sticky CTA (hidden for non-switchable factor types and expired registrations) -->
 
-
-
 <div class="mobile-cta">
-    <a href="/quote/?from=PF000966" style="color: white; font-weight: 600;">Get Free Quotes from Better-Rated Factors →</a>
+    <a href="/get-quotes/?from=PF000966" style="color: white; font-weight: 600;">Get Free Quotes from Better-Rated Factors →</a>
 </div>
 
 
-<!-- ==================== FOOTER ==================== -->
+<!-- Page-specific footer disclaimer -->
+<div class="footer-disclaimer" style="max-width: 1200px; margin: 0 auto var(--space-lg); padding: 16px 24px; background: var(--slate-100); border-radius: var(--radius-md); font-size: var(--text-sm); color: var(--slate-600); text-align: center;">
+    Some summaries and statistics on this page are AI-generated from official sources. Always verify important information with <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions" target="_blank" rel="noopener" style="color: var(--blue-600);">official HPC records</a>.
+</div>
 
-<footer class="site-footer">
-    <div class="footer-grid">
-        <div class="footer-col">
-            <a href="/" class="logo" style="margin-bottom: var(--space-md); display: inline-flex; color: white;">
-                <div class="logo-mark">CF</div>
-                Compare Factors
-            </a>
-            <p class="footer-about">Helping Scottish homeowners make informed decisions with transparent, independent data.</p>
-        </div>
-        <div class="footer-col">
-            <h4>Explore</h4>
-            <a href="/factors/">All Factors</a>
-            <a href="/areas/">By Area</a>
-            <a href="/rankings/">Rankings</a>
-            <a href="/tribunal/">Tribunal Cases</a>
-        </div>
-        <div class="footer-col">
-            <h4>Guides</h4>
-            <a href="/guides/how-to-switch-factors-scotland/">Switching Factors</a>
-            <a href="/guides/complaints/">Making a Complaint</a>
-            <a href="/guides/history-of-property-factoring-scotland/">History</a>
-        </div>
-        <div class="footer-col">
-            <h4>About</h4>
-            <a href="/methodology/">Our Methodology</a>
-            <a href="/about/">About Us</a>
-            <a href="/contact/">Contact</a>
-            <a href="/privacy/">Privacy Policy</a>
-        </div>
-    </div>
-    <div class="footer-disclaimer">
-        Some summaries and statistics on this page are AI-generated from official sources. Always verify important information with <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions" target="_blank" rel="noopener">official HPC records</a>.
-    </div>
-    <div class="footer-bottom">
-        <div>© 2026 Compare Factors. Not affiliated with the Scottish Government.</div>
-        <div>Data last updated: 2026-01-12</div>
-    </div>
-</footer>
 
-<!-- Collapsible cases toggle script -->
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">
+                        <div class="logo-mark">CF</div>
+                        Compare Factors
+                    </div>
+                    <p class="footer-about">Helping Scottish homeowners make informed decisions with transparent, independent data.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Explore</h4>
+                    <a href="/factors/">All Factors</a>
+                    <a href="/areas/">By Area</a>
+                    <a href="/rankings/">Rankings</a>
+                    <a href="/tribunal/">Tribunal Cases</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Guides</h4>
+                    <a href="/guides/how-to-switch-factors-scotland/">Switching Factors</a>
+                    <a href="/guides/complaints/">Making a Complaint</a>
+                    <a href="/guides/history-of-property-factoring-scotland/">History</a>
+                </div>
+                <div class="footer-col">
+                    <h4>About</h4>
+                    <a href="/methodology/">Our Methodology</a>
+                    <a href="/about/">About Us</a>
+                    <a href="/contact/">Contact</a>
+                    <a href="/privacy/">Privacy Policy</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div>© 2026 Compare Factors. Not affiliated with the Scottish Government.</div>
+                <div>
+                    <a href="/privacy/">Privacy</a> · 
+                    <a href="/cookie-policy/">Cookies</a> · 
+                    <a href="/terms/">Terms</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
+    
 <script>
-// Mobile menu toggle
-function toggleMenu() {
-    document.querySelector('.burger').classList.toggle('active');
-    document.getElementById('mobileNav').classList.toggle('active');
-}
-
 function toggleCases() {
     const casesList = document.getElementById('cases-list');
     const toggle = document.getElementById('cases-toggle');
@@ -2754,5 +2447,312 @@ function toggleCases() {
 }
 </script>
 
+    <script>
+    // Mobile menu toggle
+    function toggleMenu() {
+        document.querySelector('.burger').classList.toggle('active');
+        document.getElementById('mobileNav').classList.toggle('active');
+    }
+    </script>
+
+    <!-- Cookie Consent Banner -->
+    <div class="cf-cookie-overlay" id="cfCookieOverlay"></div>
+    
+    <div class="cf-cookie-banner" id="cfCookieBanner" role="dialog" aria-modal="true" aria-labelledby="cfCookieTitle">
+        <div class="cf-cookie-inner">
+            <div class="cf-cookie-header">
+                <h2 class="cf-cookie-title" id="cfCookieTitle">
+                    <svg class="cf-cookie-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="8" cy="9" r="1" fill="currentColor"/>
+                        <circle cx="15" cy="8" r="1" fill="currentColor"/>
+                        <circle cx="10" cy="14" r="1" fill="currentColor"/>
+                        <circle cx="16" cy="13" r="1" fill="currentColor"/>
+                        <circle cx="13" cy="17" r="1" fill="currentColor"/>
+                    </svg>
+                    We value your privacy
+                </h2>
+            </div>
+            
+            <p class="cf-cookie-text">
+                We use cookies to improve your experience, analyse site traffic, and understand where our visitors come from. 
+                You can choose which cookies you're happy with, and change your preferences at any time. 
+                Read our <a href="/privacy/">Privacy Policy</a> and <a href="/cookie-policy/">Cookie Policy</a> to learn more.
+            </p>
+
+            <div class="cf-cookie-actions">
+                <button type="button" class="cf-btn cf-btn-accept" id="cfAcceptAll">Accept all cookies</button>
+                <button type="button" class="cf-btn cf-btn-reject" id="cfRejectAll">Reject non-essential</button>
+                <button type="button" class="cf-btn cf-btn-settings" id="cfShowSettings">Manage preferences</button>
+            </div>
+
+            <div class="cf-cookie-settings" id="cfCookieSettings">
+                <h3 class="cf-settings-title">Cookie preferences</h3>
+                
+                <div class="cf-cookie-category">
+                    <div class="cf-category-info">
+                        <p class="cf-category-name">
+                            Essential cookies
+                            <span class="cf-required-badge">Always on</span>
+                        </p>
+                        <p class="cf-category-desc">
+                            Required for the website to function properly. These cannot be disabled as they enable core features like security, accessibility, and remembering your preferences.
+                        </p>
+                    </div>
+                    <label class="cf-toggle">
+                        <input type="checkbox" checked disabled data-cookie-category="essential">
+                        <span class="cf-toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="cf-cookie-category">
+                    <div class="cf-category-info">
+                        <p class="cf-category-name">Analytics cookies</p>
+                        <p class="cf-category-desc">
+                            Help us understand how visitors use our site so we can improve it. We use privacy-focused analytics that don't track you across other websites. Data is anonymised.
+                        </p>
+                    </div>
+                    <label class="cf-toggle">
+                        <input type="checkbox" id="cfAnalyticsCookies" data-cookie-category="analytics">
+                        <span class="cf-toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="cf-cookie-category">
+                    <div class="cf-category-info">
+                        <p class="cf-category-name">Marketing cookies</p>
+                        <p class="cf-category-desc">
+                            Used to show you relevant content and measure the effectiveness of our advertising. These may be set by third-party advertising partners.
+                        </p>
+                    </div>
+                    <label class="cf-toggle">
+                        <input type="checkbox" id="cfMarketingCookies" data-cookie-category="marketing">
+                        <span class="cf-toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="cf-cookie-actions">
+                    <button type="button" class="cf-btn cf-btn-save" id="cfSavePreferences">Save preferences</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" class="cf-cookie-settings-btn" id="cfFloatingSettings" aria-label="Cookie settings" title="Cookie settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <circle cx="8" cy="9" r="1" fill="currentColor"/>
+            <circle cx="15" cy="8" r="1" fill="currentColor"/>
+            <circle cx="10" cy="14" r="1" fill="currentColor"/>
+        </svg>
+    </button>
+
+    <script>
+    /**
+     * Compare Factors Scotland - Cookie Consent Manager
+     * UK GDPR & PECR Compliant
+     */
+    (function() {
+        'use strict';
+
+        const CONSENT_COOKIE_NAME = 'cf_cookie_consent';
+        const CONSENT_VERSION = '1.0';
+        const CONSENT_EXPIRY_DAYS = 365;
+
+        const banner = document.getElementById('cfCookieBanner');
+        const overlay = document.getElementById('cfCookieOverlay');
+        const settingsPanel = document.getElementById('cfCookieSettings');
+        const floatingBtn = document.getElementById('cfFloatingSettings');
+        
+        const acceptAllBtn = document.getElementById('cfAcceptAll');
+        const rejectAllBtn = document.getElementById('cfRejectAll');
+        const showSettingsBtn = document.getElementById('cfShowSettings');
+        const savePreferencesBtn = document.getElementById('cfSavePreferences');
+        
+        const analyticsToggle = document.getElementById('cfAnalyticsCookies');
+        const marketingToggle = document.getElementById('cfMarketingCookies');
+
+        function getConsent() {
+            try {
+                const cookie = document.cookie
+                    .split('; ')
+                    .find(row => row.startsWith(CONSENT_COOKIE_NAME + '='));
+                
+                if (cookie) {
+                    const value = JSON.parse(decodeURIComponent(cookie.split('=')[1]));
+                    if (value.version === CONSENT_VERSION) {
+                        return value;
+                    }
+                }
+            } catch (e) {
+                console.warn('Error reading consent cookie:', e);
+            }
+            return null;
+        }
+
+        function setConsent(preferences) {
+            const value = {
+                version: CONSENT_VERSION,
+                timestamp: new Date().toISOString(),
+                essential: true,
+                analytics: preferences.analytics || false,
+                marketing: preferences.marketing || false
+            };
+
+            const expires = new Date();
+            expires.setDate(expires.getDate() + CONSENT_EXPIRY_DAYS);
+
+            document.cookie = CONSENT_COOKIE_NAME + '=' + encodeURIComponent(JSON.stringify(value)) + '; ' +
+                'expires=' + expires.toUTCString() + '; ' +
+                'path=/; ' +
+                'SameSite=Lax; ' +
+                'Secure';
+
+            window.dispatchEvent(new CustomEvent('cfConsentUpdated', { detail: value }));
+            return value;
+        }
+
+        function showBanner() {
+            banner.classList.add('active');
+            overlay.classList.add('active');
+            floatingBtn.classList.remove('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideBanner() {
+            banner.classList.remove('active');
+            overlay.classList.remove('active');
+            settingsPanel.classList.remove('active');
+            floatingBtn.classList.add('active');
+            document.body.style.overflow = '';
+        }
+
+        function toggleSettings() {
+            settingsPanel.classList.toggle('active');
+            showSettingsBtn.textContent = settingsPanel.classList.contains('active') 
+                ? 'Hide preferences' 
+                : 'Manage preferences';
+        }
+
+        function loadConsentedScripts(consent) {
+            if (consent.analytics && !window.cfGA4Loaded) {
+                var script = document.createElement('script');
+                script.async = true;
+                script.src = 'https://www.googletagmanager.com/gtag/js?id=G-P9QSNCJEBQ';
+                script.onload = function() {
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){dataLayer.push(arguments);}
+                    window.gtag = gtag;
+                    gtag('js', new Date());
+                    gtag('config', 'G-P9QSNCJEBQ', {
+                        'anonymize_ip': true,
+                        'cookie_flags': 'SameSite=Lax;Secure'
+                    });
+                };
+                document.head.appendChild(script);
+                window.cfGA4Loaded = true;
+            }
+        }
+
+        function removeNonEssentialCookies(consent) {
+            consent = consent || { analytics: false, marketing: false };
+            var analyticsCookies = ['_ga', '_gid', '_gat'];
+            var marketingCookies = ['_fbp', '_fbc', '_gcl_au'];
+            var cookiesToRemove = [];
+            
+            if (!consent.analytics) cookiesToRemove = cookiesToRemove.concat(analyticsCookies);
+            if (!consent.marketing) cookiesToRemove = cookiesToRemove.concat(marketingCookies);
+
+            document.cookie.split(';').forEach(function(cookie) {
+                var name = cookie.split('=')[0].trim();
+                var shouldRemove = cookiesToRemove.some(function(pattern) {
+                    return name === pattern || name.startsWith(pattern + '_');
+                });
+                if (shouldRemove) {
+                    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+                    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=' + window.location.hostname;
+                    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.' + window.location.hostname;
+                }
+            });
+        }
+
+        function acceptAll() {
+            var consent = setConsent({ analytics: true, marketing: true });
+            hideBanner();
+            loadConsentedScripts(consent);
+        }
+
+        function rejectAll() {
+            setConsent({ analytics: false, marketing: false });
+            hideBanner();
+            removeNonEssentialCookies();
+        }
+
+        function savePreferences() {
+            var consent = setConsent({
+                analytics: analyticsToggle.checked,
+                marketing: marketingToggle.checked
+            });
+            hideBanner();
+            loadConsentedScripts(consent);
+            if (!consent.analytics || !consent.marketing) {
+                removeNonEssentialCookies(consent);
+            }
+        }
+
+        function updateTogglesFromConsent(consent) {
+            analyticsToggle.checked = consent.analytics;
+            marketingToggle.checked = consent.marketing;
+        }
+
+        function init() {
+            var existingConsent = getConsent();
+
+            if (existingConsent) {
+                floatingBtn.classList.add('active');
+                updateTogglesFromConsent(existingConsent);
+                loadConsentedScripts(existingConsent);
+            } else {
+                showBanner();
+            }
+
+            acceptAllBtn.addEventListener('click', acceptAll);
+            rejectAllBtn.addEventListener('click', rejectAll);
+            showSettingsBtn.addEventListener('click', toggleSettings);
+            savePreferencesBtn.addEventListener('click', savePreferences);
+            floatingBtn.addEventListener('click', function() {
+                var consent = getConsent();
+                if (consent) updateTogglesFromConsent(consent);
+                showBanner();
+            });
+
+            banner.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    var consent = getConsent();
+                    if (consent) hideBanner();
+                }
+            });
+        }
+
+        window.cfCookieConsent = {
+            getConsent: getConsent,
+            hasAnalyticsConsent: function() {
+                var consent = getConsent();
+                return consent ? consent.analytics : false;
+            },
+            hasMarketingConsent: function() {
+                var consent = getConsent();
+                return consent ? consent.marketing : false;
+            },
+            showBanner: showBanner
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
+    </script>
 </body>
 </html>

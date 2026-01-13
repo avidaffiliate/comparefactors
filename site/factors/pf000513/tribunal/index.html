@@ -521,6 +521,295 @@
             }
         }
 
+        /* ==================== COOKIE CONSENT ==================== */
+        .cf-cookie-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: 9998;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .cf-cookie-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .cf-cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border-top: 1px solid var(--slate-200);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+            z-index: 9999;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .cf-cookie-banner.active {
+            transform: translateY(0);
+        }
+
+        .cf-cookie-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        .cf-cookie-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .cf-cookie-title {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            margin: 0;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--navy-950);
+        }
+
+        .cf-cookie-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .cf-cookie-text {
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            color: var(--navy-800);
+            margin: 0 0 1.25rem 0;
+        }
+
+        .cf-cookie-text a {
+            color: var(--blue-600);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .cf-cookie-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .cf-btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            font-family: inherit;
+        }
+
+        .cf-btn-accept {
+            background: var(--green-600);
+            color: white;
+        }
+        .cf-btn-accept:hover {
+            background: var(--green-700);
+            transform: translateY(-1px);
+        }
+
+        .cf-btn-reject {
+            background: var(--white);
+            color: var(--navy-800);
+            border: 1.5px solid var(--slate-200);
+        }
+        .cf-btn-reject:hover {
+            background: var(--slate-50);
+            border-color: var(--slate-300);
+        }
+
+        .cf-btn-settings {
+            background: transparent;
+            color: var(--slate-500);
+            padding: 0.75rem 1rem;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+        .cf-btn-settings:hover {
+            color: var(--navy-800);
+        }
+
+        .cf-cookie-settings {
+            display: none;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--slate-200);
+        }
+        .cf-cookie-settings.active {
+            display: block;
+            animation: cfSlideDown 0.3s ease;
+        }
+
+        @keyframes cfSlideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .cf-settings-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--navy-950);
+            margin: 0 0 1rem 0;
+        }
+
+        .cf-cookie-category {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--slate-50);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+        .cf-cookie-category:last-of-type {
+            margin-bottom: 1.25rem;
+        }
+
+        .cf-category-info { flex: 1; }
+        .cf-category-name {
+            font-weight: 600;
+            color: var(--navy-800);
+            margin: 0 0 0.25rem 0;
+            font-size: 0.9375rem;
+        }
+        .cf-category-desc {
+            font-size: 0.8125rem;
+            color: var(--slate-500);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .cf-toggle {
+            position: relative;
+            flex-shrink: 0;
+        }
+        .cf-toggle input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .cf-toggle-slider {
+            display: block;
+            width: 48px;
+            height: 26px;
+            background: var(--slate-300);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            position: relative;
+        }
+        .cf-toggle-slider::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+        }
+        .cf-toggle input:checked + .cf-toggle-slider {
+            background: var(--green-600);
+        }
+        .cf-toggle input:checked + .cf-toggle-slider::after {
+            transform: translateX(22px);
+        }
+        .cf-toggle input:disabled + .cf-toggle-slider {
+            background: var(--green-600);
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .cf-required-badge {
+            display: inline-block;
+            font-size: 0.6875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--slate-500);
+            background: var(--slate-200);
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+        }
+
+        .cf-btn-save {
+            background: var(--navy-950);
+            color: white;
+        }
+        .cf-btn-save:hover {
+            background: var(--navy-800);
+            transform: translateY(-1px);
+        }
+
+        .cf-cookie-settings-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 44px;
+            height: 44px;
+            background: var(--navy-950);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            z-index: 9990;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .cf-cookie-settings-btn:hover {
+            background: var(--navy-800);
+            transform: scale(1.05);
+        }
+        .cf-cookie-settings-btn svg {
+            width: 22px;
+            height: 22px;
+            color: white;
+        }
+        .cf-cookie-settings-btn.active {
+            display: flex;
+        }
+
+        @media (max-width: 640px) {
+            .cf-cookie-inner { padding: 1.25rem; }
+            .cf-cookie-header { flex-direction: column; }
+            .cf-cookie-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            .cf-btn {
+                width: 100%;
+                text-align: center;
+            }
+            .cf-btn-settings { order: 3; }
+            .cf-cookie-category {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            .cf-toggle { align-self: flex-start; }
+        }
+
     </style>
     
 <style>
@@ -1817,6 +2106,7 @@
                 <div>© 2026 Compare Factors. Not affiliated with the Scottish Government.</div>
                 <div>
                     <a href="/privacy/">Privacy</a> · 
+                    <a href="/cookie-policy/">Cookies</a> · 
                     <a href="/terms/">Terms</a>
                 </div>
             </div>
@@ -1869,6 +2159,306 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.burger').classList.toggle('active');
         document.getElementById('mobileNav').classList.toggle('active');
     }
+    </script>
+
+    <!-- Cookie Consent Banner -->
+    <div class="cf-cookie-overlay" id="cfCookieOverlay"></div>
+    
+    <div class="cf-cookie-banner" id="cfCookieBanner" role="dialog" aria-modal="true" aria-labelledby="cfCookieTitle">
+        <div class="cf-cookie-inner">
+            <div class="cf-cookie-header">
+                <h2 class="cf-cookie-title" id="cfCookieTitle">
+                    <svg class="cf-cookie-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="8" cy="9" r="1" fill="currentColor"/>
+                        <circle cx="15" cy="8" r="1" fill="currentColor"/>
+                        <circle cx="10" cy="14" r="1" fill="currentColor"/>
+                        <circle cx="16" cy="13" r="1" fill="currentColor"/>
+                        <circle cx="13" cy="17" r="1" fill="currentColor"/>
+                    </svg>
+                    We value your privacy
+                </h2>
+            </div>
+            
+            <p class="cf-cookie-text">
+                We use cookies to improve your experience, analyse site traffic, and understand where our visitors come from. 
+                You can choose which cookies you're happy with, and change your preferences at any time. 
+                Read our <a href="/privacy/">Privacy Policy</a> and <a href="/cookie-policy/">Cookie Policy</a> to learn more.
+            </p>
+
+            <div class="cf-cookie-actions">
+                <button type="button" class="cf-btn cf-btn-accept" id="cfAcceptAll">Accept all cookies</button>
+                <button type="button" class="cf-btn cf-btn-reject" id="cfRejectAll">Reject non-essential</button>
+                <button type="button" class="cf-btn cf-btn-settings" id="cfShowSettings">Manage preferences</button>
+            </div>
+
+            <div class="cf-cookie-settings" id="cfCookieSettings">
+                <h3 class="cf-settings-title">Cookie preferences</h3>
+                
+                <div class="cf-cookie-category">
+                    <div class="cf-category-info">
+                        <p class="cf-category-name">
+                            Essential cookies
+                            <span class="cf-required-badge">Always on</span>
+                        </p>
+                        <p class="cf-category-desc">
+                            Required for the website to function properly. These cannot be disabled as they enable core features like security, accessibility, and remembering your preferences.
+                        </p>
+                    </div>
+                    <label class="cf-toggle">
+                        <input type="checkbox" checked disabled data-cookie-category="essential">
+                        <span class="cf-toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="cf-cookie-category">
+                    <div class="cf-category-info">
+                        <p class="cf-category-name">Analytics cookies</p>
+                        <p class="cf-category-desc">
+                            Help us understand how visitors use our site so we can improve it. We use privacy-focused analytics that don't track you across other websites. Data is anonymised.
+                        </p>
+                    </div>
+                    <label class="cf-toggle">
+                        <input type="checkbox" id="cfAnalyticsCookies" data-cookie-category="analytics">
+                        <span class="cf-toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="cf-cookie-category">
+                    <div class="cf-category-info">
+                        <p class="cf-category-name">Marketing cookies</p>
+                        <p class="cf-category-desc">
+                            Used to show you relevant content and measure the effectiveness of our advertising. These may be set by third-party advertising partners.
+                        </p>
+                    </div>
+                    <label class="cf-toggle">
+                        <input type="checkbox" id="cfMarketingCookies" data-cookie-category="marketing">
+                        <span class="cf-toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="cf-cookie-actions">
+                    <button type="button" class="cf-btn cf-btn-save" id="cfSavePreferences">Save preferences</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" class="cf-cookie-settings-btn" id="cfFloatingSettings" aria-label="Cookie settings" title="Cookie settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <circle cx="8" cy="9" r="1" fill="currentColor"/>
+            <circle cx="15" cy="8" r="1" fill="currentColor"/>
+            <circle cx="10" cy="14" r="1" fill="currentColor"/>
+        </svg>
+    </button>
+
+    <script>
+    /**
+     * Compare Factors Scotland - Cookie Consent Manager
+     * UK GDPR & PECR Compliant
+     */
+    (function() {
+        'use strict';
+
+        const CONSENT_COOKIE_NAME = 'cf_cookie_consent';
+        const CONSENT_VERSION = '1.0';
+        const CONSENT_EXPIRY_DAYS = 365;
+
+        const banner = document.getElementById('cfCookieBanner');
+        const overlay = document.getElementById('cfCookieOverlay');
+        const settingsPanel = document.getElementById('cfCookieSettings');
+        const floatingBtn = document.getElementById('cfFloatingSettings');
+        
+        const acceptAllBtn = document.getElementById('cfAcceptAll');
+        const rejectAllBtn = document.getElementById('cfRejectAll');
+        const showSettingsBtn = document.getElementById('cfShowSettings');
+        const savePreferencesBtn = document.getElementById('cfSavePreferences');
+        
+        const analyticsToggle = document.getElementById('cfAnalyticsCookies');
+        const marketingToggle = document.getElementById('cfMarketingCookies');
+
+        function getConsent() {
+            try {
+                const cookie = document.cookie
+                    .split('; ')
+                    .find(row => row.startsWith(CONSENT_COOKIE_NAME + '='));
+                
+                if (cookie) {
+                    const value = JSON.parse(decodeURIComponent(cookie.split('=')[1]));
+                    if (value.version === CONSENT_VERSION) {
+                        return value;
+                    }
+                }
+            } catch (e) {
+                console.warn('Error reading consent cookie:', e);
+            }
+            return null;
+        }
+
+        function setConsent(preferences) {
+            const value = {
+                version: CONSENT_VERSION,
+                timestamp: new Date().toISOString(),
+                essential: true,
+                analytics: preferences.analytics || false,
+                marketing: preferences.marketing || false
+            };
+
+            const expires = new Date();
+            expires.setDate(expires.getDate() + CONSENT_EXPIRY_DAYS);
+
+            document.cookie = CONSENT_COOKIE_NAME + '=' + encodeURIComponent(JSON.stringify(value)) + '; ' +
+                'expires=' + expires.toUTCString() + '; ' +
+                'path=/; ' +
+                'SameSite=Lax; ' +
+                'Secure';
+
+            window.dispatchEvent(new CustomEvent('cfConsentUpdated', { detail: value }));
+            return value;
+        }
+
+        function showBanner() {
+            banner.classList.add('active');
+            overlay.classList.add('active');
+            floatingBtn.classList.remove('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideBanner() {
+            banner.classList.remove('active');
+            overlay.classList.remove('active');
+            settingsPanel.classList.remove('active');
+            floatingBtn.classList.add('active');
+            document.body.style.overflow = '';
+        }
+
+        function toggleSettings() {
+            settingsPanel.classList.toggle('active');
+            showSettingsBtn.textContent = settingsPanel.classList.contains('active') 
+                ? 'Hide preferences' 
+                : 'Manage preferences';
+        }
+
+        function loadConsentedScripts(consent) {
+            if (consent.analytics && !window.cfGA4Loaded) {
+                var script = document.createElement('script');
+                script.async = true;
+                script.src = 'https://www.googletagmanager.com/gtag/js?id=G-P9QSNCJEBQ';
+                script.onload = function() {
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){dataLayer.push(arguments);}
+                    window.gtag = gtag;
+                    gtag('js', new Date());
+                    gtag('config', 'G-P9QSNCJEBQ', {
+                        'anonymize_ip': true,
+                        'cookie_flags': 'SameSite=Lax;Secure'
+                    });
+                };
+                document.head.appendChild(script);
+                window.cfGA4Loaded = true;
+            }
+        }
+
+        function removeNonEssentialCookies(consent) {
+            consent = consent || { analytics: false, marketing: false };
+            var analyticsCookies = ['_ga', '_gid', '_gat'];
+            var marketingCookies = ['_fbp', '_fbc', '_gcl_au'];
+            var cookiesToRemove = [];
+            
+            if (!consent.analytics) cookiesToRemove = cookiesToRemove.concat(analyticsCookies);
+            if (!consent.marketing) cookiesToRemove = cookiesToRemove.concat(marketingCookies);
+
+            document.cookie.split(';').forEach(function(cookie) {
+                var name = cookie.split('=')[0].trim();
+                var shouldRemove = cookiesToRemove.some(function(pattern) {
+                    return name === pattern || name.startsWith(pattern + '_');
+                });
+                if (shouldRemove) {
+                    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+                    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=' + window.location.hostname;
+                    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.' + window.location.hostname;
+                }
+            });
+        }
+
+        function acceptAll() {
+            var consent = setConsent({ analytics: true, marketing: true });
+            hideBanner();
+            loadConsentedScripts(consent);
+        }
+
+        function rejectAll() {
+            setConsent({ analytics: false, marketing: false });
+            hideBanner();
+            removeNonEssentialCookies();
+        }
+
+        function savePreferences() {
+            var consent = setConsent({
+                analytics: analyticsToggle.checked,
+                marketing: marketingToggle.checked
+            });
+            hideBanner();
+            loadConsentedScripts(consent);
+            if (!consent.analytics || !consent.marketing) {
+                removeNonEssentialCookies(consent);
+            }
+        }
+
+        function updateTogglesFromConsent(consent) {
+            analyticsToggle.checked = consent.analytics;
+            marketingToggle.checked = consent.marketing;
+        }
+
+        function init() {
+            var existingConsent = getConsent();
+
+            if (existingConsent) {
+                floatingBtn.classList.add('active');
+                updateTogglesFromConsent(existingConsent);
+                loadConsentedScripts(existingConsent);
+            } else {
+                showBanner();
+            }
+
+            acceptAllBtn.addEventListener('click', acceptAll);
+            rejectAllBtn.addEventListener('click', rejectAll);
+            showSettingsBtn.addEventListener('click', toggleSettings);
+            savePreferencesBtn.addEventListener('click', savePreferences);
+            floatingBtn.addEventListener('click', function() {
+                var consent = getConsent();
+                if (consent) updateTogglesFromConsent(consent);
+                showBanner();
+            });
+
+            banner.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    var consent = getConsent();
+                    if (consent) hideBanner();
+                }
+            });
+        }
+
+        window.cfCookieConsent = {
+            getConsent: getConsent,
+            hasAnalyticsConsent: function() {
+                var consent = getConsent();
+                return consent ? consent.analytics : false;
+            },
+            hasMarketingConsent: function() {
+                var consent = getConsent();
+                return consent ? consent.marketing : false;
+            },
+            showBanner: showBanner
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
     </script>
 </body>
 </html>
