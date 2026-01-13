@@ -171,7 +171,11 @@
             
             <div class="form-card">
                 <h2 class="form-title">Send us a message</h2>
-                <form id="contactForm" action="#" method="POST">
+                <form id="contactForm" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+                    <input type="hidden" name="form-name" value="contact">
+                    <p class="hidden" style="display:none;">
+                        <label>Don't fill this out if you're human: <input name="bot-field"></label>
+                    </p>
                     <div class="form-group">
                         <label class="form-label" for="name">Your name</label>
                         <input type="text" id="name" name="name" class="form-input" required>
