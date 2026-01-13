@@ -204,7 +204,11 @@
             
             <div class="form-card">
                 <h2 class="form-title">Request quotes</h2>
-                <form id="quoteForm" action="#" method="POST">
+                <form id="quoteForm" name="quote" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+                    <input type="hidden" name="form-name" value="quote">
+                    <p class="hidden" style="display:none;">
+                        <label>Don't fill this out if you're human: <input name="bot-field"></label>
+                    </p>
                     <div class="form-group">
                         <label class="form-label" for="postcode">Property postcode</label>
                         <input type="text" id="postcode" name="postcode" class="form-input" placeholder="e.g. EH1 1AA" required>
