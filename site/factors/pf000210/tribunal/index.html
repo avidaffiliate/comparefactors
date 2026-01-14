@@ -16,9 +16,13 @@
 <link rel="canonical" href="https://comparefactors.co.uk/factors/pf000210/tribunal/">
 
     
+    <!-- Optimized font loading: preconnect + async load to eliminate render blocking -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+    </noscript>
     
     <style>
         /* ==================== CSS VARIABLES ==================== */
@@ -30,9 +34,11 @@
             --navy-700: #334155;
             
             /* Slate scale - neutral grays */
+            /* Note: --slate-500 and lighter fail WCAG AA on white backgrounds */
+            /* Use --slate-600 minimum for body text */
             --slate-600: #475569;
-            --slate-500: #64748b;
-            --slate-400: #94a3b8;
+            --slate-500: #64748b;  /* Use only for large text or non-essential UI */
+            --slate-400: #94a3b8;  /* Use only for borders/icons, not text */
             --slate-300: #cbd5e1;
             --slate-200: #e2e8f0;
             --slate-100: #f1f5f9;
@@ -67,7 +73,7 @@
             /* Semantic aliases (for page-specific styles) */
             --primary: #2563eb;
             --primary-dark: #1d4ed8;
-            --text-muted: #64748b;
+            --text-muted: #475569;  /* Changed from slate-500 to slate-600 for WCAG AA compliance */
             --border: #e2e8f0;
             --border-light: #f1f5f9;
             --bg-muted: #f8fafc;
@@ -107,12 +113,38 @@
             -webkit-font-smoothing: antialiased;
         }
         
+        /* Accessibility: Links must be distinguishable without relying on color alone */
         a { 
             color: var(--blue-600); 
-            text-decoration: none;
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 2px;
         }
         a:hover { 
-            text-decoration: underline; 
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+        }
+        
+        /* Navigation and button-style links can skip underline since context is clear */
+        .nav-link,
+        .nav-cta,
+        .logo,
+        .btn,
+        .footer-col a,
+        .breadcrumb a,
+        .mobile-nav a {
+            text-decoration: none;
+        }
+        .nav-link:hover,
+        .footer-col a:hover,
+        .breadcrumb a:hover,
+        .mobile-nav a:hover {
+            text-decoration: underline;
+        }
+        .nav-cta:hover,
+        .logo:hover,
+        .btn:hover {
+            text-decoration: none;
         }
 
         /* ==================== HEADER ==================== */
@@ -275,10 +307,10 @@
             margin: 0 auto;
             padding: var(--space-md) 24px;
             font-size: 0.85rem;
-            color: var(--slate-500);
+            color: var(--slate-600);  /* Changed from slate-500 for WCAG AA */
         }
         .breadcrumb a {
-            color: var(--slate-500);
+            color: var(--slate-600);  /* Changed from slate-500 for WCAG AA */
             text-decoration: none;
         }
         .breadcrumb a:hover {
@@ -286,7 +318,7 @@
         }
         .breadcrumb .sep {
             margin: 0 0.5rem;
-            color: var(--slate-300);
+            color: var(--slate-400);
         }
 
         /* ==================== MAIN CONTENT ==================== */
@@ -401,7 +433,7 @@
         .text-success { color: var(--green-600); }
         .text-warning { color: var(--amber-600); }
         .text-danger { color: var(--red-600); }
-        .text-muted { color: var(--slate-500); }
+        .text-muted { color: var(--slate-600); }  /* Changed from slate-500 for WCAG AA */
         
         .risk-clean { color: var(--green-600); }
         .risk-green { color: var(--green-600); }
