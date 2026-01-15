@@ -1,0 +1,74 @@
+{#
+  Data Sources Sidebar Section
+  Compare Factors Scotland
+  
+  Usage:
+    {% include "partials/_data_sources.html" %}
+  
+  Required context:
+    - profile: Factor profile with ch_number, google_rating, google_review_count,
+               trustpilot_rating, trustpilot_review_count
+    - registry_url: URL to specific factor page on Property Factor Register
+    - wss_url: URL to WSS PDF document (or None)
+    - tribunal_last_5_years: Dict with case_count
+#}
+
+{% from "partials/_icons.html" import icon_source_check, icon_file, icon_building %}
+
+<div class="sidebar-section">
+    <h3 class="sidebar-title">Data Sources</h3>
+    <ul class="source-list">
+        {# Property Factor Register - always available #}
+        <li class="source-item">
+            {{ icon_source_check(available=true) }}
+            <a href="{{ registry_url|default('https://www.gov.scot/publications/property-factor-register/') }}" target="_blank" rel="noopener">Property Factor Register</a>
+        </li>
+        
+        {# Tribunal cases #}
+        <li class="source-item">
+            {{ icon_source_check(available=(tribunal_last_5_years.case_count > 0)) }}
+            <span>Tribunal ({{ tribunal_last_5_years.case_count|default(0) }} cases, 5yr)</span>
+        </li>
+        
+        {# Companies House #}
+        <li class="source-item">
+            {{ icon_source_check(available=(profile.ch_number)) }}
+            <span>Companies House</span>
+        </li>
+        
+        {# Google reviews #}
+        <li class="source-item">
+            {{ icon_source_check(available=(profile.google_rating)) }}
+            <span>Google ({{ profile.google_review_count|default(0) }} reviews)</span>
+        </li>
+        
+        {# Trustpilot reviews #}
+        <li class="source-item">
+            {{ icon_source_check(available=(profile.trustpilot_rating)) }}
+            <span>Trustpilot ({{ profile.trustpilot_review_count|default(0) }} reviews)</span>
+        </li>
+        
+        {# WSS document #}
+        <li class="source-item">
+            {{ icon_source_check(available=(wss_url)) }}
+            <span>WSS on file</span>
+        </li>
+    </ul>
+    
+    {# External source links #}
+    <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--slate-200); display: flex; flex-direction: column; gap: var(--space-sm);">
+        {% if wss_url %}
+        <a href="{{ wss_url }}" class="btn-outline" style="width: 100%; justify-content: center; font-size: var(--text-sm);" target="_blank" rel="noopener">
+            {{ icon_file(size=14) }}
+            <span style="margin-left: 6px;">View WSS Document</span>
+        </a>
+        {% endif %}
+        
+        {% if profile.ch_number %}
+        <a href="https://find-and-update.company-information.service.gov.uk/company/{{ profile.ch_number }}" class="btn-outline" style="width: 100%; justify-content: center; font-size: var(--text-sm);" target="_blank" rel="noopener">
+            {{ icon_building(size=14) }}
+            <span style="margin-left: 6px;">Companies House</span>
+        </a>
+        {% endif %}
+    </div>
+</div>

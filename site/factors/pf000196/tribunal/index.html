@@ -9,9 +9,9 @@
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
     <link rel="manifest" href="/site.webmanifest">
-    <title>Tribunal Record | Ross &amp; Liddell Ltd | Compare Factors</title>
+    <title>Tribunal Record | Ross & Liddell Ltd | Compare Factors</title>
     
-<meta name="description" content="Full tribunal history for Ross &amp; Liddell Ltd. 67 cases since 2017, 37% upheld. View complaint patterns, enforcement orders, and compensation awarded.">
+<meta name="description" content="Tribunal history for Ross & Liddell Ltd (last 5 years). 34 cases, 38% upheld. View complaint patterns, enforcement orders, and compensation awarded.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://comparefactors.co.uk/factors/pf000196/tribunal/">
 
@@ -36,6 +36,7 @@
             /* Slate scale - neutral grays */
             /* Note: --slate-500 and lighter fail WCAG AA on white backgrounds */
             /* Use --slate-600 minimum for body text */
+            --slate-700: #334155;
             --slate-600: #475569;
             --slate-500: #64748b;  /* Use only for large text or non-essential UI */
             --slate-400: #94a3b8;  /* Use only for borders/icons, not text */
@@ -45,17 +46,29 @@
             --slate-50: #f8fafc;
             --white: #ffffff;
             
+            /* Gray scale (for expired/inactive states) */
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-100: #f3f4f6;
+            
             /* Status colors */
             --red-700: #b91c1c;
             --red-600: #dc2626;
+            --red-500: #ef4444;
             --red-100: #fee2e2;
             --red-50: #fef2f2;
             
+            --orange-700: #c2410c;
             --orange-600: #ea580c;
             --orange-100: #ffedd5;
             
+            --amber-800: #92400e;
+            --amber-700: #b45309;
             --amber-600: #d97706;
+            --amber-500: #f59e0b;
+            --amber-200: #fde68a;
             --amber-100: #fef3c7;
+            --amber-50: #fffbeb;
             
             --green-700: #15803d;
             --green-600: #16a34a;
@@ -66,9 +79,18 @@
             --emerald-600: #059669;
             --emerald-100: #d1fae5;
             
+            --blue-800: #1e40af;
             --blue-700: #1d4ed8;
             --blue-600: #2563eb;
             --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            
+            --indigo-600: #4f46e5;
+            --indigo-100: #e0e7ff;
+            --indigo-50: #eef2ff;
+            
+            --teal-600: #0d9488;
+            --teal-500: #14b8a6;
             
             /* Semantic aliases (for page-specific styles) */
             --primary: #2563eb;
@@ -95,6 +117,20 @@
             --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            
+            /* Text Sizes */
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
         }
 
         /* ==================== RESET & BASE ==================== */
@@ -983,7 +1019,76 @@
     color: var(--primary);
 }
 
-/* Risk band colors */
+/* Risk Band Banner */
+.risk-band-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.risk-band-label {
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+.risk-band-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.risk-band-link {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    text-decoration: none;
+}
+
+.risk-band-link:hover {
+    text-decoration: underline;
+}
+
+.risk-band-banner--clean {
+    background: #ecfdf5;
+    color: #065f46;
+}
+
+.risk-band-banner--clean .risk-band-link { color: #047857; }
+
+.risk-band-banner--green {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.risk-band-banner--green .risk-band-link { color: #047857; }
+
+.risk-band-banner--amber {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.risk-band-banner--amber .risk-band-link { color: #b45309; }
+
+.risk-band-banner--orange {
+    background: #ffedd5;
+    color: #9a3412;
+}
+
+.risk-band-banner--orange .risk-band-link { color: #c2410c; }
+
+.risk-band-banner--red {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.risk-band-banner--red .risk-band-link { color: #b91c1c; }
+
+/* Risk band colors (for other uses) */
 .risk-clean { color: #059669; }
 .risk-green { color: #10b981; }
 .risk-amber { color: #f59e0b; }
@@ -1062,20 +1167,6 @@
     font-style: italic;
 }
 
-/* Peer Comparison */
-.peer-comparison {
-    background: #eff6ff;
-    border: 1px solid #bfdbfe;
-    border-radius: 8px;
-    padding: 1rem 1.25rem;
-    margin-top: 1.5rem;
-    font-size: 0.95rem;
-}
-
-.peer-comparison p {
-    margin: 0;
-}
-
 .text-success {
     color: #059669;
 }
@@ -1132,9 +1223,24 @@
     color: #15803d;
 }
 
+.outcome-rejected,
+.outcome-dismissed-rejected {
+    background: #f0fdf4;
+    color: #15803d;
+}
+
 .outcome-withdrawn {
     background: #f8fafc;
     color: #64748b;
+}
+
+.outcome-pfeo-complied,
+.outcome-pfeo-proposed,
+.outcome-pfeo-pending,
+.outcome-pfeo-breached,
+.outcome-breach---no-order {
+    background: #fef2f2;
+    color: #b91c1c;
 }
 
 /* Category Chart */
@@ -1337,6 +1443,21 @@
     color: #15803d;
 }
 
+.outcome-badge.outcome-rejected,
+.outcome-badge.outcome-dismissed-rejected {
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+.outcome-badge.outcome-pfeo-complied,
+.outcome-badge.outcome-pfeo-proposed,
+.outcome-badge.outcome-pfeo-pending,
+.outcome-badge.outcome-pfeo-breached,
+.outcome-badge.outcome-breach---no-order {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
 .outcome-badge.outcome-withdrawn,
 .outcome-badge.outcome-unknown {
     background: #f8fafc;
@@ -1471,6 +1592,21 @@
 .outcome-pill.outcome-dismissed {
     background: #f0fdf4;
     color: #15803d;
+}
+
+.outcome-pill.outcome-rejected,
+.outcome-pill.outcome-dismissed-rejected {
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+.outcome-pill.outcome-pfeo-complied,
+.outcome-pill.outcome-pfeo-proposed,
+.outcome-pill.outcome-pfeo-pending,
+.outcome-pill.outcome-pfeo-breached,
+.outcome-pill.outcome-breach---no-order {
+    background: #fef2f2;
+    color: #b91c1c;
 }
 
 .outcome-pill.outcome-withdrawn {
@@ -1619,7 +1755,7 @@
 /* Responsive */
 @media (max-width: 800px) {
     .summary-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
     
     .outcome-grid {
@@ -1638,6 +1774,17 @@
     
     .summary-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .risk-band-banner {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .risk-band-label {
+        width: 100%;
+        text-align: center;
+        font-size: 0.8rem;
     }
     
     .category-name, .geo-area {
@@ -1698,7 +1845,7 @@
 <nav class="breadcrumb">
     <a href="/">Home</a><span class="sep">›</span>
     <a href="/factors/">Factors</a><span class="sep">›</span>
-    <a href="/factors/pf000196/">Ross &amp; Liddell Ltd</a><span class="sep">›</span>
+    <a href="/factors/pf000196/">Ross & Liddell Ltd</a><span class="sep">›</span>
     <span>Tribunal Record</span>
 </nav>
 
@@ -1707,9 +1854,9 @@
     <!-- HEADER -->
     <header class="page-header">
         <div class="header-main">
-            <a href="/factors/pf000196/" class="back-link">← Ross &amp; Liddell Ltd</a>
+            <a href="/factors/pf000196/" class="back-link">← Ross & Liddell Ltd</a>
             <h1>Tribunal Record</h1>
-            <p class="last-updated">Analysis period: 2017–2025 · Last updated: Q1 2026 · <a href="#data-freshness">Update schedule</a></p>
+            <p class="last-updated">Analysis period: 2021–2026 (5-year horizon) · Last updated: 2026-01-15 · <a href="#data-freshness">Update schedule</a></p>
         </div>
         <a href="/get-quotes/?exclude=PF000196" class="btn-primary">Get Alternative Quotes</a>
     </header>
@@ -1718,70 +1865,43 @@
     <section class="section summary-section">
         <div class="summary-narrative">
             <p>
-                <strong>Ross &amp; Liddell Ltd</strong> has faced <strong>67 tribunal complaints</strong> between 2017 and 2025,
-                with <strong>25 upheld or partially upheld</strong> (37%).
+                <strong>Ross & Liddell Ltd</strong> has faced <strong>34 tribunal complaints</strong> in the last 5 years (2021–2026),
+                with <strong>13 upheld or partially upheld</strong> (38%).
                 
-                Their case rate is <strong class="text-warning">higher than average</strong> for factors managing similar property counts.
-                
-                
-                The most recent case in our dataset was <strong>November 2025</strong>.
+                The most recent case in our dataset was <strong>2025-11-24</strong>.
                 
             </p>
+        </div>
+
+        <!-- Risk Band Banner -->
+        <div class="risk-band-banner risk-band-banner--green">
+            <span class="risk-band-label">Tribunal Risk Rating</span>
+            <span class="risk-band-value">GREEN</span>
+            <a href="#methodology" class="risk-band-link">What's this?</a>
         </div>
 
         <div class="summary-grid">
             <div class="summary-stat">
-                <span class="stat-value">67</span>
+                <span class="stat-value">34</span>
                 <span class="stat-label">Total Cases</span>
-                <span class="stat-context">Since 2017</span>
+                <span class="stat-context">Last 5 years</span>
             </div>
             <div class="summary-stat">
-                <span class="stat-value">37%</span>
+                <span class="stat-value">38%</span>
                 <span class="stat-label">Upheld Rate</span>
-                <span class="stat-context">Peer avg: 18.0%</span>
+                <span class="stat-context">Industry avg: ~45%</span>
             </div>
             <div class="summary-stat">
-                <span class="stat-value">6</span>
+                <span class="stat-value">7</span>
                 <span class="stat-label">PFEOs Issued</span>
-                <span class="stat-context">9% of cases</span>
+                <span class="stat-context">21% of cases</span>
             </div>
             <div class="summary-stat">
-                <span class="stat-value">£8,500</span>
+                <span class="stat-value">£5,900</span>
                 <span class="stat-label">Compensation</span>
                 <span class="stat-context">Total ordered</span>
             </div>
-            <div class="summary-stat">
-                <span class="stat-value ">
-                    0%
-                </span>
-                <span class="stat-label">Attendance</span>
-                <span class="stat-context">Hearings attended</span>
-            </div>
-            <div class="summary-stat">
-                <span class="stat-value risk-orange">ORANGE</span>
-                <span class="stat-label">Risk Band</span>
-                <span class="stat-context"><a href="#methodology">What's this?</a></span>
-            </div>
         </div>
-
-        
-        <div class="peer-comparison">
-            <p>
-                <strong>Peer comparison:</strong> Factors managing 10,000+ properties average 
-                <strong>37.5</strong> cases with a 
-                <strong>18.0%</strong> upheld rate.
-                Ross &amp; Liddell Ltd has 
-                
-                <strong class="text-warning">more cases</strong>
-                
-                and a 
-                
-                <strong class="text-warning">higher upheld rate</strong>
-                
-                than peers.
-            </p>
-        </div>
-        
     </section>
 
     <!-- TREND CHART -->
@@ -1794,91 +1914,13 @@
             
             
             <div class="trend-row">
-                <span class="trend-year">2015</span>
-                <div class="trend-bar-container">
-                    <div class="trend-bar" style="width: 17.0%">
-                        
-                    </div>
-                </div>
-                <span class="trend-count">2</span>
-                
-            </div>
-            
-            
-            
-            <div class="trend-row">
-                <span class="trend-year">2016</span>
-                <div class="trend-bar-container">
-                    <div class="trend-bar" style="width: 17.0%">
-                        
-                    </div>
-                </div>
-                <span class="trend-count">2</span>
-                
-            </div>
-            
-            
-            
-            <div class="trend-row">
-                <span class="trend-year">2017</span>
-                <div class="trend-bar-container">
-                    <div class="trend-bar" style="width: 25.0%">
-                        
-                    </div>
-                </div>
-                <span class="trend-count">3</span>
-                
-            </div>
-            
-            
-            
-            <div class="trend-row">
-                <span class="trend-year">2018</span>
-                <div class="trend-bar-container">
-                    <div class="trend-bar" style="width: 8.0%">
-                        
-                    </div>
-                </div>
-                <span class="trend-count">1</span>
-                
-            </div>
-            
-            
-            
-            <div class="trend-row">
-                <span class="trend-year">2019</span>
-                <div class="trend-bar-container">
-                    <div class="trend-bar" style="width: 25.0%">
-                        
-                    </div>
-                </div>
-                <span class="trend-count">3</span>
-                
-            </div>
-            
-            
-            
-            <div class="trend-row">
-                <span class="trend-year">2020</span>
-                <div class="trend-bar-container">
-                    <div class="trend-bar" style="width: 25.0%">
-                        
-                    </div>
-                </div>
-                <span class="trend-count">3</span>
-                
-            </div>
-            
-            
-            
-            <div class="trend-row">
                 <span class="trend-year">2021</span>
                 <div class="trend-bar-container">
-                    <div class="trend-bar" style="width: 42.0%">
+                    <div class="trend-bar" style="width: 36.0%">
                         
                     </div>
                 </div>
-                <span class="trend-count">5</span>
+                <span class="trend-count">4</span>
                 
             </div>
             
@@ -1887,7 +1929,7 @@
             <div class="trend-row">
                 <span class="trend-year">2022</span>
                 <div class="trend-bar-container">
-                    <div class="trend-bar" style="width: 33.0%">
+                    <div class="trend-bar" style="width: 36.0%">
                         
                     </div>
                 </div>
@@ -1900,11 +1942,11 @@
             <div class="trend-row">
                 <span class="trend-year">2023</span>
                 <div class="trend-bar-container">
-                    <div class="trend-bar" style="width: 50.0%">
+                    <div class="trend-bar" style="width: 45.0%">
                         
                     </div>
                 </div>
-                <span class="trend-count">6</span>
+                <span class="trend-count">5</span>
                 
             </div>
             
@@ -1913,11 +1955,11 @@
             <div class="trend-row">
                 <span class="trend-year">2024</span>
                 <div class="trend-bar-container">
-                    <div class="trend-bar" style="width: 100.0%">
+                    <div class="trend-bar" style="width: 91.0%">
                         
                     </div>
                 </div>
-                <span class="trend-count">12</span>
+                <span class="trend-count">10</span>
                 
             </div>
             
@@ -1926,11 +1968,24 @@
             <div class="trend-row">
                 <span class="trend-year">2025</span>
                 <div class="trend-bar-container">
-                    <div class="trend-bar" style="width: 92.0%">
+                    <div class="trend-bar" style="width: 100.0%">
                         
                     </div>
                 </div>
                 <span class="trend-count">11</span>
+                
+            </div>
+            
+            
+            
+            <div class="trend-row">
+                <span class="trend-year">2026</span>
+                <div class="trend-bar-container">
+                    <div class="trend-bar" style="width: 0.0%">
+                        
+                    </div>
+                </div>
+                <span class="trend-count">0</span>
                 
             </div>
             
@@ -1944,107 +1999,34 @@
         <h2 class="section-title">Outcome Breakdown</h2>
         <div class="outcome-grid">
             
-            <div class="outcome-item outcome-upheld">
-                <span class="outcome-count">25</span>
-                <span class="outcome-label">Upheld</span>
-                <span class="outcome-pct">37.0%</span>
+            <div class="outcome-item outcome-dismissed/rejected">
+                <span class="outcome-count">21</span>
+                <span class="outcome-label">Dismissed/Rejected</span>
+                <span class="outcome-pct">62%</span>
             </div>
             
-            <div class="outcome-item outcome-partially-upheld">
-                <span class="outcome-count">0</span>
-                <span class="outcome-label">Partially Upheld</span>
-                <span class="outcome-pct">0.0%</span>
+            <div class="outcome-item outcome-pfeo-complied">
+                <span class="outcome-count">7</span>
+                <span class="outcome-label">PFEO Complied</span>
+                <span class="outcome-pct">21%</span>
             </div>
             
-            <div class="outcome-item outcome-dismissed">
-                <span class="outcome-count">42</span>
-                <span class="outcome-label">Dismissed</span>
-                <span class="outcome-pct">63.0%</span>
+            <div class="outcome-item outcome-pfeo-proposed">
+                <span class="outcome-count">4</span>
+                <span class="outcome-label">PFEO Proposed</span>
+                <span class="outcome-pct">12%</span>
             </div>
             
-            <div class="outcome-item outcome-withdrawn">
-                <span class="outcome-count">0</span>
-                <span class="outcome-label">Withdrawn</span>
-                <span class="outcome-pct">0.0%</span>
+            <div class="outcome-item outcome-breach---no-order">
+                <span class="outcome-count">2</span>
+                <span class="outcome-label">Breach - No Order</span>
+                <span class="outcome-pct">6%</span>
             </div>
             
         </div>
     </section>
 
     <!-- COMPLAINT PATTERNS -->
-    
-    <section class="section">
-        <h2 class="section-title">What Homeowners Complain About</h2>
-        <p class="section-intro">Categories based on 25 cases with detailed analysis. Cases may have multiple categories.</p>
-        <div class="category-chart">
-            
-            
-            <div class="category-row">
-                <span class="category-name">Communication</span>
-                <div class="category-bar-container">
-                    <div class="category-bar" style="width: 100.0%"></div>
-                </div>
-                <span class="category-stats">17 cases (25.0%)</span>
-            </div>
-            
-            <div class="category-row">
-                <span class="category-name">Maintenance</span>
-                <div class="category-bar-container">
-                    <div class="category-bar" style="width: 76.0%"></div>
-                </div>
-                <span class="category-stats">13 cases (19.0%)</span>
-            </div>
-            
-            <div class="category-row">
-                <span class="category-name">Code_breach</span>
-                <div class="category-bar-container">
-                    <div class="category-bar" style="width: 71.0%"></div>
-                </div>
-                <span class="category-stats">12 cases (18.0%)</span>
-            </div>
-            
-            <div class="category-row">
-                <span class="category-name">Financial</span>
-                <div class="category-bar-container">
-                    <div class="category-bar" style="width: 53.0%"></div>
-                </div>
-                <span class="category-stats">9 cases (13.0%)</span>
-            </div>
-            
-            <div class="category-row">
-                <span class="category-name">Consultation_failure</span>
-                <div class="category-bar-container">
-                    <div class="category-bar" style="width: 35.0%"></div>
-                </div>
-                <span class="category-stats">6 cases (9.0%)</span>
-            </div>
-            
-            <div class="category-row">
-                <span class="category-name">Other</span>
-                <div class="category-bar-container">
-                    <div class="category-bar" style="width: 29.0%"></div>
-                </div>
-                <span class="category-stats">5 cases (7.0%)</span>
-            </div>
-            
-            <div class="category-row">
-                <span class="category-name">Response_times</span>
-                <div class="category-bar-container">
-                    <div class="category-bar" style="width: 18.0%"></div>
-                </div>
-                <span class="category-stats">3 cases (4.0%)</span>
-            </div>
-            
-            <div class="category-row">
-                <span class="category-name">Insurance</span>
-                <div class="category-bar-container">
-                    <div class="category-bar" style="width: 18.0%"></div>
-                </div>
-                <span class="category-stats">3 cases (4.0%)</span>
-            </div>
-            
-        </div>
-    </section>
     
 
     <!-- CODE BREACHES -->
@@ -2058,7 +2040,7 @@
             <div class="enforcement-block">
                 <h3>Property Factor Enforcement Orders</h3>
                 <p class="enforcement-headline">
-                    <strong>6</strong> of 67 cases (9%)
+                    <strong>7</strong> of 34 cases (21%)
                 </p>
                 
             </div>
@@ -2066,40 +2048,14 @@
             <div class="enforcement-block">
                 <h3>Compensation Ordered</h3>
                 <p class="enforcement-headline">
-                    <strong>£8,500</strong> total
+                    <strong>£5,900</strong> total
                 </p>
-                
-                <table class="mini-table">
-                    <tbody>
-                        
-                        <tr>
-                            <td>£0</td>
-                            <td>52 cases</td>
-                        </tr>
-                        
-                        <tr>
-                            <td>£1–500</td>
-                            <td>11 cases</td>
-                        </tr>
-                        
-                        <tr>
-                            <td>£501–1,000</td>
-                            <td>3 cases</td>
-                        </tr>
-                        
-                        <tr>
-                            <td>£1,000+</td>
-                            <td>1 case</td>
-                        </tr>
-                        
-                    </tbody>
-                </table>
                 
                 
                 <p class="enforcement-note">
                     Largest single award: <strong>£3,000</strong>
                     
-                    (<a href="https://housingandpropertychamber.scot/sites/default/files/2025-03/Written%20Decision%20%28Failure%20to%20Comply%29%20%28Proposed%20PFEO%29%201023%20Redacted.pdf" target="_blank" rel="noopener">FTS/HPC/PF/24/1023</a>)
+                    (<a href="https://housingandpropertychamber.scot/sites/default/files/2025-03/Property%20Factor%20Enforcement%20Order%20%28PFEO%29%20%28Proposed%29%201023%20Redacted.pdf" target="_blank" rel="noopener">FTS/HPC/PF/24/1023</a>)
                     
                 </p>
                 
@@ -2113,62 +2069,19 @@
         <h2 class="section-title">Notable Cases</h2>
         <div class="notable-cases">
             
-            <div class="notable-case">
-                <div class="notable-header">
-                    <span class="notable-ref">FTS/HPC/PF/23/2680</span>
-                    <span class="outcome-badge outcome-upheld">Upheld</span>
-                </div>
-                <div class="notable-meta">
-                    2024-12-20
-                    
-                    · Severity 6.0/10
-                </div>
-                
-                <div class="notable-footer">
-                    
-                    
-                    <span class="notable-tag">£600</span>
-                    
-                    
-                    <a href="https://housingandpropertychamber.scot/sites/default/files/2025-01/Property%20Factor%20Enforcement%20Order%20%28PFEO%29%20%28proposed%29%20PF%2023.2680.pdf | https://housingandpropertychamber.scot/sites/default/files/2025-01/Written%20Decision%20%28Failure%20to%20Comply%29%20%28Proposed%20PFEO%29%20PF%2023.2680.pdf | https://housingandpropertychamber.scot/sites/default/files/2025-02/Certificate%20of%20Compliance%202680%20Redacted.pdf" class="notable-link" target="_blank" rel="noopener">View decision (PDF) →</a>
-                    
-                </div>
-            </div>
-            
-            <div class="notable-case">
-                <div class="notable-header">
-                    <span class="notable-ref">FTS/HPC/PF/21/1132</span>
-                    <span class="outcome-badge outcome-upheld">Upheld</span>
-                </div>
-                <div class="notable-meta">
-                    2021-09-15
-                    
-                    · Severity 6.0/10
-                </div>
-                
-                <blockquote class="notable-quote">"The Factor&#39;s failure to comply with the Property Factors Code of Conduct resulted in cleaning services not being provided and increased repair costs."</blockquote>
-                
-                <div class="notable-footer">
-                    <span class="notable-tag">PFEO</span>
-                    
-                    <span class="notable-tag">£550</span>
-                    
-                    
-                    <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Written%20Decision%20%28Failure%20to%20Comply%29%20%28Proposed%20PFEO%29%20PF.21.1132_Redacted.pdf | https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Proposed%20PFEO%20PF.21.1132_Redacted.pdf | https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/PFEO%20PF.21.1132_Redacted.pdf | https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Certificate%20of%20Compliance%20PF%2021.1132_Redacted.pdf" class="notable-link" target="_blank" rel="noopener">View decision (PDF) →</a>
-                    
-                </div>
-            </div>
             
             <div class="notable-case">
                 <div class="notable-header">
                     <span class="notable-ref">FTS/HPC/PF/24/1702</span>
-                    <span class="outcome-badge outcome-upheld">Upheld</span>
+                    <span class="outcome-badge outcome-pfeo-proposed">PFEO Proposed</span>
                 </div>
                 <div class="notable-meta">
-                    2025-11-25
+                    2025-11-24
                     
-                    · Severity 6.0/10
+                    
                 </div>
+                
+                <blockquote class="notable-quote">"The Tribunal makes a Proposed Property Factor Enforcement Order in the above Application as follows: - The Respondent is to write to the Applicant take the following action: 1. Apologise for..."</blockquote>
                 
                 <div class="notable-footer">
                     
@@ -2177,6 +2090,104 @@
                     
                     
                     <a href="https://housingandpropertychamber.scot/sites/default/files/2025-12/REDACTED%20Proposed%20Property%20Factor%20Enforcement%20Order%2024.11.2025%201702%20%282%29.pdf" class="notable-link" target="_blank" rel="noopener">View decision (PDF) →</a>
+                    
+                </div>
+            </div>
+            
+            
+            <div class="notable-case">
+                <div class="notable-header">
+                    <span class="notable-ref">FTS/HPC/PF/25/0301</span>
+                    <span class="outcome-badge outcome-pfeo-complied">PFEO Complied</span>
+                </div>
+                <div class="notable-meta">
+                    2025-09-11
+                    
+                    
+                </div>
+                
+                <blockquote class="notable-quote">"The Tribunal order the Respondent to pay to the Applicant the sum of £150 for his time, effort, and inconvenience, and (2) The Tribunal order the Respondent to issue a letter of apology to the..."</blockquote>
+                
+                <div class="notable-footer">
+                    <span class="notable-tag">PFEO</span>
+                    
+                    <span class="notable-tag">£150</span>
+                    
+                    
+                    <a href="https://housingandpropertychamber.scot/sites/default/files/2025-10/REDACTED%20Proposed%20Property%20Factor%20Enforcement%20Order%20%285.10.25%29%200301.pdf" class="notable-link" target="_blank" rel="noopener">View decision (PDF) →</a>
+                    
+                </div>
+            </div>
+            
+            
+            <div class="notable-case">
+                <div class="notable-header">
+                    <span class="notable-ref">FTS/HPC/PF/24/4464</span>
+                    <span class="outcome-badge outcome-pfeo-complied">PFEO Complied</span>
+                </div>
+                <div class="notable-meta">
+                    2025-06-26
+                    
+                    
+                </div>
+                
+                <blockquote class="notable-quote">"The Property Factor is required, within 30 days of the making of this Property Factor Enforcement Order, to make payment of the sum of £200.00 from their own funds to compensate the Homeowner for..."</blockquote>
+                
+                <div class="notable-footer">
+                    <span class="notable-tag">PFEO</span>
+                    
+                    <span class="notable-tag">£200</span>
+                    
+                    
+                    <a href="https://housingandpropertychamber.scot/sites/default/files/2025-07/Proposed%20PFEO%2007.07.25%20PF.24.4464_Redacted.pdf" class="notable-link" target="_blank" rel="noopener">View decision (PDF) →</a>
+                    
+                </div>
+            </div>
+            
+            
+            <div class="notable-case">
+                <div class="notable-header">
+                    <span class="notable-ref">FTS/HPC/PF/24/2426</span>
+                    <span class="outcome-badge outcome-pfeo-complied">PFEO Complied</span>
+                </div>
+                <div class="notable-meta">
+                    2025-05-12
+                    
+                    
+                </div>
+                
+                <blockquote class="notable-quote">"The Tribunal find that the Factor took approximately six weeks to send the owners the tender report and request payment. The Tribunal determine that this delay was  unreasonable and the services..."</blockquote>
+                
+                <div class="notable-footer">
+                    <span class="notable-tag">PFEO</span>
+                    
+                    
+                    <a href="https://housingandpropertychamber.scot/sites/default/files/2025-07/Written%20Decision%20%28Failure%20to%20Comply%29%20%28Proposed%20PFEO%29%20PF%2024.2426%20%26%202428%20-%20corrected_Redacted.pdf" class="notable-link" target="_blank" rel="noopener">View decision (PDF) →</a>
+                    
+                </div>
+            </div>
+            
+            
+            <div class="notable-case">
+                <div class="notable-header">
+                    <span class="notable-ref">FTS/HPC/PF/24/1023</span>
+                    <span class="outcome-badge outcome-pfeo-complied">PFEO Complied</span>
+                </div>
+                <div class="notable-meta">
+                    2025-02-06
+                    
+                    
+                </div>
+                
+                <blockquote class="notable-quote">"The Tribunal considers that a substantial level of compensation to reflect this should be imposed on the Respondents and that the sum of £3000.00 is an appropriate amount to award the Applicant."</blockquote>
+                
+                <div class="notable-footer">
+                    <span class="notable-tag">PFEO</span>
+                    
+                    <span class="notable-tag">£3,000</span>
+                    
+                    
+                    <a href="https://housingandpropertychamber.scot/sites/default/files/2025-03/Property%20Factor%20Enforcement%20Order%20%28PFEO%29%20%28Proposed%29%201023%20Redacted.pdf" class="notable-link" target="_blank" rel="noopener">View decision (PDF) →</a>
                     
                 </div>
             </div>
@@ -2196,7 +2207,8 @@
                     <option value="">All</option>
                     <option value="upheld">Upheld</option>
                     <option value="partially-upheld">Partially Upheld</option>
-                    <option value="dismissed">Dismissed</option>
+                    <option value="dismissed-rejected">Dismissed/Rejected</option>
+                    <option value="pfeo">PFEO Issued</option>
                     <option value="withdrawn">Withdrawn</option>
                 </select>
             </label>
@@ -2225,13 +2237,16 @@
                 </thead>
                 <tbody>
                     
-                    <tr data-outcome="upheld" data-pfeo="no">
-                        <td>2025-11-25</td>
+                    
+                    
+                    
+                    <tr data-outcome="pfeo" data-pfeo="no">
+                        <td>2025-11-24</td>
                         <td><code>FTS/HPC/PF/24/1702</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
+                        <td><span class="outcome-pill outcome-pfeo-proposed">PFEO Proposed</span></td>
                         <td>—</td>
                         <td>£500</td>
-                        <td>6.0</td>
+                        <td>—</td>
                         <td>
                             
                             <a href="https://housingandpropertychamber.scot/sites/default/files/2025-12/REDACTED%20Proposed%20Property%20Factor%20Enforcement%20Order%2024.11.2025%201702%20%282%29.pdf" target="_blank" rel="noopener">PDF</a>
@@ -2239,10 +2254,13 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2025-10-23</td>
+                    
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
+                        <td>2025-10-29</td>
                         <td><code>FTS/HPC/PF/24/3450</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2253,10 +2271,13 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2025-09-16</td>
+                    
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
+                        <td>2025-09-15</td>
                         <td><code>FTS/HPC/PF/24/2616</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2267,24 +2288,30 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="upheld" data-pfeo="no">
+                    
+                    
+                    
+                    <tr data-outcome="pfeo" data-pfeo="yes">
                         <td>2025-09-11</td>
                         <td><code>FTS/HPC/PF/25/0301</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
-                        <td>—</td>
+                        <td><span class="outcome-pill outcome-pfeo-complied">PFEO Complied</span></td>
+                        <td>⚠️</td>
                         <td>£150</td>
-                        <td>4.0</td>
+                        <td>—</td>
                         <td>
                             
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/2025-10/REDACTED%20Proposed%20Property%20Factor%20Enforcement%20Order%20%285.10.25%29%200301.pdf | https://housingandpropertychamber.scot/sites/default/files/2025-10/REDACTED%20Written%20Decision%20%28Failure%20to%20Comply%29%20%28Proposed%20PFEO%29%20%285.10.25%29%200301.pdf | https://housingandpropertychamber.scot/sites/default/files/2025-11/REDACTED%20Property%20Factor%20Enforcement%20Order%20%2822.11.25%29%200301.pdf | https://housingandpropertychamber.scot/sites/default/files/2025-11/REDACTED%20Certificate%20of%20Compliance%20%2822.11.25%29%200301.pdf" target="_blank" rel="noopener">PDF</a>
+                            <a href="https://housingandpropertychamber.scot/sites/default/files/2025-10/REDACTED%20Proposed%20Property%20Factor%20Enforcement%20Order%20%285.10.25%29%200301.pdf" target="_blank" rel="noopener">PDF</a>
                             
                         </td>
                     </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
+                    
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
                         <td>2025-08-25</td>
                         <td><code>FTS/HPC/PF/25/2311</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2295,10 +2322,13 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2025-07-01</td>
+                    
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
+                        <td>2025-06-27</td>
                         <td><code>FTS/HPC/PF/24/2475</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2309,69 +2339,50 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="upheld" data-pfeo="yes">
+                    
+                    
+                    
+                    <tr data-outcome="pfeo" data-pfeo="yes">
                         <td>2025-06-26</td>
                         <td><code>FTS/HPC/PF/24/4464</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
+                        <td><span class="outcome-pill outcome-pfeo-complied">PFEO Complied</span></td>
                         <td>⚠️</td>
                         <td>£200</td>
-                        <td>4.0</td>
+                        <td>—</td>
                         <td>
                             
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/2025-07/Proposed%20PFEO%2007.07.25%20PF.24.4464_Redacted.pdf | https://housingandpropertychamber.scot/sites/default/files/2025-07/Written%20Decision%2007.07.25%20PF.24.4464_Redacted.pdf | https://housingandpropertychamber.scot/sites/default/files/2025-08/Property%20Factor%20Enforcement%20Order%20%28PFEO%29%20PF.24.4464_Redacted.pdf | https://housingandpropertychamber.scot/sites/default/files/2025-08/Certificate%20of%20Compliance%20PF.24.4464_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
+                            <a href="https://housingandpropertychamber.scot/sites/default/files/2025-07/Proposed%20PFEO%2007.07.25%20PF.24.4464_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
                             
                         </td>
                     </tr>
                     
-                    <tr data-outcome="upheld" data-pfeo="no">
+                    
+                    
+                    
+                    <tr data-outcome="pfeo" data-pfeo="yes">
                         <td>2025-05-12</td>
                         <td><code>FTS/HPC/PF/24/2426</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
-                        <td>—</td>
-                        <td>£150</td>
-                        <td>3.0</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/2025-07/Written%20Decision%20%28Failure%20to%20Comply%29%20%28Proposed%20PFEO%29%20PF%2024.2426%20%26%202428%20-%20corrected_Redacted.pdf | https://housingandpropertychamber.scot/sites/default/files/2025-06/Property%20Factor%20Enforcement%20Order%20%28PFEO%29%20%28Proposed%29%20PF.24.2426%20%26%202428_Redacted.pdf | https://housingandpropertychamber.scot/sites/default/files/2025-08/Property%20Factor%20Enforcement%20Order%20%28PFEO%29%20PF%2024.2426%20%26%202428_Redacted.pdf | https://housingandpropertychamber.scot/sites/default/files/2025-09/Certificate%20of%20Compliance%20PF.24.2426%20%26%202428_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="upheld" data-pfeo="yes">
-                        <td>2025-05-07</td>
-                        <td><code>FTS/HPC/PF/24/2022</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
+                        <td><span class="outcome-pill outcome-pfeo-complied">PFEO Complied</span></td>
                         <td>⚠️</td>
-                        <td>£300</td>
-                        <td>1.0</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/2025-05/Written%20Decision%20%28Failure%20to%20Comply%29%20%28Proposed%20PFEO%29%202022%20Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="upheld" data-pfeo="no">
-                        <td>2025-04-07</td>
-                        <td><code>FTS/HPC/PF/24/1023</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
                         <td>—</td>
-                        <td>£3,000</td>
-                        <td>2.5</td>
+                        <td>—</td>
                         <td>
                             
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/2025-03/Written%20Decision%20%28Failure%20to%20Comply%29%20%28Proposed%20PFEO%29%201023%20Redacted.pdf" target="_blank" rel="noopener">PDF</a>
+                            <a href="https://housingandpropertychamber.scot/sites/default/files/2025-07/Written%20Decision%20%28Failure%20to%20Comply%29%20%28Proposed%20PFEO%29%20PF%2024.2426%20%26%202428%20-%20corrected_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
                             
                         </td>
                     </tr>
                     
-                    <tr data-outcome="upheld" data-pfeo="no">
-                        <td>2025-03-16</td>
+                    
+                    
+                    
+                    <tr data-outcome="breach---no-order" data-pfeo="no">
+                        <td>2025-03-10</td>
                         <td><code>FTS/HPC/PF/24/1636</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
+                        <td><span class="outcome-pill outcome-breach---no-order">Breach - No Order</span></td>
                         <td>—</td>
                         <td>—</td>
-                        <td>1.5</td>
+                        <td>—</td>
                         <td>
                             
                             <a href="https://housingandpropertychamber.scot/sites/default/files/2025-04/Written%20Decision%20%28Failure%20to%20Comply%29%20%28No%20PFEO%29%201636%20Redacted.pdf" target="_blank" rel="noopener">PDF</a>
@@ -2379,24 +2390,64 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="upheld" data-pfeo="no">
-                        <td>2024-12-20</td>
-                        <td><code>FTS/HPC/PF/23/2680</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
+                    
+                    
+                    
+                    <tr data-outcome="pfeo" data-pfeo="no">
+                        <td>2025-02-14</td>
+                        <td><code>FTS/HPC/PF/24/2022</code></td>
+                        <td><span class="outcome-pill outcome-pfeo-proposed">PFEO Proposed</span></td>
                         <td>—</td>
-                        <td>£600</td>
-                        <td>6.0</td>
+                        <td>£300</td>
+                        <td>—</td>
                         <td>
                             
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/2025-01/Property%20Factor%20Enforcement%20Order%20%28PFEO%29%20%28proposed%29%20PF%2023.2680.pdf | https://housingandpropertychamber.scot/sites/default/files/2025-01/Written%20Decision%20%28Failure%20to%20Comply%29%20%28Proposed%20PFEO%29%20PF%2023.2680.pdf | https://housingandpropertychamber.scot/sites/default/files/2025-02/Certificate%20of%20Compliance%202680%20Redacted.pdf" target="_blank" rel="noopener">PDF</a>
+                            <a href="https://housingandpropertychamber.scot/sites/default/files/2025-05/Written%20Decision%20%28Failure%20to%20Comply%29%20%28Proposed%20PFEO%29%202022%20Redacted.pdf" target="_blank" rel="noopener">PDF</a>
                             
                         </td>
                     </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2024-11-20</td>
+                    
+                    
+                    
+                    <tr data-outcome="pfeo" data-pfeo="yes">
+                        <td>2025-02-06</td>
+                        <td><code>FTS/HPC/PF/24/1023</code></td>
+                        <td><span class="outcome-pill outcome-pfeo-complied">PFEO Complied</span></td>
+                        <td>⚠️</td>
+                        <td>£3,000</td>
+                        <td>—</td>
+                        <td>
+                            
+                            <a href="https://housingandpropertychamber.scot/sites/default/files/2025-03/Property%20Factor%20Enforcement%20Order%20%28PFEO%29%20%28Proposed%29%201023%20Redacted.pdf" target="_blank" rel="noopener">PDF</a>
+                            
+                        </td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    <tr data-outcome="pfeo" data-pfeo="yes">
+                        <td>2024-12-20</td>
+                        <td><code>FTS/HPC/PF/23/2680</code></td>
+                        <td><span class="outcome-pill outcome-pfeo-complied">PFEO Complied</span></td>
+                        <td>⚠️</td>
+                        <td>£600</td>
+                        <td>—</td>
+                        <td>
+                            
+                            <a href="https://housingandpropertychamber.scot/sites/default/files/2025-01/Property%20Factor%20Enforcement%20Order%20%28PFEO%29%20%28proposed%29%20PF%2023.2680.pdf" target="_blank" rel="noopener">PDF</a>
+                            
+                        </td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
+                        <td>2024-11-18</td>
                         <td><code>FTS/HPC/PF/23/2611</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2407,10 +2458,13 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
+                    
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
                         <td>2024-10-27</td>
                         <td><code>FTS/HPC/LM/24/3567</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2421,10 +2475,13 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
+                    
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
                         <td>2024-10-27</td>
                         <td><code>FTS/HPC/PF/24/2977</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2435,10 +2492,13 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="upheld" data-pfeo="no">
-                        <td>2024-09-10</td>
+                    
+                    
+                    
+                    <tr data-outcome="breach---no-order" data-pfeo="no">
+                        <td>2024-09-02</td>
                         <td><code>FTS/HPC/PF/23/4109</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
+                        <td><span class="outcome-pill outcome-breach---no-order">Breach - No Order</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2449,24 +2509,13 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2024-08-13</td>
-                        <td><code>FTS/HPC/PF/24/2643</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/2024-08/Written%20Decision%20PF.24.2643_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2024-07-08</td>
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
+                        <td>2024-05-13</td>
                         <td><code>FTS/HPC/LM/23/1664</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2477,24 +2526,13 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2024-05-11</td>
-                        <td><code>FTS/HPC/PF/24/1624</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/2024-07/Rejection%20PF.24.1624_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2024-04-28</td>
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
+                        <td>2024-04-22</td>
                         <td><code>FTS/HPC/LM/23/1712</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2505,10 +2543,13 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
+                    
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
                         <td>2024-04-19</td>
                         <td><code>FTS/HPC/PF/24/0376</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2519,10 +2560,13 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2024-02-20</td>
+                    
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
+                        <td>2024-01-18</td>
                         <td><code>FTS/HPC/PF/23/2376</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2533,24 +2577,30 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="upheld" data-pfeo="no">
+                    
+                    
+                    
+                    <tr data-outcome="pfeo" data-pfeo="yes">
                         <td>2024-01-08</td>
                         <td><code>FTS/HPC/PF/22/3674</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
+                        <td><span class="outcome-pill outcome-pfeo-complied">PFEO Complied</span></td>
+                        <td>⚠️</td>
+                        <td>£100</td>
                         <td>—</td>
-                        <td>—</td>
-                        <td>4.0</td>
                         <td>
                             
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/2024-03/Proposed%20PFEO%20PF.22.3674.pdf | https://housingandpropertychamber.scot/sites/default/files/2024-03/Decision%20PF.22.3674.pdf | https://housingandpropertychamber.scot/sites/default/files/2024-04/PF%2022.3674%20certificate%20of%20compliance.pdf | https://housingandpropertychamber.scot/sites/default/files/2024-04/PF%2022.3674%20PFEO%20parsonage.pdf" target="_blank" rel="noopener">PDF</a>
+                            <a href="https://housingandpropertychamber.scot/sites/default/files/2024-03/Proposed%20PFEO%20PF.22.3674.pdf" target="_blank" rel="noopener">PDF</a>
                             
                         </td>
                     </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2023-12-10</td>
+                    
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
+                        <td>2023-12-06</td>
                         <td><code>FTS/HPC/PF/23/0690</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2561,10 +2611,13 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2023-12-08</td>
+                    
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
+                        <td>2023-11-30</td>
                         <td><code>FTS/HPC/PF/23/1095</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2575,38 +2628,13 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2023-08-30</td>
-                        <td><code>FTS/HPC/PF/23/1122 + 1123</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/rejection%20decision%201122%20and%201123%20%281%29_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
                     
-                    <tr data-outcome="upheld" data-pfeo="no">
-                        <td>2023-06-05</td>
-                        <td><code>FTS/HPC/PF/22/1934</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
-                        <td>—</td>
-                        <td>£500</td>
-                        <td>1.0</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Written%20Decision%20%28Failure%20to%20Comply%20-%20Proposed%20PFEO%29%20PF.22.1934_Redacted%20.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
                         <td>2023-05-02</td>
                         <td><code>FTS/HPC/PF/23/0331</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2617,10 +2645,13 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
+                    
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
                         <td>2023-03-23</td>
                         <td><code>FTS/HPC/PF/22/4273</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2631,10 +2662,30 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
+                    
+                    
+                    
+                    <tr data-outcome="pfeo" data-pfeo="no">
+                        <td>2023-01-20</td>
+                        <td><code>FTS/HPC/PF/22/1934</code></td>
+                        <td><span class="outcome-pill outcome-pfeo-proposed">PFEO Proposed</span></td>
+                        <td>—</td>
+                        <td>£500</td>
+                        <td>—</td>
+                        <td>
+                            
+                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Written%20Decision%20%28Failure%20to%20Comply%20-%20Proposed%20PFEO%29%20PF.22.1934_Redacted%20.pdf" target="_blank" rel="noopener">PDF</a>
+                            
+                        </td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
                         <td>2022-08-23</td>
                         <td><code>FTS/HPC/PF/22/1290</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2645,24 +2696,13 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="upheld" data-pfeo="no">
-                        <td>2022-07-14</td>
-                        <td><code>FTS/HPC/PF/19/4002</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>1.5</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/PF%2019.4002%20Finlayson%20v%20Ross%20%20Liddell%20Decision%20FINAL%20%281%29_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2022-06-28</td>
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
+                        <td>2022-06-22</td>
                         <td><code>FTS/HPC/PF/21/3008</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2673,10 +2713,30 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2022-02-16</td>
+                    
+                    
+                    
+                    <tr data-outcome="pfeo" data-pfeo="no">
+                        <td>2022-06-15</td>
+                        <td><code>FTS/HPC/PF/19/4002</code></td>
+                        <td><span class="outcome-pill outcome-pfeo-proposed">PFEO Proposed</span></td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>
+                            
+                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/PF%2019.4002%20Finlayson%20v%20Ross%20%20Liddell%20Decision%20FINAL%20%281%29_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
+                            
+                        </td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
+                        <td>2022-02-11</td>
                         <td><code>FTS/HPC/PF/21/1836</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2687,10 +2747,30 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2021-12-23</td>
+                    
+                    
+                    
+                    <tr data-outcome="pfeo" data-pfeo="yes">
+                        <td>2021-09-15</td>
+                        <td><code>FTS/HPC/PF/21/1132</code></td>
+                        <td><span class="outcome-pill outcome-pfeo-complied">PFEO Complied</span></td>
+                        <td>⚠️</td>
+                        <td>£550</td>
+                        <td>—</td>
+                        <td>
+                            
+                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Written%20Decision%20%28Failure%20to%20Comply%29%20%28Proposed%20PFEO%29%20PF.21.1132_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
+                            
+                        </td>
+                    </tr>
+                    
+                    
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
+                        <td>2021-07-28</td>
                         <td><code>FTS/HPC/LM/21/1223</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2701,24 +2781,13 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="upheld" data-pfeo="yes">
-                        <td>2021-09-15</td>
-                        <td><code>FTS/HPC/PF/21/1132</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
-                        <td>⚠️</td>
-                        <td>£550</td>
-                        <td>6.0</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Written%20Decision%20%28Failure%20to%20Comply%29%20%28Proposed%20PFEO%29%20PF.21.1132_Redacted.pdf | https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Proposed%20PFEO%20PF.21.1132_Redacted.pdf | https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/PFEO%20PF.21.1132_Redacted.pdf | https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Certificate%20of%20Compliance%20PF%2021.1132_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2021-04-19</td>
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
+                        <td>2021-03-19</td>
                         <td><code>FTS/HPC/PF/21/0033</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2729,24 +2798,13 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2021-04-19</td>
-                        <td><code>FTS/HPC/PF/21/0163</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Rejection%20Decision%20-%20PF.21.0163.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
                     
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2021-01-25</td>
+                    
+                    
+                    <tr data-outcome="dismissed-rejected" data-pfeo="no">
+                        <td>2021-01-05</td>
                         <td><code>FTS/HPC/PF/20/1427</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
+                        <td><span class="outcome-pill outcome-dismissed/rejected">Dismissed/Rejected</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>—</td>
@@ -2757,426 +2815,20 @@
                         </td>
                     </tr>
                     
-                    <tr data-outcome="upheld" data-pfeo="no">
-                        <td>2020-11-02</td>
-                        <td><code>FTS/HPC/PF/18/3490</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Written%20Decision%20%28Failure%20to%20Comply%29%20%28No%20Proposed%20PFEO%29%28Corrected%29PF.18.3490%20%28002%29%20%281%29.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="upheld" data-pfeo="no">
-                        <td>2020-08-13</td>
-                        <td><code>FTS/HPC/PF/19/2269</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
-                        <td>—</td>
-                        <td>£500</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Written%20Decision%20%28Failure%20to%20Comply%29%20%28Proposed%20PFEO%29-%20PF.19.2269%20%281%29_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2020-02-20</td>
-                        <td><code>FTS/HPC/PF/18/1978</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/written%20decision%20complied%20decision%20-%2004.03.2019-pf.18.1978_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2019-11-04</td>
-                        <td><code>FTS/HPC/PF/19/1684</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Written%20Decision%20%28Complied%29%20PF.19.1684.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2019-03-13</td>
-                        <td><code>FTS/HPC/PF/18/2906</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Notice%20of%20rejection%20%2813.03.19%29%20PF.18.2906.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2019-02-18</td>
-                        <td><code>FTS/HPC/PF/18/2926</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Written%20Decision%20%28Complied%29%20PF.18.2926_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="upheld" data-pfeo="no">
-                        <td>2018-02-06</td>
-                        <td><code>FTS/HPC/PF/17/0262</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Decision%20%28Complied%29%20pf.17.0262_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2017-12-28</td>
-                        <td><code>FTS/HPC/PF/17/0276</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Complied%20Decision%20pf.17.0276_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="upheld" data-pfeo="no">
-                        <td>2017-03-21</td>
-                        <td><code>HOHP/PF/16/0152</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/HOHP-PF-16-0152%20Complied%20Decision_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2017-02-07</td>
-                        <td><code>HOHP/PF/16/0092</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/hohp.pf_.16.0092%20COMPLIED_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2016-08-25</td>
-                        <td><code>HOHP/PF/16/0053</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/0053%20-%20Complied%20Decision_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="upheld" data-pfeo="yes">
-                        <td>2016-07-15</td>
-                        <td><code>HOHP/PF/15/0042</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
-                        <td>⚠️</td>
-                        <td>£1,000</td>
-                        <td>1.0</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/0042%20decision_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2015-11-23</td>
-                        <td><code>HOHP/PF/14/0157</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/0157%20Decision_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>2015-11-14</td>
-                        <td><code>HOHP/PF/15/0064/0065</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/0064%200065%20Decision%20_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>—</td>
-                        <td><code>FTS/HPC/PF/19/1574</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Written%20Decision%20%28Complied%29%20-%20PF.19.1574.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>—</td>
-                        <td><code>FTS/HPC/PF/19/0445</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Written%20Decision%20%28complied%29%20%2814.08.19%29%20PF.19.0445_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>—</td>
-                        <td><code>FTS/HPC/PF/19/0336</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Decision%20%28complied%29%20%2801.08.19%29%20PF.19.0336_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="upheld" data-pfeo="no">
-                        <td>—</td>
-                        <td><code>FTS/HPC/PF/18/0185</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
-                        <td>—</td>
-                        <td>£300</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Written%20Decision%20%28Failure%20to%20Comply%29%20%28Proposed%20PFEO%29_Redacted_0.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="upheld" data-pfeo="no">
-                        <td>—</td>
-                        <td><code>FTS/HPC/PF/18/0186</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
-                        <td>—</td>
-                        <td>£300</td>
-                        <td>6.0</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Written%20Decision%20%28Failure%20to%20Comply%29%20%28Proposed%20PFEO%29.%20PF.18.0186_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>—</td>
-                        <td><code>HOHP/PF/16/0055</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Complied%20Decision%20pf.16.0055.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="upheld" data-pfeo="no">
-                        <td>—</td>
-                        <td><code>HOHP/PF/15/0140</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/0140%20Decision_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>—</td>
-                        <td><code>HOHP/PF/15/0125</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/0125%20Decision_20160504121957_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="upheld" data-pfeo="no">
-                        <td>—</td>
-                        <td><code>HOHP/PF/15/0058</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/0058%20decision_Redacted_0.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>—</td>
-                        <td><code>HOHP/PF/14/0132</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/0132%20Decision_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>—</td>
-                        <td><code>HOHP/LM/14/0124</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/124%20decision%28rdt%29.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="upheld" data-pfeo="yes">
-                        <td>—</td>
-                        <td><code>HOHP/PF/14/0107</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
-                        <td>⚠️</td>
-                        <td>£200</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/0107%20Decision%28rdt%29.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="dismissed" data-pfeo="no">
-                        <td>—</td>
-                        <td><code>HOHP/LM/14/0113</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed</span></td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/0113%20Decision%20%28rdt%29.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="upheld" data-pfeo="no">
-                        <td>—</td>
-                        <td><code>HOHP/PF/13/0327</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
-                        <td>—</td>
-                        <td>£250</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/0327%20decision%204.7.14%20%28rdt%29_0.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
-                    <tr data-outcome="upheld" data-pfeo="yes">
-                        <td>—</td>
-                        <td><code>HOHP/PF/14/0076</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
-                        <td>⚠️</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Certificate%20of%20Compliance%20pf.14.0076_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
-                        </td>
-                    </tr>
-                    
                 </tbody>
             </table>
         </div>
 
         
-        <button class="show-all-btn" id="show-all-cases">Show all 67 cases</button>
+        <button class="show-all-btn" id="show-all-cases">Show all 34 cases</button>
         
 
         <div class="recent-decisions-note">
             <p>
-                <strong>Looking for more recent decisions?</strong><br>
-                This analysis covers decisions through 2025. 
+                <strong>Looking for older decisions?</strong><br>
+                This analysis covers the last 5 years (2021–2026). 
                 <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions" target="_blank" rel="noopener">
-                    Search the Housing &amp; Property Chamber for the latest →
+                    Search the Housing &amp; Property Chamber for the full archive →
                 </a>
             </p>
         </div>
@@ -3193,10 +2845,10 @@
             </summary>
             <div class="methodology-content">
                 <h3 id="data-freshness">Data freshness &amp; update schedule</h3>
-                <p>This analysis covers tribunal decisions published between 2017 and 2025. We update our database <strong>quarterly</strong> as new decisions are published by the Housing and Property Chamber.</p>
+                <p>This analysis covers tribunal decisions from the last 5 years (2021–2026). We update our database <strong>quarterly</strong> as new decisions are published by the Housing and Property Chamber.</p>
                 <ul>
-                    <li><strong>Last updated:</strong> Q1 2026</li>
-                    <li><strong>Next scheduled update:</strong> April 2026</li>
+                    <li><strong>Last updated:</strong> 2026-01-15</li>
+                    <li><strong>Next scheduled update:</strong> </li>
                 </ul>
                 <p>For decisions published after our last update, <a href="https://www.housingandpropertychamber.scot/search-decisions" target="_blank" rel="noopener">search the Housing &amp; Property Chamber directly →</a></p>
                 
@@ -3226,9 +2878,6 @@
                 </ul>
                 <p>Average severity across all cases provides a quality signal beyond simple case counts.</p>
                 
-                <h3>How does peer comparison work?</h3>
-                <p>We group factors into size bands by properties managed (0-500, 500-2,000, 2,000-5,000, 5,000-10,000, 10,000+) and calculate average case rates and upheld rates within each band. This accounts for the reality that larger factors face more opportunities for complaints simply due to scale.</p>
-                
                 <h3>Important notes</h3>
                 <ul>
                     <li>A dismissed case doesn't necessarily mean the homeowner was wrong—it may reflect procedural issues or burden of proof.</li>
@@ -3247,7 +2896,7 @@
         <h2>Concerned about this record?</h2>
         <p>Get free, no-obligation quotes from factors serving your area.</p>
         <a href="/get-quotes/?exclude=PF000196" class="btn-primary btn-large">Get Quotes from Alternative Factors</a>
-        <p class="cta-back"><a href="/factors/pf000196/">← Back to Ross &amp; Liddell Ltd Profile</a></p>
+        <p class="cta-back"><a href="/factors/pf000196/">← Back to Ross & Liddell Ltd Profile</a></p>
     </section>
 
 </article>
@@ -3311,7 +2960,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const rows = table.querySelectorAll('tbody tr');
         
         rows.forEach(row => {
-            const matchOutcome = !outcome || row.dataset.outcome === outcome;
+            const rowOutcome = row.dataset.outcome;
+            // Handle dismissed-rejected as a combined filter
+            let matchOutcome = !outcome || rowOutcome === outcome;
+            if (outcome === 'dismissed-rejected') {
+                matchOutcome = rowOutcome === 'dismissed-rejected' || rowOutcome === 'dismissed' || rowOutcome === 'rejected';
+            }
             const matchPfeo = !pfeo || row.dataset.pfeo === pfeo;
             row.style.display = (matchOutcome && matchPfeo) ? '' : 'none';
         });

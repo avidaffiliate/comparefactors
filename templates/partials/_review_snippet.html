@@ -1,0 +1,113 @@
+{#
+  Review Snippet Component
+  Compare Factors Scotland
+  
+  Usage:
+    {% from "partials/_review_snippet.html" import review_snippet, review_source_link, star_rating %}
+    {{ review_snippet(review) }}
+    {{ review_source_link(platform='google', rating=4.2, count=125, url='...') }}
+    {{ star_rating(4.5) }}
+  
+  Required context for review_snippet:
+    - review: Dict with review_text, author_name, review_date, rating, platform
+#}
+
+{% from "partials/_icons.html" import icon_google, icon_trustpilot, icon_star_filled, icon_chevron_right %}
+
+{# Star rating display #}
+{% macro star_rating(rating, show_value=true) %}
+{% if rating %}
+<span class="review-rating">
+    {% for i in range(5) %}
+    {% if i < rating|int %}
+    {{ icon_star_filled(size=14) }}
+    {% elif i < rating|round(0, 'ceil')|int and rating % 1 >= 0.5 %}
+    {{ icon_star_filled(size=14) }}
+    {% else %}
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+    {% endif %}
+    {% endfor %}
+    {% if show_value %}
+    <span style="margin-left: 4px; font-weight: 600;">{{ "%.1f"|format(rating) }}</span>
+    {% endif %}
+</span>
+{% endif %}
+{% endmacro %}
+
+{# Single review snippet with text #}
+{% macro review_snippet(review) %}
+<div class="review-snippet">
+    <div class="review-snippet-header">
+        <span class="platform-badge platform-badge--{{ review.platform|default('google') }}">{{ review.platform|default('Google')|title }}</span>
+        {% if review.rating %}
+        <span class="review-rating">{{ "%.1f"|format(review.rating) }}★</span>
+        {% endif %}
+    </div>
+    
+    <div class="review-snippet-text">"{{ review.review_text|truncate(300) }}"</div>
+    
+    <div class="review-snippet-meta">
+        <span>{{ review.author_name|default('Anonymous') }}</span>
+        {% if review.review_date %}
+        <span>{{ review.review_date }}</span>
+        {% endif %}
+    </div>
+</div>
+{% endmacro %}
+
+{# Review source link (Google or Trustpilot) #}
+{% macro review_source_link(platform, rating, count, url, name=none) %}
+<a href="{{ url }}" class="review-source-row" target="_blank" rel="noopener">
+    <div class="review-source-info">
+        <span class="platform-icon platform-icon--{{ platform }}">
+            {% if platform == 'google' %}
+            {{ icon_google(size=16) }}
+            {% else %}
+            {{ icon_trustpilot(size=16) }}
+            {% endif %}
+        </span>
+        <span style="font-weight: 600; color: var(--navy-800);">{{ name or (platform|title + ' Reviews') }}</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: var(--space-sm);">
+        <span style="font-weight: 600; color: var(--amber-600);">{{ "%.1f"|format(rating) if rating else '—' }}★</span>
+        <span style="color: var(--slate-500);">({{ count|default(0) }})</span>
+        {{ icon_chevron_right(size=14, class="", stroke_width=2) }}
+    </div>
+</a>
+{% endmacro %}
+
+{# Google location row for multi-location factors #}
+{% macro review_location_row(loc) %}
+<a href="https://search.google.com/local/reviews?placeid={{ loc.place_id }}" class="review-location-row" target="_blank" rel="noopener">
+    <span class="review-location-name">{{ loc.name or loc.address or 'Office' }}</span>
+    <div class="review-location-stats">
+        <span class="review-location-rating">{{ "%.1f"|format(loc.rating) if loc.rating else '—' }}★</span>
+        <span class="review-location-count">({{ loc.review_count or 0 }})</span>
+    </div>
+    {{ icon_chevron_right(size=14, class="review-location-arrow") }}
+</a>
+{% endmacro %}
+
+{# Combined rating explanation box #}
+{% macro rating_explanation(combined_rating, google_count, trustpilot_count) %}
+{% set total_reviews = (google_count|default(0)) + (trustpilot_count|default(0)) %}
+{% if combined_rating and total_reviews > 0 %}
+<div class="rating-explanation">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+    <span><strong>{{ "%.1f"|format(combined_rating) }}★ weighted average</strong> calculated from {{ google_count|default(0) }} Google + {{ trustpilot_count|default(0) }} Trustpilot reviews</span>
+</div>
+{% endif %}
+{% endmacro %}
+
+{# Review snippets section with title #}
+{% macro review_snippets_section(reviews, max_reviews=5) %}
+{% set reviews_with_text = reviews|selectattr('review_text')|list %}
+{% if reviews_with_text|length > 0 %}
+<div class="review-snippets">
+    <h4 class="review-snippets-title">Recent Reviews</h4>
+    {% for review in reviews_with_text[:max_reviews] %}
+    {{ review_snippet(review) }}
+    {% endfor %}
+</div>
+{% endif %}
+{% endmacro %}

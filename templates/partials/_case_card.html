@@ -1,0 +1,173 @@
+{#
+Case Card Partial - v2.1
+Shows tribunal case summary with full details
+
+Changes in v2.1:
+- Uses outcome_display for normalized outcomes (dismissed/rejected combined)
+- Rejected now shows green (same as dismissed)
+- PFEO and breach outcomes show as adverse (red)
+
+Usage:
+{{ case_card(case) }}
+{{ case_card_list(cases, max_visible=3) }}
+#}
+
+{% macro case_card(case) %}
+<div class="case-card {% if case.pfeo_issued %}has-pfeo{% endif %}">
+    <div class="case-header">
+        <div>
+            {% if case.pdf_url %}
+            <a href="{{ case.pdf_url }}" class="case-ref" target="_blank" rel="noopener">{{ case.case_reference or case.reference }}</a>
+            {% else %}
+            <span class="case-ref">{{ case.case_reference or case.reference }}</span>
+            {% endif %}
+            <span class="case-date">{{ case.decision_date[:10] if case.decision_date else '' }}</span>
+        </div>
+        <div class="case-badges">
+            {# Outcome badge - use outcome_display for normalized value, fallback to outcome #}
+            {% set outcome = case.outcome_display or case.outcome or 'Unknown' %}
+            {% set outcome_lower = outcome|lower %}
+            {% if 'dismiss' in outcome_lower or 'rejected' in outcome_lower %}
+            <span class="case-outcome dismissed">{{ outcome }}</span>
+            {% elif 'pfeo' in outcome_lower or 'breach' in outcome_lower %}
+            <span class="case-outcome pfeo">{{ outcome }}</span>
+            {% elif 'upheld' in outcome_lower and 'partial' not in outcome_lower %}
+            <span class="case-outcome upheld">{{ outcome }}</span>
+            {% elif 'partial' in outcome_lower %}
+            <span class="case-outcome partial">{{ outcome }}</span>
+            {% else %}
+            <span class="case-outcome other">{{ outcome }}</span>
+            {% endif %}
+            
+            {# Severity badge #}
+            {% if case.severity_score %}
+            {% set sev = case.severity_score|float %}
+            <span class="severity-badge severity-badge--{% if sev >= 7 %}critical{% elif sev >= 5 %}high{% elif sev >= 3 %}medium{% else %}low{% endif %}" title="Case severity: {{ case.severity_score }}/10">{{ case.severity_score }}/10</span>
+            {% endif %}
+        </div>
+    </div>
+    
+    {# Full summary - not truncated #}
+    {% if case.summary %}
+    <div class="case-summary-full">{{ case.summary }}</div>
+    {% endif %}
+    
+    {# Key quote #}
+    {% if case.key_quote or case.quote %}
+    <div class="case-quote">"{{ case.key_quote or case.quote }}"</div>
+    {% endif %}
+    
+    {# Compensation and PFEO indicators #}
+    {% if case.compensation_awarded or case.pfeo_issued %}
+    <div class="case-meta">
+        {% if case.compensation_awarded and case.compensation_awarded > 0 %}
+        <span class="case-compensation">£{{ "{:,.0f}".format(case.compensation_awarded) }} compensation</span>
+        {% endif %}
+        {% if case.pfeo_issued %}
+        <span class="case-pfeo-badge">⚠ PFEO issued</span>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    {# Link to PDF #}
+    {% if case.pdf_url %}
+    <a href="{{ case.pdf_url }}" class="case-link" target="_blank" rel="noopener">View decision (PDF) →</a>
+    {% endif %}
+</div>
+{% endmacro %}
+
+
+{% macro case_card_list(cases, max_visible=3) %}
+{% for case in cases %}
+<div class="case-card {% if case.pfeo_issued %}has-pfeo{% endif %}{% if loop.index > max_visible %} hidden{% endif %}">
+    <div class="case-header">
+        <div>
+            {% if case.pdf_url %}
+            <a href="{{ case.pdf_url }}" class="case-ref" target="_blank" rel="noopener">{{ case.case_reference or case.reference }}</a>
+            {% else %}
+            <span class="case-ref">{{ case.case_reference or case.reference }}</span>
+            {% endif %}
+            <span class="case-date">{{ case.decision_date[:10] if case.decision_date else '' }}</span>
+        </div>
+        <div class="case-badges">
+            {# Outcome badge - use outcome_display for normalized value, fallback to outcome #}
+            {% set outcome = case.outcome_display or case.outcome or 'Unknown' %}
+            {% set outcome_lower = outcome|lower %}
+            {% if 'dismiss' in outcome_lower or 'rejected' in outcome_lower %}
+            <span class="case-outcome dismissed">{{ outcome }}</span>
+            {% elif 'pfeo' in outcome_lower or 'breach' in outcome_lower %}
+            <span class="case-outcome pfeo">{{ outcome }}</span>
+            {% elif 'upheld' in outcome_lower and 'partial' not in outcome_lower %}
+            <span class="case-outcome upheld">{{ outcome }}</span>
+            {% elif 'partial' in outcome_lower %}
+            <span class="case-outcome partial">{{ outcome }}</span>
+            {% else %}
+            <span class="case-outcome other">{{ outcome }}</span>
+            {% endif %}
+            
+            {% if case.severity_score %}
+            {% set sev = case.severity_score|float %}
+            <span class="severity-badge severity-badge--{% if sev >= 7 %}critical{% elif sev >= 5 %}high{% elif sev >= 3 %}medium{% else %}low{% endif %}" title="Case severity: {{ case.severity_score }}/10">{{ case.severity_score }}/10</span>
+            {% endif %}
+        </div>
+    </div>
+    
+    {# Full summary #}
+    {% if case.summary %}
+    <div class="case-summary-full">{{ case.summary }}</div>
+    {% endif %}
+    
+    {% if case.key_quote or case.quote %}
+    <div class="case-quote">"{{ case.key_quote or case.quote }}"</div>
+    {% endif %}
+    
+    {% if case.compensation_awarded or case.pfeo_issued %}
+    <div class="case-meta">
+        {% if case.compensation_awarded and case.compensation_awarded > 0 %}
+        <span class="case-compensation">£{{ "{:,.0f}".format(case.compensation_awarded) }} compensation</span>
+        {% endif %}
+        {% if case.pfeo_issued %}
+        <span class="case-pfeo-badge">⚠ PFEO issued</span>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    {% if case.pdf_url %}
+    <a href="{{ case.pdf_url }}" class="case-link" target="_blank" rel="noopener">View decision (PDF) →</a>
+    {% endif %}
+</div>
+{% endfor %}
+
+{% if cases|length > max_visible %}
+<button class="show-more-btn" onclick="toggleCases(this)">
+    Show {{ cases|length - max_visible }} more recent cases ▼
+</button>
+{% endif %}
+{% endmacro %}
+
+
+{% macro case_toggle_script() %}
+<script>
+function toggleCases(btn) {
+    const container = btn.parentElement;
+    const hiddenCards = container.querySelectorAll('.case-card.hidden');
+    const isExpanding = hiddenCards.length > 0;
+    
+    container.querySelectorAll('.case-card').forEach(card => {
+        card.classList.remove('hidden');
+    });
+    
+    if (isExpanding) {
+        btn.textContent = 'Show fewer cases ▲';
+        btn.onclick = function() {
+            const cards = container.querySelectorAll('.case-card');
+            cards.forEach((card, i) => {
+                if (i >= 3) card.classList.add('hidden');
+            });
+            btn.textContent = 'Show ' + (cards.length - 3) + ' more recent cases ▼';
+            btn.onclick = function() { toggleCases(btn); };
+        };
+    }
+}
+</script>
+{% endmacro %}

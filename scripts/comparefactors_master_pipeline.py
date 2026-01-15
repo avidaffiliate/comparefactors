@@ -1,23 +1,63 @@
 #!/usr/bin/env python3
 """
 ===============================================================================
-COMPARE FACTORS SCOTLAND - MASTER PIPELINE v2.11
+COMPARE FACTORS SCOTLAND - MASTER PIPELINE v3.3
 ===============================================================================
 
 A clean, reproducible pipeline that runs end-to-end without manual intervention.
 Execute from your project root directory.
 
-v2.11 CHANGES:
-- Added UK GDPR & PECR compliant cookie consent banner to all pages
-- GA4 now loads only with user consent (no hardcoded analytics)
-- Cookie preferences: Essential (always on), Analytics, Marketing
-- Floating settings button for users to update preferences
-- Added /cookie-policy/ link to footer
+v3.3 CHANGES:
+- CASE-BASED ADVERSE OUTCOME RATE: Replaced charge-based upheld_pct with case-based metric
+  * Old: complaints_upheld / complaints_made (counted individual charges)
+  * New: is_adverse_outcome() counts cases where factor found at fault
+  * Fixed outcome classification to match actual database values:
+    - ADVERSE: Breach - No Order, PFEO Proposed/Pending/Complied/Breached
+    - NOT ADVERSE: Dismissed, Rejected, Withdrawn, Unknown
+  * Logic: Everything except dismissed/rejected/withdrawn is adverse
+    (PFEOs are only issued when factor found at fault)
+  * All 4 locations now use consistent is_adverse_outcome() helper:
+    - tribunal_cases_upheld in factors table
+    - context building for AI summaries
+    - tribunal_last_5_years stats (now 'adverse_outcome_pct')
+    - factor tribunal page stats
+- FACTORS ENRICHED CSV IMPORT: Step 2 now imports pre-calculated tribunal stats
+  * Reads factors_enriched.csv for authoritative case-based outcome counts
+  * tribunal_negative_outcomes → tribunal_cases_upheld (adverse for factor)
+  * tribunal_positive_outcomes → tribunal_cases_dismissed (dismissed + rejected)
+  * Step 7 preserves enriched values if already imported
+- GOOGLE LOCATIONS DEDUPLICATION: Added GROUP BY source_id to google_locations query
+  * Prevents duplicate locations showing in factor profiles
+  * Uses MAX() aggregation to pick best values per place_id
 
-v2.10 CHANGES:
-- factor_profile.html now extends base.html (template inheritance)
-- Added current_year to template context for footer copyright
-- Reduced code duplication by inheriting header/footer/nav from base template
+v3.2 CHANGES:
+- Removed fee information from AI summaries and template context (risk reduction)
+  * AI prompt no longer mentions fees
+  * wss passed as wss_url only (link to registry), not fee details
+  * case_fees passed as empty list
+- Added registry_url to template context using specific PF page format:
+  https://www.propertyfactorregister.gov.scot/property-factor/PF000XXX
+- Added coverage_areas_list (pre-split list) for proper template display
+- Updated AI prompt to not infer "primary" operating areas from coverage lists
+  (coverage areas are alphabetical, not ordered by property count)
+
+v3.1 CHANGES:
+- PFEO logic now derives pfeo_issued/pfeo_complied from outcome field
+- Three-way PFEO compliance distinction:
+  * pfeo_complied = 1: Complied (resolved)
+  * pfeo_complied = 0: BREACHED (explicit non-compliance - worst outcome)
+  * pfeo_complied = None: Pending/Proposed (awaiting resolution)
+- NEW RULE 0: Any PFEO Breached = RED (regardless of case volume)
+  * Breached is worse than pending - factor was ordered to comply and refused
+- Fixed Google/Trustpilot review import duplicate prevention:
+  * Now checks for existing records before insert (was using ineffective ON CONFLICT)
+  * Updates existing aggregate records with new rating/count instead of creating duplicates
+
+v3.0 CHANGES:
+- Step 9 now populates cases_by_year for trend chart (was passing empty list)
+- Step 9 now populates complaint_categories from case data
+- Step 9 google_places now includes phone and address from factor profile
+- Template v5.22 support: full Companies House section with insolvency/charges warnings
 
 v2.9 CHANGES:
 - Step 9 now generates factors directory index page (/factors/index.html)
@@ -238,6 +278,7 @@ class Config:
     # CSV file names (within csv_dir)
     factors_csv: str = "factors_register.csv"
     factors_postcodes_csv: str = "factors_postcodes.csv"
+    factors_enriched_csv: str = "factors_enriched.csv"  # In data/tribunal/, not csv
     tribunal_csv: str = "tribunal_cases.csv"
     tribunal_enriched_csv: str = "tribunal_enriched.csv"  # Fallback if no .db
     google_reviews_csv: str = "google_reviews.csv"
@@ -486,6 +527,38 @@ def find_csv_column(row: Dict, candidates: List[str], default: Any = None) -> An
         if col in row and row[col] is not None and row[col] != "":
             return row[col]
     return default
+
+
+def is_adverse_outcome(outcome: str) -> bool:
+    """
+    Determine if a tribunal case outcome is adverse for the factor.
+    
+    Classification (pro-homeowner/conservative approach):
+    - ADVERSE: Any outcome where factor found at fault
+      * Breach - No Order (code breach found, no PFEO needed)
+      * PFEO Proposed/Pending/Complied/Breached (all indicate fault found)
+      * Upheld/Partially Upheld (traditional terminology)
+      * Referred to Ministers (serious enforcement)
+    - NOT ADVERSE: Factor vindicated or case dropped
+      * Dismissed (case dismissed, no fault)
+      * Rejected (case rejected, homeowner lost)
+      * Withdrawn (case dropped by homeowner)
+    
+    Note: PFEO outcomes are always adverse because PFEOs are only issued/proposed
+    when the tribunal finds the factor breached the code.
+    """
+    if not outcome:
+        return False
+    outcome_lower = outcome.lower()
+    
+    # NOT adverse: factor vindicated or case dropped
+    not_adverse = ['dismissed', 'rejected', 'withdrawn', 'unknown']
+    for term in not_adverse:
+        if term in outcome_lower:
+            return False
+    
+    # Everything else is adverse (Breach, PFEO variants, Upheld, Referred, etc.)
+    return True
 
 
 # =============================================================================
@@ -953,6 +1026,51 @@ def step_2_import_factors():
         LOG.success(f"Updated {updated} factors with FOI postcode coverage")
     else:
         LOG.skip(f"FOI postcodes CSV not found")
+    
+    # Import pre-calculated tribunal outcome counts from enrichment
+    # This provides case-based adverse/positive outcome counts
+    enriched_path = CONFIG.data_dir / "tribunal" / "factors_enriched.csv"
+    if enriched_path.exists():
+        LOG.info(f"Reading enriched tribunal stats: {enriched_path}")
+        
+        with open(enriched_path, 'r', encoding='utf-8-sig') as f:
+            rows = list(csv.DictReader(f))
+        
+        updated = 0
+        with get_db() as conn:
+            for row in rows:
+                pf = normalize_pf_number(row.get('registration_number'))
+                if not pf:
+                    continue
+                
+                # Only update if we have tribunal data
+                total_cases = parse_int(row.get('tribunal_total_cases'))
+                if not total_cases:
+                    continue
+                
+                negative = parse_int(row.get('tribunal_negative_outcomes')) or 0
+                positive = parse_int(row.get('tribunal_positive_outcomes')) or 0
+                pfeo = (parse_int(row.get('tribunal_pfeo_issued')) or 0) + (parse_int(row.get('tribunal_pfeo_proposed')) or 0)
+                
+                # Import pre-calculated case-based outcome counts
+                # These are authoritative from the enrichment process
+                conn.execute("""
+                    UPDATE factors SET
+                        tribunal_case_count = ?,
+                        tribunal_cases_upheld = ?,
+                        tribunal_cases_dismissed = ?,
+                        tribunal_pfeo_count = ?
+                    WHERE registration_number = ?
+                """, [total_cases, negative, positive, pfeo, pf])
+                
+                if pf == 'PF000103':
+                    LOG.info(f"  James Gibb: cases={total_cases}, upheld={negative}, dismissed={positive}")
+                
+                updated += 1
+            conn.commit()
+        LOG.success(f"Updated {updated} factors with enriched tribunal stats")
+    else:
+        LOG.skip(f"Factors enriched CSV not found (will calculate from cases)")
 
 
 # =============================================================================
@@ -987,7 +1105,10 @@ def step_3_import_tribunal():
         with get_db() as conn:
             skipped = 0
             for row in cursor:
-                pf = normalize_pf_number(row['matched_registration_number'])
+                # Convert sqlite3.Row to dict for easier access
+                row = dict(row)
+                
+                pf = normalize_pf_number(row.get('matched_registration_number'))
                 
                 # Skip cases where factor doesn't exist (FK constraint)
                 if pf:
@@ -997,6 +1118,30 @@ def step_3_import_tribunal():
                     if not exists:
                         skipped += 1
                         continue
+                
+                # Derive PFEO status from outcome field
+                # This is the authoritative source for enforcement order status
+                outcome = row.get('ai_outcome') or row.get('outcome') or ''
+                outcome_upper = outcome.upper() if outcome else ''
+                
+                # pfeo_issued: 1 if any PFEO-related outcome
+                pfeo_issued = 1 if 'PFEO' in outcome_upper else (
+                    1 if row.get('pfeo_issued') else 0
+                )
+                
+                # pfeo_complied: semantic three-way distinction
+                # - 1 = Complied (resolved positively)
+                # - 0 = Breached (explicit non-compliance - worse than pending)
+                # - None = Pending/Proposed (awaiting resolution)
+                if 'COMPLIED' in outcome_upper:
+                    pfeo_complied = 1
+                elif 'BREACH' in outcome_upper:
+                    pfeo_complied = 0  # Explicit failure - penalize more than pending
+                elif 'PFEO' in outcome_upper:
+                    pfeo_complied = None  # Pending/Proposed - unresolved
+                else:
+                    # Fall back to source data if no PFEO in outcome
+                    pfeo_complied = 1 if row.get('pfeo_complied') else None
                 
                 conn.execute("""
                     INSERT INTO tribunal_cases (
@@ -1025,18 +1170,18 @@ def step_3_import_tribunal():
                     row['case_reference'],
                     pf,
                     row['decision_date'] if 'decision_date' in row.keys() else None,
-                    row['ai_outcome'] if 'ai_outcome' in row.keys() else None,
+                    outcome or None,
                     row['complaints_made'] if 'complaints_made' in row.keys() else None,
                     row['complaints_upheld'] if 'complaints_upheld' in row.keys() else None,
-                    1 if ('pfeo_issued' in row.keys() and row['pfeo_issued']) else 0,
+                    pfeo_issued,
                     row['pdf_url'] if 'pdf_url' in row.keys() else None,
                     row['summary'] if 'summary' in row.keys() else None,
                     row['key_quote'] if 'key_quote' in row.keys() else None,
                     row['complaint_categories'] if 'complaint_categories' in row.keys() else None,
                     row['severity_score'] if 'severity_score' in row.keys() else None,
                     next((row[c] for c in ['compensation_total', 'compensation_awarded', 'compensation', 'compensation_amount'] if c in row.keys() and row[c]), None),
-                    1 if ('pfeo_issued' in row.keys() and row['pfeo_issued']) else 0,
-                    1 if ('pfeo_complied' in row.keys() and row['pfeo_complied']) else None,
+                    pfeo_issued,
+                    pfeo_complied,
                 ])
                 imported += 1
             
@@ -1184,13 +1329,44 @@ def step_4_import_reviews():
                     # Aggregate record - use location/place name
                     author_name = find_csv_column(row, ['name', 'location_name', 'place_name', 'google_name', 'address'])
                 
+                # Check for existing record to prevent duplicates
+                # For aggregate records: unique by (pf, platform, source_id, review_text IS NULL)
+                # For individual reviews: unique by (pf, source_id, author_name)
+                if review_text:
+                    existing = conn.execute("""
+                        SELECT id FROM reviews 
+                        WHERE factor_registration_number = ? 
+                          AND source_id = ?
+                          AND author_name = ?
+                          AND review_text IS NOT NULL
+                    """, [pf, source_id, author_name]).fetchone()
+                else:
+                    # Aggregate record - check by source_id (place_id)
+                    existing = conn.execute("""
+                        SELECT id FROM reviews 
+                        WHERE factor_registration_number = ? 
+                          AND platform = 'google'
+                          AND source_id = ?
+                          AND review_text IS NULL
+                    """, [pf, source_id]).fetchone()
+                
+                if existing:
+                    # Update existing record instead of inserting duplicate
+                    new_rating = parse_float(find_csv_column(row, ['rating', 'google_rating']))
+                    new_count = parse_int(find_csv_column(row, ['review_count', 'total_reviews', 'google_review_count'])) or 1
+                    conn.execute("""
+                        UPDATE reviews SET rating = ?, review_count = ?
+                        WHERE id = ?
+                    """, [new_rating, new_count, existing['id']])
+                    imported += 1
+                    continue
+                
                 try:
                     conn.execute("""
                         INSERT INTO reviews (
                             factor_registration_number, platform, rating, review_count,
                             review_text, review_date, author_name, source_id
                         ) VALUES (?, 'google', ?, ?, ?, ?, ?, ?)
-                        ON CONFLICT DO NOTHING
                     """, [
                         pf,
                         parse_float(find_csv_column(row, ['rating', 'google_rating'])),
@@ -1233,20 +1409,54 @@ def step_4_import_reviews():
                 if not source_id:
                     source_id = f"trustpilot_{pf}"
                 
+                review_text = find_csv_column(row, ['review_text', 'text'])
+                author_name = find_csv_column(row, ['author_name', 'author'])
+                
+                # Check for existing record to prevent duplicates
+                if review_text:
+                    # Individual review with text
+                    existing = conn.execute("""
+                        SELECT id FROM reviews 
+                        WHERE factor_registration_number = ? 
+                          AND platform = 'trustpilot'
+                          AND source_id = ?
+                          AND author_name = ?
+                          AND review_text IS NOT NULL
+                    """, [pf, source_id, author_name]).fetchone()
+                else:
+                    # Aggregate record
+                    existing = conn.execute("""
+                        SELECT id FROM reviews 
+                        WHERE factor_registration_number = ? 
+                          AND platform = 'trustpilot'
+                          AND source_id = ?
+                          AND review_text IS NULL
+                    """, [pf, source_id]).fetchone()
+                
+                if existing:
+                    # Update existing record
+                    new_rating = parse_float(find_csv_column(row, ['rating']))
+                    new_count = parse_int(find_csv_column(row, ['review_count', 'total_reviews'])) or 1
+                    conn.execute("""
+                        UPDATE reviews SET rating = ?, review_count = ?
+                        WHERE id = ?
+                    """, [new_rating, new_count, existing['id']])
+                    imported += 1
+                    continue
+                
                 try:
                     conn.execute("""
                         INSERT INTO reviews (
                             factor_registration_number, platform, rating, review_count,
                             review_text, review_date, author_name, source_id
                         ) VALUES (?, 'trustpilot', ?, ?, ?, ?, ?, ?)
-                        ON CONFLICT DO NOTHING
                     """, [
                         pf,
                         parse_float(find_csv_column(row, ['rating'])),
                         parse_int(find_csv_column(row, ['review_count', 'total_reviews'])) or 1,
-                        find_csv_column(row, ['review_text', 'text']),
+                        review_text,
                         parse_date(find_csv_column(row, ['review_date', 'date'])),
-                        find_csv_column(row, ['author_name', 'author']),
+                        author_name,
                         source_id,
                     ])
                     imported += 1
@@ -1528,7 +1738,7 @@ def step_6_import_wss():
 
 
 # =============================================================================
-# STEP 7: CALCULATE SCORES & RISK BANDS (v2.6 - New Tier Logic)
+# STEP 7: CALCULATE SCORES & RISK BANDS (v3.1 - PFEO Breached Distinction)
 # =============================================================================
 
 def _is_within_years(case: dict, years: int) -> bool:
@@ -1554,12 +1764,18 @@ def _determine_tier(score: float, cases: list, factor_data: dict) -> str:
     """
     Determine display tier from score with special rules.
     
-    v2.9 Tier Logic:
-    - RULE 1a: Unresolved PFEO (5yr) + 3+ cases = RED
-    - RULE 1b: Unresolved PFEO (5yr) + <3 cases = ORANGE (mitigated by low volume)
+    v3.1 Tier Logic (PFEO three-way distinction):
+    - RULE 0: Any PFEO Breached (5yr) = RED (worst - explicit non-compliance)
+    - RULE 1a: Unresolved/pending PFEO (5yr) + 3+ cases = RED  
+    - RULE 1b: Unresolved/pending PFEO (5yr) + <3 cases = ORANGE (mitigated by low volume)
     - RULE 2: 2+ resolved PFEOs in 5yr = ORANGE max
     - RULE 3: < 3 cases in 5yr (no unresolved PFEO) = CLEAN
     - RULE 4: Score-based for 3+ cases (65+ GREEN, 40+ AMBER, 20+ ORANGE, else RED)
+    
+    PFEO compliance states:
+    - pfeo_complied = 1: Complied (resolved)
+    - pfeo_complied = 0: BREACHED (explicit non-compliance - worst outcome)
+    - pfeo_complied = None: Pending/Proposed (awaiting resolution)
     
     Args:
         score: Composite score (0-100 scale)
@@ -1573,15 +1789,25 @@ def _determine_tier(score: float, cases: list, factor_data: dict) -> str:
     recent_5yr = [c for c in cases if _is_within_years(c, 5)]
     recent_count = len(recent_5yr)
     
-    # Check for unresolved PFEO
-    # Unresolved = pfeo_issued AND (pfeo_complied is NULL or 0)
+    # Check for PFEO status with three-way distinction:
+    # - pfeo_complied = 1: Resolved (complied)
+    # - pfeo_complied = 0: BREACHED (explicit non-compliance - worst)
+    # - pfeo_complied = None: Pending/Proposed (unresolved)
+    has_breached_pfeo = False
     has_unresolved_pfeo = False
     for c in recent_5yr:
         if c.get('pfeo_issued'):
             pfeo_complied = c.get('pfeo_complied')
-            if pfeo_complied is None or pfeo_complied == 0:
-                has_unresolved_pfeo = True
-                break
+            if pfeo_complied == 0:
+                has_breached_pfeo = True  # Explicit non-compliance
+            elif pfeo_complied is None:
+                has_unresolved_pfeo = True  # Pending/proposed
+            # pfeo_complied == 1 means resolved/complied - no flag needed
+    
+    # RULE 0: Any BREACHED PFEO = RED (regardless of volume)
+    # Breached is worse than unresolved - they were ordered to comply and refused
+    if has_breached_pfeo:
+        return 'RED'
     
     # RULE 1a: Unresolved PFEO + high volume = RED
     if has_unresolved_pfeo and recent_count >= 3:
@@ -1739,9 +1965,33 @@ def step_7_calculate_scores():
             cases_list = [dict(c) for c in cases]
             
             # Calculate aggregates
-            case_count = len(cases_list)
-            total_upheld = sum(c['complaints_upheld'] or 0 for c in cases_list)
-            cases_with_upheld = sum(1 for c in cases_list if (c['complaints_upheld'] or 0) > 0)
+            case_count_from_table = len(cases_list)
+            
+            # Check if enriched values already imported (authoritative source)
+            # These come from factors_enriched.csv and may include cases with date issues
+            existing = conn.execute(
+                "SELECT tribunal_case_count, tribunal_cases_upheld FROM factors WHERE registration_number = ?", [pf]
+            ).fetchone()
+            
+            # Get enriched values (0 if not set)
+            enriched_count = existing['tribunal_case_count'] if existing else 0
+            enriched_upheld = existing['tribunal_cases_upheld'] if existing else 0
+            
+            # Debug for James Gibb
+            if pf == 'PF000103':
+                LOG.info(f"  Step 7 - James Gibb: table={case_count_from_table}, enriched_count={enriched_count}, enriched_upheld={enriched_upheld}")
+            
+            # Use enriched if available and > 0, otherwise calculate
+            if enriched_count and enriched_count > 0:
+                case_count = enriched_count
+            else:
+                case_count = case_count_from_table
+            
+            if enriched_upheld and enriched_upheld > 0:
+                cases_with_upheld = enriched_upheld
+            else:
+                cases_with_upheld = sum(1 for c in cases_list if is_adverse_outcome(c.get('outcome')))
+            
             has_enforcement = any(c['pfeo_issued'] for c in cases_list)
             total_compensation = sum(c['compensation_awarded'] or 0 for c in cases_list)
             pfeo_count = sum(1 for c in cases_list if c['pfeo_issued'])
@@ -1896,10 +2146,9 @@ Based on the data provided, create 3-5 bullet points summarising the key facts a
 
 Guidelines:
 - State facts, not opinions (e.g. "45 tribunal cases since 2012" not "troubled history")
-- Include specific numbers where available (ratings, case counts, fees)
+- Include specific numbers where available (ratings, case counts)
 - Note patterns from tribunal cases if data exists (e.g. "Most common complaints relate to communication and fees")
 - Mention review ratings and volume without characterising them as good/bad
-- Include fee information if available
 - If data is limited, simply note what is known
 
 Avoid:
@@ -1907,6 +2156,8 @@ Avoid:
 - Recommendations ("consider alternatives", "proceed with caution")  
 - Speculation beyond the data provided
 - Emotional language
+- Inferring "primary" or "main" operating areas from coverage lists - these are alphabetical and do not indicate where most properties are located
+- Mentioning fee amounts (this data may be unreliable)
 
 Return JSON in this exact format:
 {
@@ -1984,7 +2235,7 @@ def build_factor_context(conn, factor: dict) -> dict:
         ).fetchone()[0]
         
         pfeo_count = sum(1 for c in cases if c['pfeo_issued'])
-        upheld_count = sum(1 for c in cases if c['outcome'] and 'upheld' in c['outcome'].lower() and 'not' not in c['outcome'].lower())
+        upheld_count = sum(1 for c in cases if is_adverse_outcome(c.get('outcome')))
         
         # Extract complaint categories
         all_categories = []
@@ -2071,46 +2322,23 @@ def build_factor_context(conn, factor: dict) -> dict:
     else:
         context["reviews"] = {"message": "No reviews found"}
     
-    # WSS fee data
+    # WSS link only (no fee data - too unreliable)
     wss = conn.execute("""
-        SELECT management_fee_amount, insurance_admin_fee, late_penalty,
-               response_time_emergency, response_time_routine
+        SELECT registration_number
         FROM wss
         WHERE registration_number = ?
     """, [pf]).fetchone()
     
     if wss:
-        context["fees_wss"] = {
-            "management_fee": wss['management_fee_amount'],
-            "insurance_admin": wss['insurance_admin_fee'],
-            "late_penalty": wss['late_penalty'],
-            "emergency_response": wss['response_time_emergency'],
-            "routine_response": wss['response_time_routine']
-        }
+        context["wss_available"] = True
     
-    # Tribunal fee examples
-    try:
-        case_fees = conn.execute("""
-            SELECT fee_type, amount, frequency
-            FROM case_fees
-            WHERE factor_registration_number = ?
-              AND amount > 0 AND amount < 1000
-            ORDER BY fee_type
-            LIMIT 6
-        """, [pf]).fetchall()
-        
-        if case_fees:
-            context["fees_tribunal"] = [
-                {"type": f['fee_type'], "amount": f['amount'], "frequency": f['frequency']}
-                for f in case_fees
-            ]
-    except:
-        pass
+    # Note: Fee data (fees_wss, fees_tribunal) deliberately excluded from AI context
+    # as values are unreliable and should not be mentioned in summaries
     
     # Company info
     company = conn.execute("""
-        SELECT company_name, company_number, incorporation_date, company_status
-        FROM companies_house
+        SELECT company_name, company_number, incorporated_date, company_status
+        FROM companies
         WHERE registration_number = ?
     """, [pf]).fetchone()
     
@@ -2118,7 +2346,7 @@ def build_factor_context(conn, factor: dict) -> dict:
         context["company"] = {
             "name": company['company_name'],
             "number": company['company_number'],
-            "incorporated": company['incorporation_date'],
+            "incorporated": company['incorporated_date'],
             "status": company['company_status']
         }
     
@@ -2250,9 +2478,10 @@ def generate_factor_profiles(conn, env, output_dir: Path) -> int:
         pf = profile['registration_number']
         
         # Get WSS data
-        wss = conn.execute(
+        wss_row = conn.execute(
             "SELECT * FROM wss WHERE registration_number = ?", [pf]
         ).fetchone()
+        wss = dict(wss_row) if wss_row else None
         
         # Get recent reviews (includes aggregate records without individual text)
         reviews = conn.execute("""
@@ -2263,30 +2492,46 @@ def generate_factor_profiles(conn, env, output_dir: Path) -> int:
         
         # Get Google locations (aggregate records for each place_id)
         # These are the location-level summaries, not individual reviews
+        # GROUP BY source_id to deduplicate in case of multiple records per place
         google_locations_raw = conn.execute("""
             SELECT 
                 source_id as place_id,
-                rating,
-                review_count,
-                author_name as name
+                MAX(rating) as rating,
+                MAX(review_count) as review_count,
+                MAX(author_name) as name
             FROM reviews 
             WHERE factor_registration_number = ?
               AND platform = 'google'
               AND review_text IS NULL
               AND review_count > 1
+            GROUP BY source_id
             ORDER BY review_count DESC
         """, [pf]).fetchall()
         google_locations = [dict(loc) for loc in google_locations_raw]
         
         # Get primary Google place for contact info (highest review count)
+        # Also include phone/address from factor profile as fallback
         google_places = None
-        if google_locations:
-            primary = google_locations[0]
+        if google_locations or profile.get('phone') or profile.get('address'):
+            primary = google_locations[0] if google_locations else {}
+            
+            # Build full address from profile if available
+            address_parts = []
+            if profile.get('address'):
+                address_parts.append(profile['address'])
+            if profile.get('city'):
+                address_parts.append(profile['city'])
+            if profile.get('postcode'):
+                address_parts.append(profile['postcode'])
+            full_address = ', '.join(address_parts) if address_parts else None
+            
             google_places = {
                 'place_id': primary.get('place_id'),
                 'rating': primary.get('rating'),
                 'review_count': primary.get('review_count'),
                 'name': primary.get('name'),
+                'phone': profile.get('phone'),
+                'address': full_address,
             }
         
         # Get Trustpilot URL
@@ -2304,11 +2549,12 @@ def generate_factor_profiles(conn, env, output_dir: Path) -> int:
             trustpilot = dict(trustpilot_row)
         
         # Get tribunal cases
-        cases = conn.execute("""
+        cases_raw = conn.execute("""
             SELECT * FROM tribunal_cases 
             WHERE factor_registration_number = ?
             ORDER BY decision_date DESC
         """, [pf]).fetchall()
+        cases = [dict(c) for c in cases_raw]  # Convert to dicts for .get() access
         
         # Get fee examples from tribunal cases with reasonable bounds
         # Group by fee type and show representative examples
@@ -2439,22 +2685,37 @@ def generate_factor_profiles(conn, env, output_dir: Path) -> int:
             case_fees = []
         
         # Calculate tribunal stats
+        # Use enriched values from factors table (imported from factors_enriched.csv)
+        # These are authoritative and include cases that may have date issues in tribunal_cases table
+        enriched_case_count = profile.get('tribunal_case_count') or 0
+        enriched_upheld = profile.get('tribunal_cases_upheld') or 0
+        
+        # Debug for James Gibb
+        if pf == 'PF000103':
+            LOG.info(f"  Step 9 - James Gibb: enriched_case_count={enriched_case_count}, enriched_upheld={enriched_upheld}")
+        
+        # Calculate from tribunal_cases for cases with valid dates (for chart/details)
         cutoff_5y = (datetime.now().year - 5)
         cases_5y = [c for c in cases if c['decision_date'] and c['decision_date'][:4].isdigit() and int(c['decision_date'][:4]) >= cutoff_5y]
         
-        tribunal_last_5_years = {
-            'case_count': len(cases_5y),
-            'pfeo_count': sum(1 for c in cases_5y if c['pfeo_issued']),
-            'compensation': sum(c['compensation_awarded'] or 0 for c in cases_5y),
-            'rate_per_10k': profile['tribunal_rate_per_10k'],
-            'complaints_upheld_pct': None,
-        }
+        # For display: use enriched if available, otherwise calculated
+        if enriched_case_count > 0:
+            case_count_5y = enriched_case_count
+            adverse_5y = enriched_upheld
+        else:
+            case_count_5y = len(cases_5y)
+            adverse_5y = sum(1 for c in cases_5y if is_adverse_outcome(c.get('outcome')))
         
-        if cases_5y:
-            total_made = sum(c['complaints_made'] or 0 for c in cases_5y)
-            total_upheld = sum(c['complaints_upheld'] or 0 for c in cases_5y)
-            if total_made > 0:
-                tribunal_last_5_years['complaints_upheld_pct'] = (total_upheld / total_made) * 100
+        tribunal_last_5_years = {
+            'case_count': case_count_5y,
+            'pfeo_count': sum(1 for c in cases_5y if c['pfeo_issued']) if cases_5y else (profile.get('tribunal_pfeo_count') or 0),
+            'compensation': sum(c['compensation_awarded'] or 0 for c in cases_5y) if cases_5y else (profile.get('tribunal_total_compensation') or 0),
+            'rate_per_10k': profile['tribunal_rate_per_10k'],
+            'upheld': adverse_5y if case_count_5y > 0 else None,
+            'upheld_count': adverse_5y if case_count_5y > 0 else None,
+            'adverse_outcome_pct': (adverse_5y / case_count_5y * 100) if case_count_5y > 0 else None,
+            'complaints_upheld_pct': (adverse_5y / case_count_5y * 100) if case_count_5y > 0 else None,
+        }
         
         first_case_year = None
         if cases:
@@ -2469,6 +2730,36 @@ def generate_factor_profiles(conn, env, output_dir: Path) -> int:
             'first_case_year': first_case_year,
         }
         
+        # Calculate cases_by_year for trend chart (always show last 5 years)
+        cases_by_year = []
+        current_year = datetime.now().year
+        # Initialize all 5 years with 0 cases
+        year_data = {y: {'year': y, 'cases': 0, 'pfeos': 0} for y in range(current_year - 4, current_year + 1)}
+        
+        if cases:
+            for c in cases:
+                if c['decision_date'] and len(c['decision_date']) >= 4 and c['decision_date'][:4].isdigit():
+                    year = int(c['decision_date'][:4])
+                    if year in year_data:  # Only count if within our 5-year window
+                        year_data[year]['cases'] += 1
+                        if c['pfeo_issued']:
+                            year_data[year]['pfeos'] += 1
+        
+        # Sort by year and convert to list
+        cases_by_year = [year_data[y] for y in sorted(year_data.keys())]
+        
+        # Calculate complaint_categories from cases
+        complaint_categories = {}
+        for c in cases:
+            if c.get('complaint_categories'):
+                try:
+                    cats = json.loads(c['complaint_categories']) if isinstance(c['complaint_categories'], str) else c['complaint_categories']
+                    if isinstance(cats, list):
+                        for cat in cats:
+                            complaint_categories[cat] = complaint_categories.get(cat, 0) + 1
+                except:
+                    pass
+        
         # Parse at_a_glance JSON
         at_a_glance = None
         if profile['at_a_glance']:
@@ -2479,28 +2770,43 @@ def generate_factor_profiles(conn, env, output_dir: Path) -> int:
         
         # Render template
         try:
+            # Build registry URL
+            registry_url = f"https://www.propertyfactorregister.gov.scot/property-factor/{pf}"
+            
+            # Split coverage areas into list for template (handles comma-separated string)
+            coverage_areas_list = []
+            if profile.get('coverage_areas'):
+                coverage_areas_list = [a.strip() for a in profile['coverage_areas'].split(',') if a.strip()]
+            
+            # Only pass WSS PDF URL (no fee details - removing fee info to reduce risk)
+            wss_url = None
+            if wss and wss.get('document_url'):
+                wss_url = wss['document_url']  # Actual PDF URL from our WSS scrape
+            
             html = template.render(
                 profile=profile,
                 at_a_glance=at_a_glance,
-                wss=dict(wss) if wss else None,
+                wss=None,  # Fee data removed - use wss_url instead
+                wss_url=wss_url,
                 recent_reviews=[dict(r) for r in reviews],
                 google_places=google_places,
                 google_locations=google_locations,
                 trustpilot=trustpilot,
                 fee_examples=[],
                 fee_summary=None,
-                case_fees=case_fees,
+                case_fees=[],  # Fee data removed
+                registry_url=registry_url,
+                coverage_areas_list=coverage_areas_list,
                 tribunal_last_5_years=tribunal_last_5_years,
                 tribunal_full_history=tribunal_full_history,
-                cases_by_year=[],
+                cases_by_year=cases_by_year,
                 recent_cases=[dict(c) for c in cases[:5]],
-                complaint_categories={},
+                complaint_categories=complaint_categories,
                 similar_factors=[],
                 timeline_events=[],
                 generated_date=datetime.now().strftime('%Y-%m-%d'),
                 reviews_updated=datetime.now().strftime('%Y-%m-%d'),
                 tribunal_updated=datetime.now().strftime('%Y-%m-%d'),
-                current_year=datetime.now().year,
             )
             
             factor_dir = output_dir / pf.lower()
@@ -2645,7 +2951,7 @@ def generate_factor_tribunal_pages(conn, env, factors_dir: Path) -> int:
             
             # Calculate comprehensive stats
             total_cases = len(cases)
-            upheld_count = sum(1 for c in cases if c.get('outcome') in ['Upheld', 'Partially Upheld'] or (c.get('complaints_upheld') and c.get('complaints_upheld') > 0))
+            upheld_count = sum(1 for c in cases if is_adverse_outcome(c.get('outcome')))
             upheld_rate = round((upheld_count / total_cases * 100) if total_cases > 0 else 0, 0)
             
             pfeo_count = sum(1 for c in cases if c.get('pfeo_issued'))
@@ -3088,6 +3394,8 @@ def generate_factors_directory(conn, factors_dir: Path) -> int:
     html = f'''<!DOCTYPE html>
 <html lang="en-GB">
 <head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P9QSNCJEBQ"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','G-P9QSNCJEBQ');</script>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -3122,8 +3430,6 @@ function filterAndSort(){{const search=searchInput.value.toLowerCase(),risk=risk
 filterAndSort();searchInput.addEventListener('input',filterAndSort);riskFilter.addEventListener('change',filterAndSort);sortFilter.addEventListener('change',filterAndSort);includeExpired.addEventListener('change',filterAndSort);includeRsl.addEventListener('change',filterAndSort);
 </script>
 {SHARED_SCRIPTS}
-{COOKIE_CONSENT_HTML}
-{COOKIE_CONSENT_JS}
 </body>
 </html>'''
     
@@ -3189,29 +3495,6 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 .footer-bottom{padding-top:24px;border-top:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;color:rgba(255,255,255,0.5)}.footer-bottom a{color:rgba(255,255,255,0.5)}.footer-bottom a:hover{color:white}
 @media(max-width:768px){.nav{display:none}.burger{display:flex}.footer-grid{grid-template-columns:1fr 1fr;gap:32px}.footer-bottom{flex-direction:column;gap:8px;text-align:center}.stats-bar{gap:24px}.filters-bar{flex-direction:column;align-items:stretch}.filter-divider{display:none}.page-title{font-size:1.75rem}}
 @media(max-width:480px){.header-inner{padding:0 16px}.main-content{padding:0 16px var(--space-xl)}.footer-grid{grid-template-columns:1fr;gap:24px}.factor-grid{grid-template-columns:1fr}.area-grid{grid-template-columns:1fr}}
-.cf-cookie-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.4);backdrop-filter:blur(2px);z-index:9998;opacity:0;visibility:hidden;transition:opacity 0.3s,visibility 0.3s}.cf-cookie-overlay.active{opacity:1;visibility:visible}
-.cf-cookie-banner{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--slate-200);box-shadow:0 -4px 20px rgba(0,0,0,0.1);z-index:9999;transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.16,1,0.3,1)}.cf-cookie-banner.active{transform:translateY(0)}
-.cf-cookie-inner{max-width:1200px;margin:0 auto;padding:1.5rem}
-.cf-cookie-title{display:flex;align-items:center;gap:0.625rem;margin:0 0 1rem;font-size:1.125rem;font-weight:600;color:var(--navy-950)}.cf-cookie-icon{width:24px;height:24px;flex-shrink:0}
-.cf-cookie-text{font-size:0.9375rem;line-height:1.6;color:var(--navy-800);margin:0 0 1.25rem}.cf-cookie-text a{color:var(--blue-600);text-decoration:underline}
-.cf-cookie-actions{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center}
-.cf-btn{padding:0.75rem 1.5rem;font-size:0.9375rem;font-weight:500;border-radius:8px;cursor:pointer;border:none;font-family:inherit;transition:all 0.2s}
-.cf-btn-accept{background:var(--green-600);color:#fff}.cf-btn-accept:hover{background:var(--green-700)}
-.cf-btn-reject{background:#fff;color:var(--navy-800);border:1.5px solid var(--slate-200)}.cf-btn-reject:hover{background:var(--slate-50)}
-.cf-btn-settings{background:transparent;color:var(--slate-500);text-decoration:underline}.cf-btn-settings:hover{color:var(--navy-800)}
-.cf-cookie-settings{display:none;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--slate-200)}.cf-cookie-settings.active{display:block}
-.cf-settings-title{font-size:1rem;font-weight:600;color:var(--navy-950);margin:0 0 1rem}
-.cf-cookie-category{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1rem;background:var(--slate-50);border-radius:8px;margin-bottom:0.75rem}
-.cf-category-info{flex:1}.cf-category-name{font-weight:600;color:var(--navy-800);margin:0 0 0.25rem;font-size:0.9375rem}.cf-category-desc{font-size:0.8125rem;color:var(--slate-500);margin:0;line-height:1.5}
-.cf-toggle{position:relative;flex-shrink:0}.cf-toggle input{position:absolute;opacity:0;width:0;height:0}
-.cf-toggle-slider{display:block;width:48px;height:26px;background:var(--slate-300);border-radius:13px;cursor:pointer;transition:background 0.2s;position:relative}
-.cf-toggle-slider::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.15)}
-.cf-toggle input:checked+.cf-toggle-slider{background:var(--green-600)}.cf-toggle input:checked+.cf-toggle-slider::after{transform:translateX(22px)}
-.cf-toggle input:disabled+.cf-toggle-slider{background:var(--green-600);opacity:0.6;cursor:not-allowed}
-.cf-required-badge{display:inline-block;font-size:0.6875rem;font-weight:500;text-transform:uppercase;color:var(--slate-500);background:var(--slate-200);padding:0.125rem 0.5rem;border-radius:4px;margin-left:0.5rem}
-.cf-btn-save{background:var(--navy-950);color:#fff}.cf-btn-save:hover{background:var(--navy-800)}
-.cf-cookie-settings-btn{position:fixed;bottom:20px;left:20px;width:44px;height:44px;background:var(--navy-950);border:none;border-radius:50%;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.15);z-index:9990;display:none;align-items:center;justify-content:center;transition:transform 0.2s,background 0.2s}.cf-cookie-settings-btn:hover{background:var(--navy-800);transform:scale(1.05)}.cf-cookie-settings-btn svg{width:22px;height:22px;color:#fff}.cf-cookie-settings-btn.active{display:flex}
-@media(max-width:640px){.cf-cookie-inner{padding:1.25rem}.cf-cookie-actions{flex-direction:column;width:100%}.cf-btn{width:100%;text-align:center}.cf-btn-settings{order:3}.cf-cookie-category{flex-direction:column;gap:0.75rem}.cf-toggle{align-self:flex-start}}
 '''
 
 SHARED_HEADER = '''<header class="site-header">
@@ -3266,65 +3549,10 @@ def get_shared_footer(generated_date: str) -> str:
         </div>
         <div class="footer-bottom">
             <div>© 2026 Compare Factors. Not affiliated with the Scottish Government.</div>
-            <div><a href="/privacy/">Privacy</a> · <a href="/cookie-policy/">Cookies</a> · <a href="/terms/">Terms</a></div>
+            <div><a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></div>
         </div>
     </div>
 </footer>'''
-
-# Cookie Consent HTML
-COOKIE_CONSENT_HTML = '''
-<div class="cf-cookie-overlay" id="cfCookieOverlay"></div>
-<div class="cf-cookie-banner" id="cfCookieBanner" role="dialog" aria-modal="true" aria-labelledby="cfCookieTitle">
-    <div class="cf-cookie-inner">
-        <h2 class="cf-cookie-title" id="cfCookieTitle">
-            <svg class="cf-cookie-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="8" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="8" r="1" fill="currentColor"/><circle cx="10" cy="14" r="1" fill="currentColor"/><circle cx="16" cy="13" r="1" fill="currentColor"/><circle cx="13" cy="17" r="1" fill="currentColor"/></svg>
-            We value your privacy
-        </h2>
-        <p class="cf-cookie-text">We use cookies to improve your experience and analyse site traffic. You can choose which cookies you're happy with. Read our <a href="/privacy/">Privacy Policy</a> and <a href="/cookie-policy/">Cookie Policy</a> to learn more.</p>
-        <div class="cf-cookie-actions">
-            <button type="button" class="cf-btn cf-btn-accept" id="cfAcceptAll">Accept all cookies</button>
-            <button type="button" class="cf-btn cf-btn-reject" id="cfRejectAll">Reject non-essential</button>
-            <button type="button" class="cf-btn cf-btn-settings" id="cfShowSettings">Manage preferences</button>
-        </div>
-        <div class="cf-cookie-settings" id="cfCookieSettings">
-            <h3 class="cf-settings-title">Cookie preferences</h3>
-            <div class="cf-cookie-category">
-                <div class="cf-category-info"><p class="cf-category-name">Essential cookies<span class="cf-required-badge">Always on</span></p><p class="cf-category-desc">Required for the website to function properly.</p></div>
-                <label class="cf-toggle"><input type="checkbox" checked disabled><span class="cf-toggle-slider"></span></label>
-            </div>
-            <div class="cf-cookie-category">
-                <div class="cf-category-info"><p class="cf-category-name">Analytics cookies</p><p class="cf-category-desc">Help us understand how visitors use our site. Data is anonymised.</p></div>
-                <label class="cf-toggle"><input type="checkbox" id="cfAnalyticsCookies"><span class="cf-toggle-slider"></span></label>
-            </div>
-            <div class="cf-cookie-category">
-                <div class="cf-category-info"><p class="cf-category-name">Marketing cookies</p><p class="cf-category-desc">Used to show relevant content and measure advertising effectiveness.</p></div>
-                <label class="cf-toggle"><input type="checkbox" id="cfMarketingCookies"><span class="cf-toggle-slider"></span></label>
-            </div>
-            <div class="cf-cookie-actions"><button type="button" class="cf-btn cf-btn-save" id="cfSavePreferences">Save preferences</button></div>
-        </div>
-    </div>
-</div>
-<button type="button" class="cf-cookie-settings-btn" id="cfFloatingSettings" aria-label="Cookie settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="8" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="8" r="1" fill="currentColor"/><circle cx="10" cy="14" r="1" fill="currentColor"/></svg></button>
-'''
-
-# Cookie Consent JavaScript (minified)
-COOKIE_CONSENT_JS = '''<script>
-(function(){var COOKIE_NAME='cf_cookie_consent',VERSION='1.0',EXPIRY=365;var banner=document.getElementById('cfCookieBanner'),overlay=document.getElementById('cfCookieOverlay'),settings=document.getElementById('cfCookieSettings'),floatBtn=document.getElementById('cfFloatingSettings'),acceptBtn=document.getElementById('cfAcceptAll'),rejectBtn=document.getElementById('cfRejectAll'),showSettingsBtn=document.getElementById('cfShowSettings'),saveBtn=document.getElementById('cfSavePreferences'),analyticsToggle=document.getElementById('cfAnalyticsCookies'),marketingToggle=document.getElementById('cfMarketingCookies');
-function getConsent(){try{var c=document.cookie.split('; ').find(function(r){return r.startsWith(COOKIE_NAME+'=')});if(c){var v=JSON.parse(decodeURIComponent(c.split('=')[1]));if(v.version===VERSION)return v}}catch(e){}return null}
-function setConsent(p){var v={version:VERSION,timestamp:new Date().toISOString(),essential:true,analytics:p.analytics||false,marketing:p.marketing||false};var exp=new Date();exp.setDate(exp.getDate()+EXPIRY);document.cookie=COOKIE_NAME+'='+encodeURIComponent(JSON.stringify(v))+'; expires='+exp.toUTCString()+'; path=/; SameSite=Lax; Secure';window.dispatchEvent(new CustomEvent('cfConsentUpdated',{detail:v}));return v}
-function showBanner(){banner.classList.add('active');overlay.classList.add('active');floatBtn.classList.remove('active');document.body.style.overflow='hidden'}
-function hideBanner(){banner.classList.remove('active');overlay.classList.remove('active');settings.classList.remove('active');floatBtn.classList.add('active');document.body.style.overflow=''}
-function loadScripts(c){if(c.analytics&&!window.cfGA4Loaded){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=G-P9QSNCJEBQ';s.onload=function(){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}window.gtag=gtag;gtag('js',new Date());gtag('config','G-P9QSNCJEBQ',{anonymize_ip:true})};document.head.appendChild(s);window.cfGA4Loaded=true}}
-function removeNonEssential(c){c=c||{analytics:false,marketing:false};var cookies=['_ga','_gid','_gat','_fbp','_fbc','_gcl_au'];document.cookie.split(';').forEach(function(ck){var n=ck.split('=')[0].trim();if(cookies.some(function(p){return n===p||n.startsWith(p+'_')})){document.cookie=n+'=;expires=Thu,01 Jan 1970 00:00:00 GMT;path=/';document.cookie=n+'=;expires=Thu,01 Jan 1970 00:00:00 GMT;path=/;domain='+location.hostname}})}
-function init(){var c=getConsent();if(c){floatBtn.classList.add('active');analyticsToggle.checked=c.analytics;marketingToggle.checked=c.marketing;loadScripts(c)}else{showBanner()}
-acceptBtn.addEventListener('click',function(){var c=setConsent({analytics:true,marketing:true});hideBanner();loadScripts(c)});
-rejectBtn.addEventListener('click',function(){setConsent({analytics:false,marketing:false});hideBanner();removeNonEssential()});
-showSettingsBtn.addEventListener('click',function(){settings.classList.toggle('active');showSettingsBtn.textContent=settings.classList.contains('active')?'Hide preferences':'Manage preferences'});
-saveBtn.addEventListener('click',function(){var c=setConsent({analytics:analyticsToggle.checked,marketing:marketingToggle.checked});hideBanner();loadScripts(c);if(!c.analytics||!c.marketing)removeNonEssential(c)});
-floatBtn.addEventListener('click',function(){var c=getConsent();if(c){analyticsToggle.checked=c.analytics;marketingToggle.checked=c.marketing}showBanner()})}
-window.cfCookieConsent={getConsent:getConsent,hasAnalyticsConsent:function(){var c=getConsent();return c?c.analytics:false},hasMarketingConsent:function(){var c=getConsent();return c?c.marketing:false},showBanner:showBanner};
-if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init)}else{init()}})();
-</script>'''
 
 SHARED_SCRIPTS = '''<script>function toggleMenu(){document.querySelector('.burger').classList.toggle('active');document.getElementById('mobileNav').classList.toggle('active')}</script>'''
 
@@ -3456,6 +3684,8 @@ def generate_area_pages(conn, areas_dir: Path) -> int:
         html = f'''<!DOCTYPE html>
 <html lang="en-GB">
 <head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P9QSNCJEBQ"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','G-P9QSNCJEBQ');</script>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -3490,8 +3720,6 @@ function filterAndSort(){{const search=searchInput.value.toLowerCase(),risk=risk
 filterAndSort();searchInput.addEventListener('input',filterAndSort);riskFilter.addEventListener('change',filterAndSort);sortFilter.addEventListener('change',filterAndSort);includeExpired.addEventListener('change',filterAndSort);includeRsl.addEventListener('change',filterAndSort);
 </script>
 {SHARED_SCRIPTS}
-{COOKIE_CONSENT_HTML}
-{COOKIE_CONSENT_JS}
 </body>
 </html>'''
         
@@ -3562,6 +3790,8 @@ def generate_areas_index(conn, areas_dir: Path) -> int:
     html = f'''<!DOCTYPE html>
 <html lang="en-GB">
 <head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P9QSNCJEBQ"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','G-P9QSNCJEBQ');</script>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -3587,8 +3817,6 @@ def generate_areas_index(conn, areas_dir: Path) -> int:
 </div>
 {get_shared_footer(generated_date)}
 {SHARED_SCRIPTS}
-{COOKIE_CONSENT_HTML}
-{COOKIE_CONSENT_JS}
 </body>
 </html>'''
     
@@ -3685,6 +3913,8 @@ def generate_comparison_page(conn, site_dir: Path) -> bool:
     html = f'''<!DOCTYPE html>
 <html lang="en-GB">
 <head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P9QSNCJEBQ"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','G-P9QSNCJEBQ');</script>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -3788,8 +4018,6 @@ document.getElementById('factor2').addEventListener('change',updateComparison);
 document.getElementById('factor3').addEventListener('change',updateComparison);
 </script>
 {SHARED_SCRIPTS}
-{COOKIE_CONSENT_HTML}
-{COOKIE_CONSENT_JS}
 </body>
 </html>'''
     
@@ -3805,18 +4033,14 @@ document.getElementById('factor3').addEventListener('change',updateComparison);
 def generate_homepage(conn, site_dir: Path) -> bool:
     """Generate the homepage with dynamic counts and tribunal hotspots."""
     
-    # Get counts - all actively registered factors in Scotland (including RSL/Local Authority)
+    # Get counts
     active_factors = conn.execute("""
-        SELECT COUNT(*) FROM factors 
-        WHERE status='registered'
-    """).fetchone()[0]
-    
-    # Commercial factors only (excludes Housing Associations and Local Authorities)
-    commercial_factors = conn.execute("""
         SELECT COUNT(*) FROM factors 
         WHERE status='registered' 
         AND (factor_type IS NULL OR factor_type NOT IN ('Housing Association', 'Local Authority'))
     """).fetchone()[0]
+    
+    total_factors = conn.execute("SELECT COUNT(*) FROM factors WHERE status='registered'").fetchone()[0]
     tribunal_cases = conn.execute("SELECT COUNT(*) FROM tribunal_cases").fetchone()[0]
     total_reviews = conn.execute("SELECT COUNT(*) FROM reviews").fetchone()[0]
     
@@ -3875,6 +4099,8 @@ def generate_homepage(conn, site_dir: Path) -> bool:
     html = f'''<!DOCTYPE html>
 <html lang="en-GB">
 <head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P9QSNCJEBQ"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','G-P9QSNCJEBQ');</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -4003,29 +4229,6 @@ body{{font-family:var(--font-body);background:var(--slate-50);color:var(--navy-8
 .footer-bottom{{padding-top:32px;border-top:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;font-size:0.85rem;color:rgba(255,255,255,0.5)}}
 @media(max-width:768px){{.footer-grid{{grid-template-columns:1fr 1fr;gap:32px}}.footer-bottom{{flex-direction:column;gap:8px;text-align:center}}}}
 @media(max-width:480px){{.footer-grid{{grid-template-columns:1fr}}}}
-.cf-cookie-overlay{{position:fixed;inset:0;background:rgba(15,23,42,0.4);backdrop-filter:blur(2px);z-index:9998;opacity:0;visibility:hidden;transition:opacity 0.3s,visibility 0.3s}}.cf-cookie-overlay.active{{opacity:1;visibility:visible}}
-.cf-cookie-banner{{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--slate-200);box-shadow:0 -4px 20px rgba(0,0,0,0.1);z-index:9999;transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.16,1,0.3,1)}}.cf-cookie-banner.active{{transform:translateY(0)}}
-.cf-cookie-inner{{max-width:1200px;margin:0 auto;padding:1.5rem}}
-.cf-cookie-title{{display:flex;align-items:center;gap:0.625rem;margin:0 0 1rem;font-size:1.125rem;font-weight:600;color:var(--navy-950)}}.cf-cookie-icon{{width:24px;height:24px;flex-shrink:0}}
-.cf-cookie-text{{font-size:0.9375rem;line-height:1.6;color:var(--navy-800);margin:0 0 1.25rem}}.cf-cookie-text a{{color:var(--blue-600);text-decoration:underline}}
-.cf-cookie-actions{{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center}}
-.cf-btn{{padding:0.75rem 1.5rem;font-size:0.9375rem;font-weight:500;border-radius:8px;cursor:pointer;border:none;font-family:inherit;transition:all 0.2s}}
-.cf-btn-accept{{background:var(--green-600);color:#fff}}.cf-btn-accept:hover{{background:var(--green-700)}}
-.cf-btn-reject{{background:#fff;color:var(--navy-800);border:1.5px solid var(--slate-200)}}.cf-btn-reject:hover{{background:var(--slate-50)}}
-.cf-btn-settings{{background:transparent;color:var(--slate-500);text-decoration:underline}}.cf-btn-settings:hover{{color:var(--navy-800)}}
-.cf-cookie-settings{{display:none;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--slate-200)}}.cf-cookie-settings.active{{display:block}}
-.cf-settings-title{{font-size:1rem;font-weight:600;color:var(--navy-950);margin:0 0 1rem}}
-.cf-cookie-category{{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1rem;background:var(--slate-50);border-radius:8px;margin-bottom:0.75rem}}
-.cf-category-info{{flex:1}}.cf-category-name{{font-weight:600;color:var(--navy-800);margin:0 0 0.25rem;font-size:0.9375rem}}.cf-category-desc{{font-size:0.8125rem;color:var(--slate-500);margin:0;line-height:1.5}}
-.cf-toggle{{position:relative;flex-shrink:0}}.cf-toggle input{{position:absolute;opacity:0;width:0;height:0}}
-.cf-toggle-slider{{display:block;width:48px;height:26px;background:var(--slate-300);border-radius:13px;cursor:pointer;transition:background 0.2s;position:relative}}
-.cf-toggle-slider::after{{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.15)}}
-.cf-toggle input:checked+.cf-toggle-slider{{background:var(--green-600)}}.cf-toggle input:checked+.cf-toggle-slider::after{{transform:translateX(22px)}}
-.cf-toggle input:disabled+.cf-toggle-slider{{background:var(--green-600);opacity:0.6;cursor:not-allowed}}
-.cf-required-badge{{display:inline-block;font-size:0.6875rem;font-weight:500;text-transform:uppercase;color:var(--slate-500);background:var(--slate-200);padding:0.125rem 0.5rem;border-radius:4px;margin-left:0.5rem}}
-.cf-btn-save{{background:var(--navy-950);color:#fff}}.cf-btn-save:hover{{background:var(--navy-800)}}
-.cf-cookie-settings-btn{{position:fixed;bottom:20px;left:20px;width:44px;height:44px;background:var(--navy-950);border:none;border-radius:50%;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.15);z-index:9990;display:none;align-items:center;justify-content:center;transition:transform 0.2s,background 0.2s}}.cf-cookie-settings-btn:hover{{background:var(--navy-800);transform:scale(1.05)}}.cf-cookie-settings-btn svg{{width:22px;height:22px;color:#fff}}.cf-cookie-settings-btn.active{{display:flex}}
-@media(max-width:640px){{.cf-cookie-inner{{padding:1.25rem}}.cf-cookie-actions{{flex-direction:column;width:100%}}.cf-btn{{width:100%;text-align:center}}.cf-btn-settings{{order:3}}.cf-cookie-category{{flex-direction:column;gap:0.75rem}}.cf-toggle{{align-self:flex-start}}}}
 </style>
 </head>
 <body>
@@ -4217,9 +4420,6 @@ function toggleMenu(){{document.querySelector('.burger').classList.toggle('activ
     searchBtn.addEventListener('click',handleSearch);searchInput.addEventListener('keypress',function(e){{if(e.key==='Enter')handleSearch()}});
 }})();
 </script>
-{SHARED_SCRIPTS}
-{COOKIE_CONSENT_HTML}
-{COOKIE_CONSENT_JS}
 </body>
 </html>'''
     
@@ -4313,6 +4513,26 @@ def step_9_generate_site():
     factors_dir.mkdir(parents=True, exist_ok=True)
     tribunal_dir.mkdir(parents=True, exist_ok=True)
     areas_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Copy static assets (CSS, JS, images)
+    static_src = Path("static")
+    static_dest = CONFIG.site_dir / "static"
+    if static_src.exists():
+        try:
+            static_dest.mkdir(parents=True, exist_ok=True)
+            # Copy files individually to handle locked files gracefully
+            for src_file in static_src.rglob("*"):
+                if src_file.is_file():
+                    rel_path = src_file.relative_to(static_src)
+                    dest_file = static_dest / rel_path
+                    dest_file.parent.mkdir(parents=True, exist_ok=True)
+                    try:
+                        shutil.copy2(src_file, dest_file)
+                    except PermissionError:
+                        LOG.warning(f"Skipped locked file: {rel_path}")
+            LOG.success(f"Copied static assets to {static_dest}")
+        except Exception as e:
+            LOG.warning(f"Could not copy static assets: {e}")
     
     with get_db() as conn:
         # 1. Factor profiles
@@ -4416,7 +4636,7 @@ def step_10_validate():
             LOG.info(f"Factors with At a Glance: {with_summary}")
             
             # Risk distribution
-            LOG.info("Risk band distribution (v2.9):")
+            LOG.info("Risk band distribution (v3.2):")
             cursor = conn.execute("""
                 SELECT risk_band, COUNT(*) as cnt,
                        ROUND(AVG(tribunal_composite_score), 2) as avg_score
@@ -4457,7 +4677,7 @@ def step_10_validate():
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Compare Factors Scotland - Master Pipeline v2.11",
+        description="Compare Factors Scotland - Master Pipeline v3.2",
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
     
@@ -4493,8 +4713,9 @@ def main():
     reset_db = args.full
     
     print("\n" + "="*70)
-    print("COMPARE FACTORS SCOTLAND - MASTER PIPELINE v2.11")
-    print("Template inheritance: factor_profile.html now extends base.html")
+    print("COMPARE FACTORS SCOTLAND - MASTER PIPELINE v3.2")
+    print("Fee data removed from AI/template. Registry URLs use specific PF page format.")
+    print("Coverage areas passed as list. AI won't infer 'primary' areas from alphabetical list.")
     print("="*70)
     print(f"Project root: {CONFIG.project_root}")
     print(f"Database: {CONFIG.db_path}")
@@ -4512,8 +4733,8 @@ def main():
             4: "Import Review Data",
             5: "Import Companies House Data",
             6: "Import WSS Data",
-            7: "Calculate Scores & Risk Bands (v2.9 - Refined PFEO Logic)",
-            8: "Generate AI Summaries",
+            7: "Calculate Scores & Risk Bands (v3.2 - PFEO Breached Distinction)",
+            8: "Generate AI Summaries (no fee data)",
             9: "Generate Static Site",
             10: "Validate Output",
         }

@@ -13,6 +13,8 @@ FIXES IN THIS VERSION:
   - Incremental scraping: only downloads new cases not previously grabbed
   - Higher fuzzy match threshold (90% instead of 85%)
   - Weighted average scoring instead of max (more conservative)
+  - Deduplicates URLs for combined cases (no more duplicate URL | URL)
+  - Default 5-year filter (2021+) - older cases skipped unless --all-years
 
 SOURCE:  https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions
 
@@ -26,11 +28,17 @@ OUTPUTS:
     data/tribunal/pdfs/{PF_NUMBER}/         - Downloaded PDFs (optional)
 
 USAGE:
-    # Basic scrape (incremental - only new cases)
+    # Basic scrape (incremental - only new cases, 2021+)
     python scripts/04_tribunal_scrape.py
 
-    # Force full rescrape
+    # Force full rescrape (2021+)
     python scripts/04_tribunal_scrape.py --force
+
+    # Include all years (pre-2021 too)
+    python scripts/04_tribunal_scrape.py --all-years
+
+    # Only 2023+ cases
+    python scripts/04_tribunal_scrape.py --min-year 2023
 
     # With PDF downloads
     python scripts/04_tribunal_scrape.py --download-pdfs
@@ -90,14 +98,23 @@ BLOCKED_NORMALIZED_NAMES = {
 MIN_NAME_LENGTH = 4
 
 # Outcome classification
+# POSITIVE = factor was NOT found at fault
+# NEGATIVE = factor was found at fault
+# NEUTRAL = ambiguous / can't determine
 NEGATIVE_OUTCOMES = {
-    "PFEO Issued", "PFEO Issued - Non-Compliant", "PFEO Proposed",
-    "Failure to Comply", "Decision Issued"
+    "Breach - No Order", "PFEO Proposed", "PFEO Pending",
+    "PFEO Complied", "PFEO Breached"
 }
 POSITIVE_OUTCOMES = {
-    "Complied", "Dismissed", "Rejected", "Withdrawn"
+    "Dismissed", "Rejected"
 }
-# Everything else is "neutral" (Unknown, etc.)
+NEUTRAL_OUTCOMES = {
+    "Withdrawn", "Unknown"
+}
+
+# Year filter - only scrape cases from this year onwards (5-year window)
+# Older cases are less relevant and PDFs may require OCR
+MIN_YEAR = 2021
 
 
 # ============================================================================
@@ -128,10 +145,11 @@ class Decision:
 
 class PropertyFactorsScraper:
     
-    def __init__(self, factors_csv: Path, output_dir: Path, mappings_csv: Path = None):
+    def __init__(self, factors_csv: Path, output_dir: Path, mappings_csv: Path = None, min_year: int = None):
         self.output_dir = output_dir
         self.factors_csv = factors_csv
         self.mappings_csv = mappings_csv or MANUAL_MAPPINGS_CSV
+        self.min_year = min_year  # None = no filter, otherwise skip cases before this year
         self.session = requests.Session()
         self.session.headers.update({
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
@@ -351,7 +369,7 @@ class PropertyFactorsScraper:
         Scrape a single page of decisions.
         
         Returns:
-            (decisions, new_count, skipped_count)
+            (decisions, new_count, skipped_count, skipped_old_count)
         """
         url = f"{DECISIONS_URL}?search_api_fulltext=&page={page_num}"
         print(f"  Scraping page {page_num + 1}...")
@@ -362,10 +380,11 @@ class PropertyFactorsScraper:
         
         decisions = []
         skipped = 0
+        skipped_old = 0
         table = soup.select_one("table.tablesaw")
         if not table:
             print(f"    ⚠️ No table found on page {page_num}")
-            return decisions, 0, 0
+            return decisions, 0, 0, 0
         
         rows = table.select("tbody tr")
         for row in rows:
@@ -378,6 +397,13 @@ class PropertyFactorsScraper:
                         skipped += 1
                         continue
                 
+                # Filter by year if min_year is set
+                if self.min_year:
+                    case_year = self._get_case_year(decision.hearing_date)
+                    if case_year and case_year < self.min_year:
+                        skipped_old += 1
+                        continue
+                
                 # Match to our database
                 reg_num, method = self._match_factor(decision)
                 decision.matched_registration_number = reg_num
@@ -385,12 +411,28 @@ class PropertyFactorsScraper:
                 decisions.append(decision)
         
         matched = sum(1 for d in decisions if d.matched_registration_number)
+        status_parts = [f"Found {len(decisions)} new decisions ({matched} matched)"]
         if skipped > 0:
-            print(f"    Found {len(decisions)} new decisions ({matched} matched), skipped {skipped} existing")
-        else:
-            print(f"    Found {len(decisions)} decisions ({matched} matched)")
+            status_parts.append(f"skipped {skipped} existing")
+        if skipped_old > 0:
+            status_parts.append(f"skipped {skipped_old} pre-{self.min_year}")
+        print(f"    {', '.join(status_parts)}")
         
-        return decisions, len(decisions), skipped
+        return decisions, len(decisions), skipped, skipped_old
+    
+    def _get_case_year(self, hearing_date: str) -> Optional[int]:
+        """Extract year from hearing date string (YYYY-MM-DD or similar)."""
+        if not hearing_date:
+            return None
+        # Try to extract 4-digit year from start of string (ISO format)
+        if len(hearing_date) >= 4 and hearing_date[:4].isdigit():
+            return int(hearing_date[:4])
+        # Try to find any 4-digit year in the string
+        import re
+        match = re.search(r'20\d{2}', hearing_date)
+        if match:
+            return int(match.group())
+        return None
     
     def _parse_row(self, row) -> Optional[Decision]:
         """Parse a single table row into a Decision object."""
@@ -407,7 +449,9 @@ class PropertyFactorsScraper:
             url = urljoin(BASE_URL, link.get("href", ""))
             if ref:
                 decision.case_references.append(ref)
-                decision.case_urls.append(url)
+                # Deduplicate URLs (combined cases share the same URL)
+                if url not in decision.case_urls:
+                    decision.case_urls.append(url)
         
         # Property Factor (column 1)
         decision.property_factor = cells[1].get_text(strip=True)
@@ -455,52 +499,122 @@ class PropertyFactorsScraper:
     
     def _determine_outcome(self, pdf_files: list) -> tuple:
         """
-        Determine the case outcome, PFEO resolution status, and outcome type.
+        Determine the case outcome using a state machine approach.
+        
+        CASE LIFECYCLE:
+        ===============
+        
+        TERMINAL STATES (no breach found):
+          - Dismissed    → positive  (homeowner lost, factor cleared)
+          - Rejected     → positive  (procedural rejection)
+          - Withdrawn    → neutral   (ambiguous - settlement, gave up, etc.)
+        
+        BREACH FOUND - NO ENFORCEMENT:
+          - Breach - No Order → negative (breach confirmed but resolved
+                                          during proceedings or too minor)
+        
+        PFEO STAGE:
+          - PFEO Proposed → negative (warning issued, awaiting response)
+          - PFEO Pending  → negative (order issued, awaiting compliance)
+        
+        RESOLUTION STAGE:
+          - PFEO Complied → negative (had PFEO, eventually fixed)
+          - PFEO Breached → negative (failed to comply with PFEO)
+        
+        We check from END of lifecycle backwards to find the FINAL state.
         """
         filenames = " ".join(p.get("name", "").lower() for p in pdf_files)
         
-        # Determine outcome
-        if "certificate of compliance" in filenames:
-            outcome = "Complied"
-            pfeo_resolved = "resolved"
-        elif "failure to comply with order" in filenames or "failure to comply" in filenames:
-            if "pfeo" in filenames and "proposed" not in filenames:
-                outcome = "PFEO Issued - Non-Compliant"
-            else:
-                outcome = "Failure to Comply"
-            pfeo_resolved = "unresolved"
-        elif "pfeo" in filenames:
-            if "proposed" in filenames:
-                outcome = "PFEO Proposed"
-                pfeo_resolved = "pending"
-            else:
-                outcome = "PFEO Issued"
-                pfeo_resolved = "pending"
-        elif "dismissal" in filenames or "dismissed" in filenames:
-            outcome = "Dismissed"
-            pfeo_resolved = ""
-        elif "reject" in filenames:
-            outcome = "Rejected"
-            pfeo_resolved = ""
-        elif "withdrawn" in filenames:
-            outcome = "Withdrawn"
-            pfeo_resolved = ""
-        elif "decision" in filenames:
-            outcome = "Decision Issued"
-            pfeo_resolved = ""
-        else:
-            outcome = "Unknown"
-            pfeo_resolved = ""
+        # =========================================================
+        # HELPER: Check for patterns with variations
+        # =========================================================
+        def has_pattern(patterns):
+            """Check if any pattern exists in filenames."""
+            return any(p in filenames for p in patterns)
         
-        # Determine outcome type
-        if outcome in NEGATIVE_OUTCOMES:
-            outcome_type = "negative"
-        elif outcome in POSITIVE_OUTCOMES:
-            outcome_type = "positive"
-        else:
-            outcome_type = "neutral"
+        # Pattern groups
+        DISMISSED_PATTERNS = ["dismissal", "dismissed"]
+        REJECTED_PATTERNS = ["reject"]
+        WITHDRAWN_PATTERNS = ["withdrawn", "withdrawal"]
         
-        return outcome, pfeo_resolved, outcome_type
+        # Compliance: certificate/cert of compliance, compliance cert, compliance decision
+        COMPLIANCE_PATTERNS = [
+            "certificate of compliance", "cert of compliance", 
+            "compliance cert", "compliance decision"
+        ]
+        
+        FAILURE_PATTERNS = ["failure to comply"]
+        
+        # PFEO: both acronym and full name
+        PFEO_PATTERNS = ["pfeo", "property factor enforcement order"]
+        PROPOSED_PATTERNS = ["proposed"]
+        
+        DECISION_PATTERNS = ["decision", "written decision"]
+        
+        # =========================================================
+        # STAGE 1: Check for terminal POSITIVE outcomes
+        # =========================================================
+        
+        if has_pattern(DISMISSED_PATTERNS):
+            return "Dismissed", "", "positive"
+        
+        if has_pattern(REJECTED_PATTERNS):
+            return "Rejected", "", "positive"
+        
+        # =========================================================
+        # STAGE 2: Check for NEUTRAL terminal state
+        # =========================================================
+        
+        if has_pattern(WITHDRAWN_PATTERNS):
+            return "Withdrawn", "", "neutral"
+        
+        # =========================================================
+        # STAGE 3: Check RESOLUTION stage (furthest in lifecycle)
+        # =========================================================
+        
+        has_compliance = has_pattern(COMPLIANCE_PATTERNS)
+        has_failure = has_pattern(FAILURE_PATTERNS)
+        has_pfeo = has_pattern(PFEO_PATTERNS)
+        has_proposed = has_pattern(PROPOSED_PATTERNS)
+        
+        if has_compliance:
+            return "PFEO Complied", "resolved", "negative"
+        
+        # "Failure to Comply" docs indicate PFEO was breached
+        # UNLESS it also says "Proposed PFEO" - then they're proposing a PFEO
+        # due to failure to comply with the initial decision
+        if has_failure:
+            # Check context: "failure to comply" + "proposed pfeo" = proposing enforcement
+            # vs "failure to comply" alone or with issued PFEO = breached
+            if has_proposed and has_pfeo:
+                # "Written Decision (Failure to Comply) (Proposed PFEO)" 
+                # = failed to comply with decision, now proposing PFEO
+                return "PFEO Proposed", "proposed", "negative"
+            else:
+                return "PFEO Breached", "breached", "negative"
+        
+        # =========================================================
+        # STAGE 4: Check PFEO stage
+        # =========================================================
+        
+        if has_pfeo:
+            if has_proposed:
+                return "PFEO Proposed", "proposed", "negative"
+            else:
+                return "PFEO Pending", "pending", "negative"
+        
+        # =========================================================
+        # STAGE 5: Check for breach without enforcement
+        # =========================================================
+        
+        if has_pattern(DECISION_PATTERNS):
+            return "Breach - No Order", "", "negative"
+        
+        # =========================================================
+        # UNKNOWN: Can't determine from filenames
+        # =========================================================
+        
+        return "Unknown", "", "neutral"
     
     def scrape_all(self, max_pages: Optional[int] = None, delay: float = 1.0, 
                     batch_size: int = 5, download_pdfs: bool = False, pdf_delay: float = 0.5,
@@ -521,6 +635,9 @@ class PropertyFactorsScraper:
             self.existing_case_refs = set()
             print("🔄 Force mode: will rescrape all cases")
         
+        if self.min_year:
+            print(f"📅 Filtering to cases from {self.min_year} onwards")
+        
         total_pages = self.get_total_pages()
         print(f"Found {total_pages} pages to scrape")
         
@@ -530,6 +647,7 @@ class PropertyFactorsScraper:
         
         all_decisions = []
         total_skipped = 0
+        total_skipped_old = 0
         page = 0
         batch_num = 0
         consecutive_all_existing = 0  # Track pages with all existing cases
@@ -539,6 +657,7 @@ class PropertyFactorsScraper:
             batch_end = min(page + batch_size, total_pages)
             batch_decisions = []
             batch_skipped = 0
+            batch_skipped_old = 0
             
             print(f"\n{'='*60}")
             print(f"BATCH {batch_num}: Pages {page + 1} to {batch_end}")
@@ -547,9 +666,10 @@ class PropertyFactorsScraper:
             # Scrape this batch
             for p in range(page, batch_end):
                 try:
-                    decisions, new_count, skipped_count = self.scrape_page(p, skip_existing=not force)
+                    decisions, new_count, skipped_count, skipped_old_count = self.scrape_page(p, skip_existing=not force)
                     batch_decisions.extend(decisions)
                     batch_skipped += skipped_count
+                    batch_skipped_old += skipped_old_count
                     
                     # Track consecutive pages with all existing cases
                     if new_count == 0 and skipped_count > 0:
@@ -566,6 +686,7 @@ class PropertyFactorsScraper:
             
             all_decisions.extend(batch_decisions)
             total_skipped += batch_skipped
+            total_skipped_old += batch_skipped_old
             
             # Download PDFs for this batch if requested
             if download_pdfs and batch_decisions:
@@ -578,14 +699,32 @@ class PropertyFactorsScraper:
                 # Load existing decisions and merge with new ones
                 existing_decisions = self._load_existing_decisions() if not force else []
                 combined_decisions = existing_decisions + all_decisions
-                self.save_cases_csv(combined_decisions)
-                self.save_unmatched_csv(combined_decisions)
-                self.generate_enriched_factors(combined_decisions)
+                
+                # Deduplicate by normalized case references (handles same refs in different order)
+                # Key = sorted refs joined, so "A | B" and "B | A" have the same key
+                seen_ref_sets = set()
+                unique_decisions = []
+                for d in reversed(combined_decisions):
+                    # Create normalized key from sorted refs
+                    if d.case_references:
+                        key = tuple(sorted(d.case_references))
+                    else:
+                        key = None
+                    if key and key not in seen_ref_sets:
+                        seen_ref_sets.add(key)
+                        unique_decisions.append(d)
+                unique_decisions.reverse()  # Restore original order
+                
+                self.save_cases_csv(unique_decisions)
+                self.save_unmatched_csv(unique_decisions)
+                self.generate_enriched_factors(unique_decisions)
             
             matched_batch = sum(1 for d in batch_decisions if d.matched_registration_number)
             print(f"✅ Batch {batch_num} complete: {len(batch_decisions)} new decisions ({matched_batch} matched)")
             if batch_skipped > 0:
                 print(f"   Skipped {batch_skipped} existing cases")
+            if batch_skipped_old > 0:
+                print(f"   Skipped {batch_skipped_old} pre-{self.min_year} cases")
             print(f"📊 Running total: {len(all_decisions)} new decisions")
             
             # Early exit if we've hit 3 consecutive pages of all existing cases
@@ -610,6 +749,8 @@ class PropertyFactorsScraper:
         print(f"Unmatched: {len(all_decisions) - matched}")
         if total_skipped > 0:
             print(f"Skipped (already existed): {total_skipped}")
+        if total_skipped_old > 0:
+            print(f"Skipped (pre-{self.min_year}): {total_skipped_old}")
         
         return all_decisions
     
@@ -631,7 +772,8 @@ class PropertyFactorsScraper:
                     d.property_factor = row.get("tribunal_property_factor", "")
                     d.registration_number = row.get("tribunal_registration_number", "")
                     d.case_references = [r.strip() for r in row.get("case_references", "").split(" | ") if r.strip()]
-                    d.case_urls = [r.strip() for r in row.get("case_urls", "").split(" | ") if r.strip()]
+                    # Deduplicate URLs (combined cases may have duplicate URLs in older CSVs)
+                    d.case_urls = list(dict.fromkeys(r.strip() for r in row.get("case_urls", "").split(" | ") if r.strip()))
                     d.application_complaints = row.get("application_complaints", "")
                     d.hearing_date = row.get("hearing_date", "")
                     d.outcome = row.get("outcome", "")
@@ -1082,8 +1224,10 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python scripts/04_tribunal_scrape.py                  # Incremental (new cases only)
-  python scripts/04_tribunal_scrape.py --force          # Full rescrape
+  python scripts/04_tribunal_scrape.py                  # Incremental (new cases only, 2021+)
+  python scripts/04_tribunal_scrape.py --force          # Full rescrape (2021+)
+  python scripts/04_tribunal_scrape.py --all-years      # Include pre-2021 cases
+  python scripts/04_tribunal_scrape.py --min-year 2023  # Only 2023+ cases
   python scripts/04_tribunal_scrape.py --download-pdfs  # With PDF downloads
   python scripts/04_tribunal_scrape.py --max-pages 5    # Limited test run
         """
@@ -1104,8 +1248,15 @@ Examples:
                         help="Pages per batch before saving (default: 5)")
     parser.add_argument("--force", action="store_true",
                         help="Force full rescrape (ignore existing cases)")
+    parser.add_argument("--min-year", type=int, default=MIN_YEAR,
+                        help=f"Only include cases from this year onwards (default: {MIN_YEAR})")
+    parser.add_argument("--all-years", action="store_true",
+                        help="Include all years (override --min-year filter)")
     
     args = parser.parse_args()
+    
+    # Determine year filter
+    min_year = None if args.all_years else args.min_year
     
     print("=" * 60)
     print("TRIBUNAL DECISIONS SCRAPER (FIXED)")
@@ -1114,12 +1265,14 @@ Examples:
     print(f"Factors: {args.factors}")
     print(f"Output: {args.output}")
     print(f"Mode: {'Full rescrape' if args.force else 'Incremental (new cases only)'}")
+    print(f"Years: {'All years' if min_year is None else f'{min_year}+'}")
     print()
     
     try:
         scraper = PropertyFactorsScraper(
             factors_csv=args.factors,
-            output_dir=args.output
+            output_dir=args.output,
+            min_year=min_year
         )
     except FileNotFoundError:
         return

@@ -1,0 +1,74 @@
+{#
+  Risk Badge Component
+  Compare Factors Scotland
+  
+  Usage:
+    {% from "partials/_risk_badge.html" import risk_badge, risk_badge_small %}
+    {{ risk_badge(profile) }}
+    {{ risk_badge_small("CLEAN") }}
+  
+  Required context for risk_badge:
+    - profile: Factor profile with risk_band, status, tribunal_composite_score, tribunal_pfeo_penalty
+#}
+
+{% from "partials/_icons.html" import icon_risk_badge %}
+
+{# Full risk badge with reason line #}
+{% macro risk_badge(profile) %}
+{% set band = profile.risk_band|default('CLEAN') %}
+{% set band_lower = band|lower %}
+{% set band_class = band_lower if profile.status == 'registered' else 'expired' %}
+{% set score = profile.tribunal_composite_score|default(100) %}
+
+<div class="risk-badge {{ band_class }}" role="status" aria-label="{% if profile.status != 'registered' %}Historical tribunal rating{% else %}Tribunal risk rating: {{ band }}{% endif %}">
+    <div class="risk-badge-main">
+        {{ icon_risk_badge(band if profile.status == 'registered' else 'expired') }}
+        {{ band }}
+    </div>
+    <div class="risk-badge-reason">
+        {% if profile.status != 'registered' %}
+            Historical record
+        {% elif band == 'CLEAN' %}
+            No upheld cases
+        {% elif profile.tribunal_pfeo_penalty and profile.tribunal_pfeo_penalty > 0 %}
+            Includes PFEO penalty
+        {% else %}
+            Tribunal record
+        {% endif %}
+    </div>
+</div>
+{% endmacro %}
+
+{# Small inline badge for listings #}
+{% macro risk_badge_small(band, show_text=true) %}
+{% set band_lower = band|lower %}
+<span class="badge badge--{{ band_lower }}">
+    {% if show_text %}{{ band }}{% endif %}
+</span>
+{% endmacro %}
+
+{# Badge with custom label #}
+{% macro risk_badge_labeled(band, label) %}
+{% set band_lower = band|lower %}
+<div class="risk-badge {{ band_lower }}">
+    <div class="risk-badge-main">
+        {{ icon_risk_badge(band) }}
+        {{ band }}
+    </div>
+    <div class="risk-badge-reason">{{ label }}</div>
+</div>
+{% endmacro %}
+
+{# Severity badge for tribunal cases #}
+{% macro severity_badge(score) %}
+{% set sev = score|float %}
+{% set sev_class = 'critical' if sev >= 8 else 'high' if sev >= 6 else 'medium' if sev >= 4 else 'low' %}
+<span class="severity-badge severity-badge--{{ sev_class }}" title="Case severity: {{ score }}/10">{{ score }}/10</span>
+{% endmacro %}
+
+{# Case outcome badge #}
+{% macro outcome_badge(outcome) %}
+{% set outcome_lower = (outcome|default('Unknown'))|lower %}
+{% set outcome_class = 'upheld' if 'upheld' in outcome_lower and 'not' not in outcome_lower and 'partial' not in outcome_lower else 'partial' if 'partial' in outcome_lower else 'dismissed' if 'dismiss' in outcome_lower or 'not upheld' in outcome_lower else 'withdrawn' if 'withdrawn' in outcome_lower else 'other' %}
+<span class="case-outcome {{ outcome_class }}">{{ outcome }}</span>
+{% endmacro %}

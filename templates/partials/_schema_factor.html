@@ -1,0 +1,127 @@
+{#
+  Schema.org JSON-LD for Factor Profile Pages
+  Compare Factors Scotland
+  
+  Usage:
+    {% include "partials/_schema_factor.html" %}
+  
+  Required context:
+    - profile: Row from v_factor_profiles view
+    - coverage_areas_list: Pre-split list of coverage areas
+    - google_places: Dict with contact info (phone, address, place_id)
+    - tribunal_last_5_years: Dict with case_count, complaints_upheld_pct
+    - tribunal_full_history: Dict with case_count
+#}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "RealEstateAgent",
+      "@id": "https://comparefactors.co.uk/factors/{{ profile.registration_number|lower }}/#organization",
+      "name": "{{ profile.name }}",
+      {% if profile.registration_number %}
+      "image": "https://comparefactors.co.uk/images/factors/{{ profile.registration_number|lower }}.jpg",
+      {% endif %}
+      "description": "Property factor profile for {{ profile.name }} ({{ profile.registration_number }}). Risk rating: {{ profile.risk_band }}. Managed properties: {{ profile.property_count }}. Services include block management, insurance administration, and repairs.",
+      "url": "https://comparefactors.co.uk/factors/{{ profile.registration_number|lower }}/",
+      {% if google_places and google_places.phone %}
+      "telephone": "{{ google_places.phone }}",
+      {% endif %}
+      {% if google_places and google_places.address %}
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{ google_places.address.split(',')[0] if ',' in google_places.address else google_places.address }}",
+        "addressLocality": "{{ google_places.address.split(',')[-2].strip() if google_places.address.split(',')|length > 2 else 'Scotland' }}",
+        "postalCode": "{{ google_places.address.split(',')[-1].strip() if ',' in google_places.address else '' }}",
+        "addressCountry": "GB"
+      },
+      {% endif %}
+      
+      {% if coverage_areas_list %}
+      "areaServed": [
+        {% for area in coverage_areas_list[:15] %}
+        {% set clean_area = area.strip().replace('"', '').replace('&#34;', '') %}
+        {"@type": "City", "name": "{{ clean_area }}"}{% if not loop.last %},{% endif %}
+        {% endfor %}
+      ],
+      {% endif %}
+
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Property Factoring Services",
+        "itemListElement": [
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Block Management" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Building Insurance Administration" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Emergency Repairs" } }
+        ]
+      },
+
+      "priceRange": "££",
+
+      {% set total_reviews = (profile.google_review_count|default(0)) + (profile.trustpilot_review_count|default(0)) %}
+      {% if profile.combined_rating and total_reviews > 0 %}
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{ "%.1f"|format(profile.combined_rating) }}",
+        "reviewCount": "{{ total_reviews }}",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      {% endif %}
+
+      "knowsAbout": "Property Factoring Act (Scotland) 2011"
+    },
+    
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://comparefactors.co.uk/" },
+        { "@type": "ListItem", "position": 2, "name": "Factors", "item": "https://comparefactors.co.uk/factors/" },
+        { "@type": "ListItem", "position": 3, "name": "{{ profile.name }}", "item": "https://comparefactors.co.uk/factors/{{ profile.registration_number|lower }}/" }
+      ]
+    },
+
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Has {{ profile.name }} had any tribunal cases?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "{% if tribunal_last_5_years.case_count > 0 %}Yes, {{ profile.name }} has had {{ tribunal_last_5_years.case_count }} tribunal cases in the last 5 years, with {{ tribunal_last_5_years.complaints_upheld_pct|default(0)|int }}% of complaints upheld.{% elif tribunal_full_history.case_count > 0 %}{{ profile.name }} has tribunal history, but no cases in the last 5 years.{% else %}No, {{ profile.name }} has no tribunal cases on record with the Housing & Property Chamber.{% endif %}"
+          }
+        },
+        {
+            "@type": "Question",
+            "name": "How much does {{ profile.name }} charge?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Fee information for {{ profile.name }} varies by development. Factors typically charge between £120 and £350 per year for management fees. Request a quote directly from the factor for accurate pricing, or view their Written Statement of Services if available."
+            }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I make a complaint about {{ profile.name }}?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "First, raise your complaint directly with {{ profile.name }} using their formal complaints procedure (required by law to be in their Written Statement of Services). If unresolved after 8 weeks, you can apply to the Housing & Property Chamber. Visit housingandpropertychamber.scot to start an application."
+          }
+        }
+        {% if profile.status == 'registered' and profile.factor_type not in ['RSL', 'Housing Association', 'Local Authority'] %}
+        ,{
+            "@type": "Question",
+            "name": "How do I switch away from {{ profile.name }}?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "To change property factors, you'll need a majority vote from property owners in your development (typically at an AGM or EGM). The new factor must be registered with the Scottish Property Factor Register. Our switching guide explains the full process step-by-step."
+            }
+        }
+        {% endif %}
+      ]
+    }
+  ]
+}
+</script>

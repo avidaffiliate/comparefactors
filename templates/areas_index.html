@@ -1,0 +1,95 @@
+{#
+Areas Index Template
+SEO-optimized with search functionality
+#}
+{% extends "base_listing.html" %}
+
+{% block title %}Property Factors by Area in Scotland | Compare Factors Scotland{% endblock %}
+{% block description %}Find and compare property factors serving your area in Scotland. Browse {{ areas|length }} regions including Glasgow, Edinburgh, Aberdeen, Dundee, and more. Independent ratings and tribunal records.{% endblock %}
+{% block canonical %}https://comparefactors.co.uk/areas/{% endblock %}
+
+{% block head_extra %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Property Factors by Area in Scotland",
+    "description": "Find property factors serving different areas across Scotland",
+    "url": "https://comparefactors.co.uk/areas/",
+    "isPartOf": {
+        "@type": "WebSite",
+        "name": "Compare Factors Scotland",
+        "url": "https://comparefactors.co.uk"
+    },
+    "about": {
+        "@type": "Service",
+        "name": "Property Factor Comparison",
+        "areaServed": {
+            "@type": "Country",
+            "name": "Scotland"
+        }
+    }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="breadcrumb"><a href="/">Home</a><span class="breadcrumb-sep">›</span><span>Areas</span></div>
+<div class="page-header">
+    <h1 class="page-title">Property Factors by Area</h1>
+    <p class="page-subtitle">Find factors serving your local area in Scotland</p>
+</div>
+<div class="main-content">
+
+<div class="search-bar">
+    <input type="text" class="search-input" id="areaSearch" placeholder="Search areas..." aria-label="Search areas">
+    <div class="results-count" id="resultsCount">{{ areas|length }} areas</div>
+</div>
+
+<div class="area-list" id="areaList">
+{% for area in areas|sort(attribute='name') %}
+<a href="/areas/{{ area.slug }}/" class="area-row" data-name="{{ area.name|lower }}">
+    <span class="area-name">{{ area.name }}</span>
+    <span class="area-factor-count">{{ area.factor_count }} factor{{ 's' if area.factor_count != 1 else '' }}</span>
+</a>
+{% endfor %}
+</div>
+
+<div class="no-results" id="noResults" style="display:none;">
+    <p>No areas match your search. Try a different term or <a href="/factors/">browse all factors</a>.</p>
+</div>
+
+<section class="seo-content">
+    <h2>About Property Factors in Scotland</h2>
+    <p>Property factors (also known as property managers) are responsible for maintaining common areas in flatted developments across Scotland. All factors must be registered on the <a href="https://www.propertyfactorregister.gov.scot/" rel="noopener">Scottish Property Factor Register</a> and comply with the Property Factors Code of Conduct.</p>
+    <p>Use Compare Factors Scotland to find factors operating in your area, view their tribunal records, and read customer reviews before making a decision.</p>
+</section>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+const searchInput = document.getElementById('areaSearch');
+const areaList = document.getElementById('areaList');
+const rows = Array.from(areaList.querySelectorAll('.area-row'));
+const resultsCount = document.getElementById('resultsCount');
+const noResults = document.getElementById('noResults');
+
+function filterAreas() {
+    const search = searchInput.value.toLowerCase().trim();
+    let visibleCount = 0;
+    
+    rows.forEach(row => {
+        const name = row.dataset.name;
+        const visible = !search || name.includes(search);
+        row.style.display = visible ? '' : 'none';
+        if (visible) visibleCount++;
+    });
+    
+    resultsCount.textContent = visibleCount + ' area' + (visibleCount !== 1 ? 's' : '');
+    noResults.style.display = visibleCount === 0 ? '' : 'none';
+    areaList.style.display = visibleCount === 0 ? 'none' : '';
+}
+
+searchInput.addEventListener('input', filterAreas);
+{% endblock %}

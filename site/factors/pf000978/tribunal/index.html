@@ -36,6 +36,7 @@
             /* Slate scale - neutral grays */
             /* Note: --slate-500 and lighter fail WCAG AA on white backgrounds */
             /* Use --slate-600 minimum for body text */
+            --slate-700: #334155;
             --slate-600: #475569;
             --slate-500: #64748b;  /* Use only for large text or non-essential UI */
             --slate-400: #94a3b8;  /* Use only for borders/icons, not text */
@@ -45,17 +46,29 @@
             --slate-50: #f8fafc;
             --white: #ffffff;
             
+            /* Gray scale (for expired/inactive states) */
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-100: #f3f4f6;
+            
             /* Status colors */
             --red-700: #b91c1c;
             --red-600: #dc2626;
+            --red-500: #ef4444;
             --red-100: #fee2e2;
             --red-50: #fef2f2;
             
+            --orange-700: #c2410c;
             --orange-600: #ea580c;
             --orange-100: #ffedd5;
             
+            --amber-800: #92400e;
+            --amber-700: #b45309;
             --amber-600: #d97706;
+            --amber-500: #f59e0b;
+            --amber-200: #fde68a;
             --amber-100: #fef3c7;
+            --amber-50: #fffbeb;
             
             --green-700: #15803d;
             --green-600: #16a34a;
@@ -66,9 +79,18 @@
             --emerald-600: #059669;
             --emerald-100: #d1fae5;
             
+            --blue-800: #1e40af;
             --blue-700: #1d4ed8;
             --blue-600: #2563eb;
             --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            
+            --indigo-600: #4f46e5;
+            --indigo-100: #e0e7ff;
+            --indigo-50: #eef2ff;
+            
+            --teal-600: #0d9488;
+            --teal-500: #14b8a6;
             
             /* Semantic aliases (for page-specific styles) */
             --primary: #2563eb;
@@ -95,6 +117,20 @@
             --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            
+            /* Text Sizes */
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
         }
 
         /* ==================== RESET & BASE ==================== */
@@ -1724,8 +1760,6 @@
                 Their case rate is <strong class="text-success">lower than average</strong> for factors managing similar property counts.
                 
                 
-                The most recent case in our dataset was <strong>July 2024</strong>.
-                
             </p>
         </div>
 
@@ -1738,12 +1772,12 @@
             <div class="summary-stat">
                 <span class="stat-value">100%</span>
                 <span class="stat-label">Upheld Rate</span>
-                <span class="stat-context">Peer avg: 14.0%</span>
+                <span class="stat-context">Peer avg: 64.0%</span>
             </div>
             <div class="summary-stat">
-                <span class="stat-value">0</span>
+                <span class="stat-value">1</span>
                 <span class="stat-label">PFEOs Issued</span>
-                <span class="stat-context">0% of cases</span>
+                <span class="stat-context">100% of cases</span>
             </div>
             <div class="summary-stat">
                 <span class="stat-value">£100</span>
@@ -1768,8 +1802,8 @@
         <div class="peer-comparison">
             <p>
                 <strong>Peer comparison:</strong> Factors managing 0-500 properties average 
-                <strong>3.9</strong> cases with a 
-                <strong>14.0%</strong> upheld rate.
+                <strong>2.2</strong> cases with a 
+                <strong>64.0%</strong> upheld rate.
                 Avongreen Abodes Ltd has 
                 
                 <strong class="text-success">fewer cases</strong>
@@ -1786,28 +1820,6 @@
 
     <!-- TREND CHART -->
     
-    <section class="section">
-        <h2 class="section-title">Cases Over Time</h2>
-        <div class="trend-chart">
-            
-            
-            
-            
-            <div class="trend-row">
-                <span class="trend-year">2024</span>
-                <div class="trend-bar-container">
-                    <div class="trend-bar" style="width: 100.0%">
-                        
-                    </div>
-                </div>
-                <span class="trend-count">1</span>
-                
-            </div>
-            
-        </div>
-        
-    </section>
-    
 
     <!-- OUTCOME BREAKDOWN -->
     <section class="section">
@@ -1815,9 +1827,9 @@
         <div class="outcome-grid">
             
             <div class="outcome-item outcome-upheld">
-                <span class="outcome-count">1</span>
+                <span class="outcome-count">0</span>
                 <span class="outcome-label">Upheld</span>
-                <span class="outcome-pct">100.0%</span>
+                <span class="outcome-pct">0.0%</span>
             </div>
             
             <div class="outcome-item outcome-partially-upheld">
@@ -1858,7 +1870,7 @@
             </div>
             
             <div class="category-row">
-                <span class="category-name">Code_breach</span>
+                <span class="category-name">Other</span>
                 <div class="category-bar-container">
                     <div class="category-bar" style="width: 100.0%"></div>
                 </div>
@@ -1880,7 +1892,7 @@
             <div class="enforcement-block">
                 <h3>Property Factor Enforcement Orders</h3>
                 <p class="enforcement-headline">
-                    <strong>0</strong> of 1 cases (0%)
+                    <strong>1</strong> of 1 cases (100%)
                 </p>
                 
             </div>
@@ -1920,6 +1932,37 @@
     </section>
 
     <!-- NOTABLE CASES -->
+    
+    <section class="section">
+        <h2 class="section-title">Notable Cases</h2>
+        <div class="notable-cases">
+            
+            <div class="notable-case">
+                <div class="notable-header">
+                    <span class="notable-ref">FTS/HPC/PF/23/0080</span>
+                    <span class="outcome-badge outcome-pfeo-complied">PFEO Complied</span>
+                </div>
+                <div class="notable-meta">
+                    
+                    
+                    · Severity 7.0/10
+                </div>
+                
+                <blockquote class="notable-quote">"The Tribunal upheld the complaint under Section 3.1. The view of the Tribunal was that the property factors had made an honest mistake, but that, nevertheless, improper, or at least incorrect,..."</blockquote>
+                
+                <div class="notable-footer">
+                    <span class="notable-tag">PFEO</span>
+                    
+                    <span class="notable-tag">£100</span>
+                    
+                    
+                    <a href="https://housingandpropertychamber.scot/sites/default/files/2024-07/Written%20Decision%20with%20PFEO%20-%2023.07.24%20-%20%20PF.23.0080_R.pdf" class="notable-link" target="_blank" rel="noopener">View decision (PDF) →</a>
+                    
+                </div>
+            </div>
+            
+        </div>
+    </section>
     
 
     <!-- FULL CASE LIST -->
@@ -1962,13 +2005,13 @@
                 </thead>
                 <tbody>
                     
-                    <tr data-outcome="upheld" data-pfeo="no">
-                        <td>2024-07-03</td>
-                        <td><code>FTS/HPC/PF/23/0080</code></td>
-                        <td><span class="outcome-pill outcome-upheld">Upheld</span></td>
+                    <tr data-outcome="pfeo-complied" data-pfeo="yes">
                         <td>—</td>
+                        <td><code>FTS/HPC/PF/23/0080</code></td>
+                        <td><span class="outcome-pill outcome-pfeo-complied">PFEO Complied</span></td>
+                        <td>⚠️</td>
                         <td>£100</td>
-                        <td>4.5</td>
+                        <td>7.0</td>
                         <td>
                             
                             <a href="https://housingandpropertychamber.scot/sites/default/files/2024-07/Written%20Decision%20with%20PFEO%20-%2023.07.24%20-%20%20PF.23.0080_R.pdf" target="_blank" rel="noopener">PDF</a>

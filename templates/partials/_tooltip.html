@@ -1,0 +1,18 @@
+{#
+  Tooltip Component
+  Compare Factors Scotland
+  
+  Usage:
+    {% from "partials/_tooltip.html" import tooltip %}
+    {{ tooltip("i", "This is the tooltip content explaining something.") }}
+#}
+
+{# Basic tooltip trigger with content #}
+{% macro tooltip(trigger_text="i", content="", id=none) %}
+<span class="tooltip-trigger" tabindex="0" role="button" {% if id %}aria-describedby="{{ id }}"{% endif %}>{{ trigger_text }}<span class="tooltip-content" {% if id %}id="{{ id }}"{% endif %}>{{ content }}</span></span>
+{% endmacro %}
+
+{# Tooltip with custom trigger element #}
+{% macro tooltip_wrap(content, id=none) %}
+<span class="tooltip-trigger" tabindex="0" role="button" {% if id %}aria-describedby="{{ id }}"{% endif %}>{{ caller() }}<span class="tooltip-content" {% if id %}id="{{ id }}"{% endif %}>{{ content }}</span></span>
+{% endmacro %}

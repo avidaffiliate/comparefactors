@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 """
 ============================================================================
-SCRIPT 07: TRUSTPILOT SCRAPER
+SCRIPT 07: TRUSTPILOT SCRAPER (TOP 25 BY SIZE)
 ============================================================================
 
-PURPOSE: Search Trustpilot for factor profiles and extract ratings/reviews.
+PURPOSE: Search Trustpilot for the top 25 largest factors by property count.
 
 INPUT:  data/csv/factors_register.csv
-OUTPUT: data/csv/trustpilot_reviews.csv
+OUTPUT: data/csv/trustpilot_reviews_top25.csv
 
 COLUMNS OUTPUT:
     - factor_registration_number
     - factor_name
+    - property_count
     - trustpilot_id
     - trustpilot_name
     - trustpilot_url
@@ -20,16 +21,12 @@ COLUMNS OUTPUT:
     - categories
 
 USAGE:
-    python 07_trustpilot_scrape.py
-    python 07_trustpilot_scrape.py --resume
-    python 07_trustpilot_scrape.py --limit 10
+    python 07_trustpilot_scrape_top25.py
 
 DEPENDENCIES:
     pip install requests beautifulsoup4
 
-TIME: ~15-20 minutes for 340 factors
-
-NOTE: Trustpilot coverage for property factors is typically ~20-25%
+TIME: ~1-2 minutes for 25 factors
 ============================================================================
 """
 
@@ -40,7 +37,6 @@ import time
 import argparse
 from pathlib import Path
 from typing import Optional, Dict, List
-from urllib.parse import quote
 
 import requests
 from bs4 import BeautifulSoup
@@ -50,11 +46,13 @@ from bs4 import BeautifulSoup
 # ============================================================================
 
 INPUT_CSV = Path("data/csv/factors_register.csv")
-OUTPUT_CSV = Path("data/csv/trustpilot_reviews.csv")
-CHECKPOINT_FILE = Path("data/trustpilot_checkpoint.json")
+OUTPUT_CSV = Path("data/csv/trustpilot_reviews_top25.csv")
 
 BASE_URL = "https://www.trustpilot.com"
 SEARCH_URL = "https://www.trustpilot.com/search"
+
+# Top N factors by size
+TOP_N = 25
 
 # Rate limiting
 REQUEST_DELAY = 1.5  # Seconds between requests
@@ -93,7 +91,6 @@ def search_trustpilot(session: requests.Session, query: str) -> Optional[Dict]:
         for script in soup.select('script[type="application/json"]'):
             try:
                 data = json.loads(script.string)
-                # Navigate through possible structures
                 if isinstance(data, dict):
                     businesses = find_businesses_in_json(data)
                     if businesses:
@@ -135,11 +132,9 @@ def find_businesses_in_json(data: Dict, depth: int = 0) -> List[Dict]:
     businesses = []
     
     if isinstance(data, dict):
-        # Check if this looks like a business object
         if 'businessUnitId' in data or 'identifyingName' in data:
             businesses.append(data)
         
-        # Recurse into values
         for value in data.values():
             businesses.extend(find_businesses_in_json(value, depth + 1))
     
@@ -175,15 +170,12 @@ def parse_result_card(card) -> Dict:
         'categories': '',
     }
     
-    # ID from data attribute
     data['trustpilot_id'] = card.get('data-business-unit-id', '')
     
-    # Name
     name_el = card.select_one('.typography_heading-xs__jSwUz, .business-name, h3')
     if name_el:
         data['trustpilot_name'] = name_el.get_text(strip=True)
     
-    # URL
     link = card.select_one('a[href*="/review/"]')
     if link:
         href = link.get('href', '')
@@ -191,19 +183,16 @@ def parse_result_card(card) -> Dict:
             href = BASE_URL + href
         data['trustpilot_url'] = href
     
-    # Rating
     rating_el = card.select_one('[data-rating]')
     if rating_el:
         data['rating'] = float(rating_el.get('data-rating', 0))
     else:
-        # Try to find rating text
         rating_text = card.select_one('.typography_body-m__xgxZ_, .star-rating')
         if rating_text:
             match = re.search(r'(\d+\.?\d*)', rating_text.get_text())
             if match:
                 data['rating'] = float(match.group(1))
     
-    # Review count
     review_el = card.select_one('.typography_body-m__xgxZ_, .review-count')
     if review_el:
         text = review_el.get_text()
@@ -212,41 +201,6 @@ def parse_result_card(card) -> Dict:
             data['review_count'] = int(match.group(1).replace(',', ''))
     
     return data
-
-
-def fetch_company_page(session: requests.Session, url: str) -> Optional[Dict]:
-    """Fetch additional details from company's Trustpilot page."""
-    
-    if not url:
-        return None
-    
-    try:
-        response = session.get(url, timeout=REQUEST_TIMEOUT)
-        
-        if response.status_code != 200:
-            return None
-        
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        data = {}
-        
-        # Get more accurate rating from page
-        rating_el = soup.select_one('[data-rating-typography]')
-        if rating_el:
-            try:
-                data['rating'] = float(rating_el.get_text(strip=True))
-            except ValueError:
-                pass
-        
-        # Get review count
-        review_el = soup.select_one('[itemprop="reviewCount"]')
-        if review_el:
-            data['review_count'] = int(review_el.get('content', 0))
-        
-        return data
-        
-    except Exception:
-        return None
 
 
 def name_match_score(factor_name: str, trustpilot_name: str) -> float:
@@ -275,99 +229,98 @@ def name_match_score(factor_name: str, trustpilot_name: str) -> float:
     
     return overlap / total if total > 0 else 0.0
 
-# ============================================================================
-# CHECKPOINT MANAGEMENT
-# ============================================================================
 
-def load_checkpoint() -> Dict:
-    """Load checkpoint data."""
-    if CHECKPOINT_FILE.exists():
-        with open(CHECKPOINT_FILE, 'r') as f:
-            return json.load(f)
-    return {'processed': [], 'results': []}
+def get_top_factors_by_size(factors: List[Dict], n: int = 25) -> List[Dict]:
+    """Filter to top N factors by property_count, excluding expired registrations."""
+    
+    # Filter to registered (active) factors only
+    active = [
+        f for f in factors 
+        if f.get('status', '').strip().lower() == 'registered'
+    ]
+    
+    # Sort by property_count descending
+    sorted_factors = sorted(
+        active,
+        key=lambda x: int(x.get('property_count', 0) or 0),
+        reverse=True
+    )
+    
+    return sorted_factors[:n]
 
-
-def save_checkpoint(data: Dict):
-    """Save checkpoint."""
-    CHECKPOINT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    with open(CHECKPOINT_FILE, 'w') as f:
-        json.dump(data, f, indent=2)
 
 # ============================================================================
 # MAIN EXECUTION
 # ============================================================================
 
 def main():
-    parser = argparse.ArgumentParser(description="Scrape Trustpilot for property factors")
-    parser.add_argument('--resume', action='store_true', help='Resume from checkpoint')
-    parser.add_argument('--limit', type=int, help='Limit number of factors')
+    parser = argparse.ArgumentParser(description="Scrape Trustpilot for top 25 property factors by size")
+    parser.add_argument('--top', type=int, default=TOP_N,
+                        help=f'Number of top factors to process (default: {TOP_N})')
     parser.add_argument('--min-reviews', type=int, default=1,
                         help='Minimum reviews to include (default: 1)')
     args = parser.parse_args()
     
     print("=" * 60)
-    print("TRUSTPILOT SCRAPER")
+    print("TRUSTPILOT SCRAPER - TOP 25 BY SIZE")
     print("=" * 60)
     
     # Check input file
     if not INPUT_CSV.exists():
         print(f"❌ Input file not found: {INPUT_CSV}")
-        print("   Run 02_registry_enrich.py first.")
         return
     
     # Load factors
     with open(INPUT_CSV, 'r', encoding='utf-8-sig') as f:
         factors = list(csv.DictReader(f))
     
-    print(f"📋 Loaded {len(factors)} factors")
+    print(f"📋 Loaded {len(factors)} total factors")
     
-    # Load checkpoint
-    checkpoint = {'processed': [], 'results': []}
-    if args.resume:
-        checkpoint = load_checkpoint()
-        print(f"   Resuming: {len(checkpoint['processed'])} already processed")
+    # Get top N by size
+    top_factors = get_top_factors_by_size(factors, args.top)
     
-    processed_set = set(checkpoint['processed'])
+    print(f"🎯 Targeting top {len(top_factors)} factors by property count")
+    print()
     
-    # Filter to unprocessed
-    pending = [f for f in factors if f['registration_number'] not in processed_set]
+    # Show the factors we'll be searching
+    print("Factors to search:")
+    print("-" * 60)
+    for i, f in enumerate(top_factors, 1):
+        name = f.get('name', '')[:40]
+        count = int(f.get('property_count', 0) or 0)
+        print(f"  {i:2}. {name:<42} ({count:,} properties)")
+    print("-" * 60)
+    print()
     
-    if args.limit:
-        pending = pending[:args.limit]
-    
-    print(f"   {len(pending)} to process")
-    
-    if not pending:
-        print("\n✅ All factors already processed!")
-        return
-    
-    results = checkpoint['results']
+    results = []
     
     # Create session
     session = requests.Session()
     session.headers.update(HEADERS)
     
-    print(f"\n🔍 Searching Trustpilot...")
+    print("🔍 Searching Trustpilot...")
+    print()
     
     found_count = 0
     
-    for i, factor in enumerate(pending):
+    for i, factor in enumerate(top_factors):
         pf = factor.get('registration_number', '')
         name = factor.get('name', '')
+        prop_count = int(factor.get('property_count', 0) or 0)
         
-        print(f"[{i+1}/{len(pending)}] {name[:45]}...", end=" ", flush=True)
+        print(f"[{i+1}/{len(top_factors)}] {name[:45]}...", end=" ", flush=True)
         
         # Search
         data = search_trustpilot(session, name)
         
         if data and data.get('review_count', 0) >= args.min_reviews:
-            # Verify it's a reasonable match
             match_score = name_match_score(name, data.get('trustpilot_name', ''))
             
-            if match_score >= 0.3:  # Lenient threshold
+            if match_score >= 0.3:
                 result = {
                     'factor_registration_number': pf,
                     'factor_name': name,
+                    'property_count': prop_count,
                     **data,
                     'match_score': match_score,
                 }
@@ -378,28 +331,19 @@ def main():
             else:
                 print(f"⚠️ Poor match ({match_score:.0%})")
         else:
-            print("❌")
-        
-        # Update checkpoint
-        checkpoint['processed'].append(pf)
-        checkpoint['results'] = results
-        
-        if (i + 1) % 20 == 0:
-            save_checkpoint(checkpoint)
+            print("❌ Not found")
         
         # Rate limiting
-        time.sleep(REQUEST_DELAY)
-    
-    # Save final checkpoint
-    save_checkpoint(checkpoint)
+        if i < len(top_factors) - 1:
+            time.sleep(REQUEST_DELAY)
     
     # Write output
     OUTPUT_CSV.parent.mkdir(parents=True, exist_ok=True)
     
     fieldnames = [
-        'factor_registration_number', 'factor_name', 'trustpilot_id',
-        'trustpilot_name', 'trustpilot_url', 'rating', 'review_count',
-        'categories', 'match_score'
+        'factor_registration_number', 'factor_name', 'property_count',
+        'trustpilot_id', 'trustpilot_name', 'trustpilot_url', 
+        'rating', 'review_count', 'categories', 'match_score'
     ]
     
     with open(OUTPUT_CSV, 'w', newline='', encoding='utf-8') as f:
@@ -408,21 +352,23 @@ def main():
         writer.writerows(results)
     
     # Summary
-    print("\n" + "=" * 60)
+    print()
+    print("=" * 60)
     print("TRUSTPILOT SCRAPING COMPLETE")
     print("=" * 60)
     
-    total_factors = len(checkpoint['processed'])
-    coverage = found_count / total_factors * 100 if total_factors > 0 else 0
+    coverage = found_count / len(top_factors) * 100 if top_factors else 0
     
-    print(f"✅ Found: {len(results)} factors on Trustpilot")
+    print(f"✅ Found: {len(results)}/{len(top_factors)} factors on Trustpilot")
     print(f"📊 Coverage: {coverage:.1f}%")
     
     if results:
         avg_rating = sum(r['rating'] for r in results if r.get('rating')) / len([r for r in results if r.get('rating')])
         total_reviews = sum(r.get('review_count', 0) for r in results)
+        total_properties = sum(r.get('property_count', 0) for r in results)
         print(f"📊 Average rating: {avg_rating:.2f}")
         print(f"📊 Total reviews: {total_reviews:,}")
+        print(f"📊 Properties covered: {total_properties:,}")
     
     print(f"\n📄 Output saved to: {OUTPUT_CSV}")
 

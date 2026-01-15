@@ -1,0 +1,65 @@
+{#
+  At a Glance Component
+  Compare Factors Scotland
+  
+  Usage:
+    {% from "partials/_at_a_glance.html" import at_a_glance_box %}
+    {{ at_a_glance_box(at_a_glance) }}
+  
+  Required context:
+    - at_a_glance: Dict with bullets (list of {text, sentiment}) and optionally summary
+#}
+
+{% from "partials/_icons.html" import icon_sentiment, icon_info_outline %}
+
+{# At a glance section #}
+{% macro at_a_glance_box(at_a_glance) %}
+{% if at_a_glance and at_a_glance.bullets %}
+<div class="at-a-glance">
+    <div class="at-a-glance-header">
+        <span class="at-a-glance-title">At a Glance</span>
+        <span class="at-a-glance-badge">
+            {{ icon_info_outline(size=12) }}
+            AI Summary
+        </span>
+    </div>
+    <ul class="at-a-glance-list">
+        {% for bullet in at_a_glance.bullets %}
+        <li class="at-a-glance-item">
+            {{ icon_sentiment(bullet.sentiment) }}
+            <span>{{ bullet.text }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% endmacro %}
+
+{# Verdict box #}
+{% macro verdict_box(profile, at_a_glance, band) %}
+{% set band_lower = band|lower %}
+<div class="verdict-box {{ band_lower }}">
+    <div class="verdict-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+        Our Verdict
+    </div>
+    <p class="verdict-text">
+        {% if at_a_glance and at_a_glance.summary %}
+            {{ at_a_glance.summary }}
+        {% else %}
+            {{ profile.name }} is a <strong>
+            {% if profile.property_count and profile.property_count > 5000 %}large{% elif profile.property_count and profile.property_count > 1000 %}mid-sized{% else %}small{% endif %}
+            </strong> Scottish property factor.
+            
+            Based on our data, they hold a <strong>{{ band }}</strong> risk rating.
+            {% if band == 'CLEAN' %}
+            They have no significant tribunal history, suggesting a reliable service record.
+            {% elif band == 'AMBER' %}
+            Potential clients should be aware of a moderate frequency of tribunal disputes relative to their size.
+            {% elif band == 'RED' %}
+            They have a higher-than-average volume of tribunal cases or enforcement orders, which is a significant concern.
+            {% endif %}
+        {% endif %}
+    </p>
+</div>
+{% endmacro %}
