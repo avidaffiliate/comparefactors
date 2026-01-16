@@ -1691,8 +1691,8 @@
     gap: var(--space-sm);
     width: 100%;
     padding: var(--space-sm) var(--space-lg);
-    background: var(--blue-600);
-    color: white;
+    background: var(--white);
+    color: var(--navy-900);
     font-weight: 600;
     font-size: var(--text-base);
     border-radius: var(--radius-md);
@@ -1701,7 +1701,8 @@
 }
 
 .mobile-cta-button:hover {
-    background: var(--blue-700);
+    background: var(--slate-100);
+    text-decoration: none;
 }
 
 @media (max-width: 968px) {
@@ -2016,4 +2017,55 @@
 
 .show-more-btn:hover {
     background: var(--slate-100);
+}
+
+/* =============================================================================
+   MOBILE RESPONSIVENESS FIXES
+   ============================================================================= */
+
+/* Fix header truncation on mobile */
+@media (max-width: 640px) {
+    .profile-header {
+        padding: var(--space-lg);
+    }
+    
+    .profile-header-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-md);
+    }
+    
+    .profile-identity h1 {
+        font-size: var(--text-xl);
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    .profile-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-xs);
+    }
+    
+    .risk-badge {
+        align-self: flex-start;
+    }
+    
+    .verdict-text {
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+}
+
+/* Hide duplicate CTAs on mobile - sticky footer handles it */
+@media (max-width: 968px) {
+    /* Hide sidebar CTA box */
+    .sidebar .cta-box {
+        display: none;
+    }
+    
+    /* Hide main content CTA card */
+    .main-content > .card[style*="linear-gradient"] {
+        display: none;
+    }
 }
