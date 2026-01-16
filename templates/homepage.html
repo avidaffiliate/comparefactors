@@ -327,7 +327,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         <header class="section-header">
             <div>
                 <h2 id="tribunal-title" class="section-title">Tribunal Hotspots</h2>
-                <p class="section-subtitle">Factors with the most Housing &amp; Property Chamber cases</p>
+                <p class="section-subtitle">Factors with the most Housing &amp; Property Chamber cases (last 5 years)</p>
             </div>
             <a href="/factors/?sort=tribunal" class="section-link">View all by cases <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></a>
         </header>
@@ -349,7 +349,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
                         <span>{{ f.registration_number }}</span>
                     </div>
                 </div>
-                <div class="table-cell" role="cell"><strong>{{ f.tribunal_case_count }}</strong> cases</div>
+                <div class="table-cell" role="cell"><strong>{{ f.tribunal_case_count_5yr }}</strong> cases</div>
                 <div class="table-cell" role="cell">{{ "{:,}".format(f.property_count) }}</div>
                 <div class="table-cell" role="cell"><span class="risk-badge risk-badge--{{ f.risk_band|lower }}">{{ f.risk_band }}</span></div>
                 <a href="/factors/{{ f.registration_number|lower }}/" class="view-btn" role="cell">View</a>

@@ -226,6 +226,7 @@ CREATE TABLE IF NOT EXISTS factors (
     
     -- Tribunal aggregates
     tribunal_case_count INTEGER DEFAULT 0,
+    tribunal_case_count_5yr INTEGER DEFAULT 0,
     tribunal_cases_upheld INTEGER DEFAULT 0,
     tribunal_cases_dismissed INTEGER DEFAULT 0,
     tribunal_pfeo_count INTEGER DEFAULT 0,
@@ -988,6 +989,7 @@ def step_7_calculate_scores():
             conn.execute("""
                 UPDATE factors SET
                     tribunal_case_count = ?,
+                    tribunal_case_count_5yr = ?,
                     tribunal_cases_upheld = ?,
                     tribunal_pfeo_count = ?,
                     tribunal_total_compensation = ?,
@@ -997,7 +999,7 @@ def step_7_calculate_scores():
                     has_active_pfeo = ?
                 WHERE registration_number = ?
             """, [
-                total_case_count, total_upheld, pfeo_count, compensation, round(rate, 2),
+                total_case_count, len(cases), total_upheld, pfeo_count, compensation, round(rate, 2),
                 len(recent_cases), tier, 1 if has_unresolved else 0, pf
             ])
         
@@ -1087,11 +1089,11 @@ def step_9_generate_site():
             """).fetchone()
             tribunal_count = conn.execute("SELECT COUNT(*) FROM tribunal_cases").fetchone()[0]
             
-            # Get tribunal hotspots
+            # Get tribunal hotspots (using 5-year filtered count for consistency with profiles)
             hotspots = [dict(r) for r in conn.execute("""
                 SELECT * FROM factors 
-                WHERE status='registered' AND tribunal_case_count > 0
-                ORDER BY tribunal_case_count DESC LIMIT 5
+                WHERE status='registered' AND tribunal_case_count_5yr > 0
+                ORDER BY tribunal_case_count_5yr DESC LIMIT 5
             """).fetchall()]
             
             # Add initials for avatars
@@ -1128,7 +1130,7 @@ def step_9_generate_site():
             # Calculate stats
             active = [f for f in factors if f['status'] == 'registered' and f.get('factor_type') not in ('Registered Social Landlord', 'Local Authority')]
             expired = sum(1 for f in factors if f['status'] != 'registered')
-            rsl_council = sum(1 for f in factors if f.get('factor_type') in ('Registered Social Landlord', 'Local Authority'))
+            rsl_council = sum(1 for f in factors if f['status'] == 'registered' and f.get('factor_type') in ('Registered Social Landlord', 'Local Authority'))
             
             html = template.render(
                 factors=factors,
