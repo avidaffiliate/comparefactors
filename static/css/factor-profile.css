@@ -25,6 +25,11 @@
     --gray-500: #6b7280;
     --gray-100: #f3f4f6;
     
+    /* Blue additions */
+    --blue-50: #eff6ff;
+    --blue-200: #bfdbfe;
+    --blue-800: #1e40af;
+    
     /* Amber additions */
     --amber-50: #fffbeb;
     --amber-200: #fde68a;
@@ -114,10 +119,10 @@
     align-items: flex-start;
     gap: var(--space-md);
     padding: var(--space-md) var(--space-lg);
-    border-radius: var(--radius-md);
-    margin-bottom: var(--space-md);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-lg);
     font-size: var(--text-sm);
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 .alert-banner svg {
@@ -125,23 +130,55 @@
     margin-top: 2px;
 }
 
-.alert-banner-content { flex: 1; }
+.alert-banner-content { 
+    flex: 1; 
+}
 
 .alert-banner-title {
     font-weight: 600;
-    margin-bottom: 2px;
+    margin-bottom: var(--space-xs);
 }
 
+/* Expired Registration Banner (grey) */
 .alert-banner--expired {
     background: var(--gray-100);
     border: 1px solid var(--slate-300);
     color: var(--gray-600);
 }
 
+.alert-banner--expired svg {
+    color: var(--gray-500);
+}
+
+.alert-banner--expired .alert-banner-title {
+    color: var(--slate-800);
+}
+
+/* Non-Switchable Factor Banner (blue/info) */
 .alert-banner--info {
-    background: var(--blue-100);
-    border: 1px solid #93c5fd;
+    background: var(--blue-50);
+    border: 1px solid var(--blue-200);
     color: var(--blue-700);
+}
+
+.alert-banner--info svg {
+    color: var(--blue-500);
+}
+
+.alert-banner--info .alert-banner-title {
+    color: var(--blue-800);
+}
+
+@media (max-width: 600px) {
+    .alert-banner {
+        padding: var(--space-sm) var(--space-md);
+        gap: var(--space-sm);
+    }
+    
+    .alert-banner svg {
+        width: 18px;
+        height: 18px;
+    }
 }
 
 /* =============================================================================
@@ -226,8 +263,8 @@
 .risk-badge.green,
 .risk-badge--green { background: var(--green-100); color: var(--green-700); }
 
-.risk-badge.amber,
-.risk-badge--amber { background: var(--amber-100); color: var(--amber-600); }
+.risk-badge.limited,
+.risk-badge--limited { background: var(--gray-100); color: var(--gray-600); }
 
 .risk-badge.orange,
 .risk-badge--orange { background: var(--orange-100); color: var(--orange-600); }
@@ -287,11 +324,11 @@
 }
 .risk-band-banner--green .risk-band-link { color: var(--green-600); }
 
-.risk-band-banner--amber {
-    background: var(--amber-100);
-    color: var(--amber-700);
+.risk-band-banner--limited {
+    background: var(--gray-100);
+    color: var(--gray-600);
 }
-.risk-band-banner--amber .risk-band-link { color: var(--amber-600); }
+.risk-band-banner--limited .risk-band-link { color: var(--gray-500); }
 
 .risk-band-banner--orange {
     background: var(--orange-100);
@@ -380,7 +417,7 @@
 /* Verdict box color variants */
 .verdict-box.red::before { background: var(--red-600); }
 .verdict-box.orange::before { background: var(--orange-600); }
-.verdict-box.amber::before { background: var(--amber-600); }
+.verdict-box.limited::before { background: var(--gray-500); }
 .verdict-box.green::before { background: var(--green-600); }
 .verdict-box.clean::before { background: var(--emerald-600); }
 
@@ -841,7 +878,7 @@
 .case-outcome.dismissed,
 .case-outcome.rejected,
 .case-outcome.dismissed-rejected { background: var(--green-100); color: var(--green-700); }
-.case-outcome.partial { background: var(--amber-100); color: var(--amber-600); }
+.case-outcome.partial { background: var(--gray-100); color: var(--gray-600); }
 .case-outcome.withdrawn { background: var(--slate-100); color: var(--slate-600); }
 .case-outcome.settled { background: var(--blue-100); color: var(--blue-700); }
 .case-outcome.pfeo,
@@ -1418,8 +1455,44 @@
     word-break: break-word;
 }
 
-.contact-value a {
+.contact-value a,
+.contact-link {
     color: var(--blue-600);
+    text-decoration: none;
+}
+
+.contact-link:hover {
+    text-decoration: underline;
+}
+
+.contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+/* Quick Facts List */
+.facts-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.fact-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: var(--text-sm);
+}
+
+.fact-item dt {
+    color: var(--slate-500);
+}
+
+.fact-item dd {
+    font-weight: 500;
+    color: var(--navy-900);
+    margin: 0;
 }
 
 /* Source List */
@@ -1486,6 +1559,114 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+/* CTA Button (alternative styling) */
+.cta-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    width: 100%;
+    padding: var(--space-sm) var(--space-lg);
+    background: var(--white);
+    color: var(--navy-900);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.cta-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cta-highlight {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-sm);
+    display: inline-block;
+}
+
+.correction-link {
+    display: block;
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--text-xs);
+    color: var(--slate-500);
+    text-align: center;
+    text-decoration: none;
+    border-top: 1px solid var(--slate-100);
+}
+
+.correction-link:hover {
+    color: var(--blue-600);
+    background: var(--slate-50);
+}
+
+/* Info Box (for non-switchable factors: RSL, Council, Expired) */
+.info-box {
+    padding: var(--space-lg);
+    background: var(--slate-50);
+    font-size: var(--text-sm);
+    color: var(--slate-600);
+    line-height: 1.6;
+}
+
+.info-box-title {
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--navy-900);
+    margin: 0 0 var(--space-sm) 0;
+}
+
+.info-box p {
+    margin: 0 0 var(--space-sm) 0;
+}
+
+.info-box p:last-child {
+    margin-bottom: 0;
+}
+
+.info-box .btn {
+    margin-top: var(--space-sm);
+}
+
+/* Button variants */
+.btn--sm {
+    padding: 8px 14px;
+    font-size: var(--text-sm);
+}
+
+.btn--secondary {
+    display: inline-block;
+    background: var(--white);
+    color: var(--slate-700);
+    border: 1px solid var(--slate-300);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.btn--secondary:hover {
+    background: var(--slate-50);
+    border-color: var(--slate-400);
+}
+
+/* No contact message */
+.no-contact {
+    color: var(--slate-500);
+    font-size: var(--text-sm);
+    font-style: italic;
+    margin: 0;
+}
+
 /* =============================================================================
    MOBILE CTA
    ============================================================================= */
@@ -1503,14 +1684,34 @@
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
 }
 
-@media (max-width: 768px) {
+.mobile-cta-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    width: 100%;
+    padding: var(--space-sm) var(--space-lg);
+    background: var(--blue-600);
+    color: white;
+    font-weight: 600;
+    font-size: var(--text-base);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: background 0.15s;
+}
+
+.mobile-cta-button:hover {
+    background: var(--blue-700);
+}
+
+@media (max-width: 968px) {
     .mobile-cta {
         display: block;
     }
     
-    /* Add padding to body so content isn't hidden behind CTA */
-    body {
-        padding-bottom: 60px;
+    /* Only add bottom padding when mobile CTA is visible (commercial factors) */
+    body.has-mobile-cta {
+        padding-bottom: 80px;
     }
 }
 

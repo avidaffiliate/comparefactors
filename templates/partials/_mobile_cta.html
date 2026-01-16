@@ -1,0 +1,17 @@
+{# =============================================================================
+   MOBILE CTA PARTIAL
+   
+   Only shows for commercial factors with active registration.
+   Uses is_switchable variable defined in main template.
+   ============================================================================= #}
+
+{% if is_switchable %}
+<div class="mobile-cta">
+    <a href="/get-quotes/?from={{ profile.registration_number }}" class="mobile-cta-button">
+        Get Free Quotes
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+    </a>
+</div>
+{% endif %}

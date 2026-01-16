@@ -557,10 +557,10 @@
             background: var(--green-100);
             color: var(--green-700);
         }
-        .risk-badge--amber,
-        .risk-badge.amber {
-            background: var(--amber-100);
-            color: var(--amber-600);
+        .risk-badge--limited,
+        .risk-badge.limited {
+            background: var(--gray-100);
+            color: var(--gray-600);
         }
         .risk-badge--orange,
         .risk-badge.orange {
@@ -581,7 +581,7 @@
         
         .risk-clean { color: var(--green-600); }
         .risk-green { color: var(--green-600); }
-        .risk-amber { color: var(--amber-600); }
+        .risk-limited { color: var(--gray-600); }
         .risk-orange { color: var(--orange-600); }
         .risk-red { color: var(--red-600); }
 
@@ -1041,8 +1041,29 @@
         
         <!-- ==================== ALERT BANNERS ==================== -->
         
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="alert-banner alert-banner--info" role="alert">
+    <svg class="" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+    <div class="alert-banner-content">
+        <div class="alert-banner-title">Switching Not Available</div>
         
+        This is a registered social landlord. Homeowners in properties managed by this organisation typically cannot choose an alternative factor — the factoring arrangement is tied to the property ownership or tenancy structure.
         
+    </div>
+</div>
+
         
         <!-- ==================== PROFILE HEADER ==================== -->
         <div class="profile-header">
@@ -1484,8 +1505,15 @@ Over growing etc"</div>
 
 <!-- Mobile Sticky CTA -->
 
+
+
 <div class="mobile-cta">
-    <a href="/get-quotes/?from=PF000202" style="color: white; font-weight: 600;">Get Free Quotes from Better-Rated Factors →</a>
+    <a href="/get-quotes/?from=PF000202" class="mobile-cta-button">
+        Get Free Quotes
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+    </a>
 </div>
 
 
@@ -1565,6 +1593,11 @@ function toggleCases(btn) {
 </script>
 
 <script>
+// Add body class for mobile CTA padding
+
+document.body.classList.add('has-mobile-cta');
+
+
 function toggleLocations(btn) {
     const container = btn.closest('.review-locations-list');
     const hiddenLocations = container.querySelector('.hidden-locations');

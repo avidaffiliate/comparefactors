@@ -28,7 +28,7 @@ Uses client-side filtering for fast interaction
             <option value="">All</option>
             <option value="CLEAN">Clean Record</option>
             <option value="GREEN">Low Risk</option>
-            <option value="AMBER">Some Concerns</option>
+            <option value="LIMITED">Limited Data</option>
             <option value="ORANGE">Significant Issues</option>
             <option value="RED">Serious Record</option>
         </select>
@@ -206,7 +206,11 @@ function filterAndSort(){
     visibleCards.forEach(card=>grid.appendChild(card));
 }
 
-// Initialize
+// Initialize from URL params
+const urlParams = new URLSearchParams(window.location.search);
+const searchParam = urlParams.get('search');
+if(searchParam) searchInput.value = searchParam;
+
 filterAndSort();
 
 // Event listeners

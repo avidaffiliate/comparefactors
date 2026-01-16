@@ -540,10 +540,10 @@
             background: var(--green-100);
             color: var(--green-700);
         }
-        .risk-badge--amber,
-        .risk-badge.amber {
-            background: var(--amber-100);
-            color: var(--amber-600);
+        .risk-badge--limited,
+        .risk-badge.limited {
+            background: var(--gray-100);
+            color: var(--gray-600);
         }
         .risk-badge--orange,
         .risk-badge.orange {
@@ -564,7 +564,7 @@
         
         .risk-clean { color: var(--green-600); }
         .risk-green { color: var(--green-600); }
-        .risk-amber { color: var(--amber-600); }
+        .risk-limited { color: var(--gray-600); }
         .risk-orange { color: var(--orange-600); }
         .risk-red { color: var(--red-600); }
 
@@ -1024,16 +1024,27 @@
         
         <!-- ==================== ALERT BANNERS ==================== -->
         
-        <div class="alert-banner alert-banner--expired" role="alert">
-            <svg class="" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-            <div class="alert-banner-content">
-                <div class="alert-banner-title">Registration Expired</div>
-                This profile is included for historical completeness. Queens Cross Housing Association is no longer registered with the Scottish Property Factor Register and cannot legally provide factoring services.
-            </div>
-        </div>
-        
-        
-        
+
+
+
+
+
+
+
+
+
+
+<div class="alert-banner alert-banner--expired" role="alert">
+    <svg class="" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+    <div class="alert-banner-content">
+        <div class="alert-banner-title">Registration Expired</div>
+        This profile is included for historical completeness. Queens Cross Housing Association is no longer registered with the Scottish Property Factor Register and cannot legally provide factoring services.
+    </div>
+</div>
+
+
+
+
         
         <!-- ==================== PROFILE HEADER ==================== -->
         <div class="profile-header">
@@ -1304,6 +1315,8 @@
 <!-- Mobile Sticky CTA -->
 
 
+
+
 <!-- Page-specific footer disclaimer -->
 <div class="footer-disclaimer">
     Some summaries and statistics on this page are AI-generated from official sources. Always verify important information with <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions" target="_blank" rel="noopener">official HPC records</a>.
@@ -1380,6 +1393,9 @@ function toggleCases(btn) {
 </script>
 
 <script>
+// Add body class for mobile CTA padding
+
+
 function toggleLocations(btn) {
     const container = btn.closest('.review-locations-list');
     const hiddenLocations = container.querySelector('.hidden-locations');

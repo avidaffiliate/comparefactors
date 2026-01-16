@@ -449,10 +449,10 @@
             background: var(--green-100);
             color: var(--green-700);
         }
-        .risk-badge--amber,
-        .risk-badge.amber {
-            background: var(--amber-100);
-            color: var(--amber-600);
+        .risk-badge--limited,
+        .risk-badge.limited {
+            background: var(--gray-100);
+            color: var(--gray-600);
         }
         .risk-badge--orange,
         .risk-badge.orange {
@@ -473,7 +473,7 @@
         
         .risk-clean { color: var(--green-600); }
         .risk-green { color: var(--green-600); }
-        .risk-amber { color: var(--amber-600); }
+        .risk-limited { color: var(--gray-600); }
         .risk-orange { color: var(--orange-600); }
         .risk-red { color: var(--red-600); }
 
@@ -1874,9 +1874,9 @@
         </div>
 
         <!-- Risk Band Banner -->
-        <div class="risk-band-banner risk-band-banner--none">
+        <div class="risk-band-banner risk-band-banner--limited">
             <span class="risk-band-label">Tribunal Risk Rating</span>
-            <span class="risk-band-value">None</span>
+            <span class="risk-band-value">LIMITED</span>
             <a href="#methodology" class="risk-band-link">What's this?</a>
         </div>
 
@@ -1889,7 +1889,7 @@
             <div class="summary-stat">
                 <span class="stat-value">100%</span>
                 <span class="stat-label">Upheld Rate</span>
-                <span class="stat-context">Industry avg: ~45%</span>
+                <span class="stat-context">Complaints upheld</span>
             </div>
             <div class="summary-stat">
                 <span class="stat-value">1</span>
@@ -2177,16 +2177,17 @@
                 <p>The Housing and Property Chamber is part of the First-tier Tribunal for Scotland. It handles complaints against property factors under the Property Factors (Scotland) Act 2011.</p>
                 
                 <h3>How is the case rate calculated?</h3>
-                <p>Case rate = (number of tribunal cases ÷ properties managed) × 10,000. This normalizes for factor size, allowing fair comparison between factors managing 100 properties and 10,000 properties.</p>
+                <p>Case rate = (weighted tribunal cases ÷ properties managed) × 10,000. Standard cases count as 1 point, cases with PFEOs that were complied with count as 1.5, and PFEO breaches count as 3. This normalizes for factor size and enforcement severity, allowing fair comparison between factors of different sizes.</p>
                 
                 <h3>What do the risk bands mean?</h3>
                 <ul>
-                    <li><strong>CLEAN:</strong> 0 cases per 10,000 properties</li>
-                    <li><strong>GREEN:</strong> &lt;10 cases per 10,000 — minimal tribunal exposure</li>
-                    <li><strong>AMBER:</strong> 10-50 cases per 10,000 — moderate tribunal exposure</li>
-                    <li><strong>ORANGE:</strong> 50-100 cases per 10,000 — elevated tribunal exposure</li>
-                    <li><strong>RED:</strong> &gt;100 cases per 10,000 — significant tribunal exposure</li>
+                    <li><strong>CLEAN:</strong> No adverse tribunal cases in the past 5 years</li>
+                    <li><strong>GREEN:</strong> ≤10 weighted cases per 10,000 properties — low tribunal exposure</li>
+                    <li><strong>ORANGE:</strong> 11–30 weighted cases per 10,000 — elevated tribunal exposure, or 2+ PFEO breaches</li>
+                    <li><strong>RED:</strong> &gt;30 weighted cases per 10,000 — significant tribunal exposure</li>
+                    <li><strong>LIMITED:</strong> Fewer than 50 properties managed — insufficient data for reliable rating</li>
                 </ul>
+                <p><em>Weighted cases: Standard adverse cases count as 1, PFEO complied = 1.5×, PFEO breached = 3×</em></p>
                 
                 <h3>How is severity score calculated?</h3>
                 <p>Each case receives a severity score (0-10) based on objective factors AI-extracted from the tribunal decision:</p>

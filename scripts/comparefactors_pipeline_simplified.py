@@ -899,7 +899,7 @@ def step_7_calculate_scores():
     Simplified Risk Band Methodology v2
     
     Rules:
-      < 50 properties        → LIMITED DATA (no band assigned)
+      < 50 properties        → LIMITED (insufficient data for scoring)
       0 adverse cases        → CLEAN  
       1-2 cases, no breach   → GREEN (capped)
       2+ breaches            → ORANGE minimum
@@ -949,7 +949,7 @@ def step_7_calculate_scores():
             
             # Determine risk band
             if prop_count < MIN_PROPERTIES:
-                tier = None  # LIMITED DATA
+                tier = 'LIMITED'  # Limited data (< 50 properties)
             elif adverse_count == 0:
                 tier = 'CLEAN'
             elif breach_count >= 2:
@@ -1009,7 +1009,7 @@ def step_7_calculate_scores():
             count = conn.execute("SELECT COUNT(*) FROM factors WHERE risk_band = ?", [band]).fetchone()[0]
             log_info(f"{band}: {count}")
         
-        limited = conn.execute("SELECT COUNT(*) FROM factors WHERE risk_band IS NULL").fetchone()[0]
+        limited = conn.execute("SELECT COUNT(*) FROM factors WHERE risk_band = 'LIMITED'").fetchone()[0]
         log_info(f"LIMITED (< 50 props): {limited}")
     
     log_success("Scores calculated")
@@ -1357,13 +1357,13 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
                 pass
         
         # Build risk explainer
-        risk_band = profile.get('risk_band')  # Can be None for LIMITED
+        risk_band = profile.get('risk_band') or 'LIMITED'  # Default to LIMITED if not set
         risk_explainers = {
             'CLEAN': 'No adverse tribunal cases in the past 5 years.',
             'GREEN': 'Low case rate (≤10 per 10k properties).',
+            'LIMITED': 'Limited data - fewer than 50 properties managed.',
             'ORANGE': 'Elevated case rate or multiple PFEO breaches.',
             'RED': 'High tribunal case rate (>30 per 10k) - significant concerns.',
-            None: 'Limited data - fewer than 50 properties managed.',
         }
         
         # Calculate 5-year stats from filtered cases (cases is already 5-year filtered)

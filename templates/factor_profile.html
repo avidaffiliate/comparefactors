@@ -95,25 +95,7 @@ Required data context:
     <main class="main-content">
         
         <!-- ==================== ALERT BANNERS ==================== -->
-        {% if profile.status != 'registered' %}
-        <div class="alert-banner alert-banner--expired" role="alert">
-            {{ icon_alert_circle(size=20) }}
-            <div class="alert-banner-content">
-                <div class="alert-banner-title">Registration Expired</div>
-                This profile is included for historical completeness. {{ profile.name }} is no longer registered with the Scottish Property Factor Register and cannot legally provide factoring services.
-            </div>
-        </div>
-        {% endif %}
-        
-        {% if profile.status == 'registered' and profile.factor_type in ['RSL', 'Housing Association', 'Local Authority'] %}
-        <div class="alert-banner alert-banner--info" role="alert">
-            {{ icon_info(size=20) }}
-            <div class="alert-banner-content">
-                <div class="alert-banner-title">Switching Not Available</div>
-                This factor is a {{ profile.factor_type }}. Homeowners in properties managed by this organisation typically cannot choose an alternative factor—the factoring arrangement is tied to the property ownership or tenancy structure.
-            </div>
-        </div>
-        {% endif %}
+        {% include "partials/_alert_banners.html" %}
         
         <!-- ==================== PROFILE HEADER ==================== -->
         <div class="profile-header">
@@ -266,19 +248,16 @@ Required data context:
                         <div class="data-item">
                             <div class="data-value">{{ tribunal_last_5_years.case_count|default(0) }}</div>
                             <div class="data-label">Cases</div>
-                            <div class="data-benchmark">Avg: ~5</div>
                         </div>
                         <div class="data-item">
                             <div class="data-value {% if tribunal_last_5_years.complaints_upheld_pct and tribunal_last_5_years.complaints_upheld_pct > 50 %}red{% endif %}">
                                 {% if tribunal_last_5_years.complaints_upheld_pct %}{{ tribunal_last_5_years.complaints_upheld_pct|int }}%{% else %}—{% endif %}
                             </div>
                             <div class="data-label">Upheld</div>
-                            <div class="data-benchmark">Avg: ~45%</div>
                         </div>
                         <div class="data-item">
                             <div class="data-value">{{ "%.1f"|format(tribunal_last_5_years.rate_per_10k) if tribunal_last_5_years.rate_per_10k else '—' }}</div>
                             <div class="data-label">Rate/10k</div>
-                            <div class="data-benchmark">Avg: 2.0</div>
                         </div>
                         <div class="data-item">
                             <div class="data-value {% if tribunal_last_5_years.pfeo_count and tribunal_last_5_years.pfeo_count > 0 %}red{% endif %}">{{ tribunal_last_5_years.pfeo_count|default(0) }}</div>
@@ -570,11 +549,7 @@ Required data context:
 </div>
 
 <!-- Mobile Sticky CTA -->
-{% if is_switchable %}
-<div class="mobile-cta">
-    <a href="/get-quotes/?from={{ profile.registration_number }}" style="color: white; font-weight: 600;">Get Free Quotes from Better-Rated Factors →</a>
-</div>
-{% endif %}
+{% include "partials/_mobile_cta.html" %}
 
 <!-- Page-specific footer disclaimer -->
 <div class="footer-disclaimer">
@@ -585,6 +560,11 @@ Required data context:
 {% block scripts %}
 {{ case_toggle_script() }}
 <script>
+// Add body class for mobile CTA padding
+{% if is_switchable %}
+document.body.classList.add('has-mobile-cta');
+{% endif %}
+
 function toggleLocations(btn) {
     const container = btn.closest('.review-locations-list');
     const hiddenLocations = container.querySelector('.hidden-locations');

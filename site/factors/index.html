@@ -52,7 +52,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 .factor-name{font-family:var(--font-display);font-size:1.1rem;font-weight:600;color:var(--navy-950);margin:0;line-height:1.3}.factor-name a{color:inherit}.factor-name a:hover{text-decoration:underline}
 .factor-reg{font-size:0.75rem;color:var(--slate-400);margin-top:2px}.factor-badges{display:flex;flex-wrap:wrap;gap:4px}
 .badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:4px;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.02em;white-space:nowrap}
-.badge-red{background:var(--red-100);color:var(--red-700)}.badge-orange{background:var(--orange-100);color:var(--orange-600)}.badge-amber{background:var(--amber-100);color:var(--amber-600)}.badge-green{background:var(--green-100);color:var(--green-700)}.badge-clean{background:var(--green-50);color:var(--green-600)}.badge-expired{background:var(--slate-100);color:var(--slate-500)}.badge-rsl{background:#e0e7ff;color:#4338ca}.badge-tpi{background:var(--blue-100);color:var(--blue-700)}
+.badge-red{background:var(--red-100);color:var(--red-700)}.badge-orange{background:var(--orange-100);color:var(--orange-600)}.badge-limited{background:#f3f4f6;color:#4b5563}.badge-green{background:var(--green-100);color:var(--green-700)}.badge-clean{background:var(--green-50);color:var(--green-600)}.badge-expired{background:var(--slate-100);color:var(--slate-500)}.badge-rsl{background:#e0e7ff;color:#4338ca}.badge-tpi{background:var(--blue-100);color:var(--blue-700)}
 .factor-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.factor-stat{text-align:center;padding:8px;background:var(--slate-50);border-radius:6px}.factor-stat-value{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--navy-950)}.factor-stat-label{font-size:0.7rem;color:var(--slate-500);margin-top:2px}
 .reviews-row{display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap}.review-item{display:flex;align-items:center;gap:4px;font-size:0.85rem}.stars{color:#fbbf24;letter-spacing:-1px}.rating-num{font-weight:600;color:var(--slate-700)}.review-count{color:var(--slate-400);font-size:0.8rem}.no-reviews{color:var(--slate-400);font-size:0.85rem;font-style:italic}
 .factor-footer{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--slate-100)}.factor-meta{font-size:0.8rem;color:var(--slate-400)}.factor-link{font-size:0.85rem;font-weight:600;color:var(--blue-600)}
@@ -122,7 +122,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
             <option value="">All</option>
             <option value="CLEAN">Clean Record</option>
             <option value="GREEN">Low Risk</option>
-            <option value="AMBER">Some Concerns</option>
+            <option value="LIMITED">Limited Data</option>
             <option value="ORANGE">Significant Issues</option>
             <option value="RED">Serious Record</option>
         </select>
@@ -157,7 +157,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="34 camphill avenue owners association" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="8"
@@ -171,7 +171,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -430,7 +430,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="a w middleton" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="20"
@@ -444,7 +444,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -814,7 +814,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="alan a haxton" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="14"
@@ -828,7 +828,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -1147,7 +1147,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="abba land and property limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="17"
@@ -1161,7 +1161,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -1207,7 +1207,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="abbey construction (scotland) ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="15"
@@ -1221,7 +1221,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -1438,7 +1438,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="aberdeenshire council" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="1"
      data-properties="6"
@@ -1452,7 +1452,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -1729,7 +1729,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="acre lettings ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="39"
@@ -1743,7 +1743,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -1840,7 +1840,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="afton builders limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="19"
@@ -1854,7 +1854,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -1900,7 +1900,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="ainsley smith & co ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="5"
@@ -1914,7 +1914,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -2002,7 +2002,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="alan gebbie" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="11"
@@ -2016,7 +2016,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -2258,7 +2258,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="alderglen factor association" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="37"
@@ -2272,7 +2272,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -3477,7 +3477,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="argyll letting services limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="12"
@@ -3491,7 +3491,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -3861,7 +3861,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="avongreen abodes ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="5"
@@ -3875,7 +3875,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -4398,7 +4398,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="bastion property management ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="16"
@@ -4412,7 +4412,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -5208,7 +5208,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="blochairn housing association ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="1"
      data-properties="31"
@@ -5222,7 +5222,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -5268,7 +5268,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="block property management ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="2"
@@ -5282,7 +5282,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -5370,7 +5370,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="blosshome property management ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="22"
@@ -5384,7 +5384,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -5643,7 +5643,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="bowman rebecchi limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="16"
@@ -5657,7 +5657,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -5874,7 +5874,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="brio retirement living (chapelton) limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="26"
@@ -5888,7 +5888,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -7434,7 +7434,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="chapelton community interest company" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="30"
@@ -7448,7 +7448,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -7602,7 +7602,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="chesnutt skeoch ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="27"
@@ -7616,7 +7616,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -7653,7 +7653,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="christopher moore" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="6"
@@ -7667,7 +7667,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -8829,7 +8829,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="colonsay community development company" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="9"
@@ -8843,7 +8843,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -8931,7 +8931,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="communities housing trust" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="6"
@@ -8945,7 +8945,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -9135,7 +9135,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="cordale housing association limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="1"
      data-properties="22"
@@ -9149,7 +9149,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -9468,7 +9468,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="cullen property limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="32"
@@ -9482,7 +9482,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -9963,7 +9963,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="djm property services & contracts ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="40"
@@ -9977,7 +9977,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -10287,7 +10287,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="david robin wardhaugh" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="18"
@@ -10301,7 +10301,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -10347,7 +10347,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="davidson & robertson limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="2"
@@ -10361,7 +10361,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -10398,7 +10398,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="denise baykal" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="18"
@@ -10412,7 +10412,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -10662,7 +10662,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="duffield morgan limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="14"
@@ -10676,7 +10676,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -10713,7 +10713,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="dumfries and galloway homes limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="28"
@@ -10727,7 +10727,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -11873,7 +11873,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="eildon housing association ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="1"
      data-properties="43"
@@ -11887,7 +11887,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -12794,7 +12794,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="facilities management scotland limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="14"
@@ -12808,7 +12808,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -13793,7 +13793,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="forgewood housing co-operative ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="1"
      data-properties="47"
@@ -13807,7 +13807,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -14441,7 +14441,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="galloway and ayrshire properties ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="28"
@@ -14455,7 +14455,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -14501,7 +14501,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="gardeen housing association limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="1"
      data-properties="17"
@@ -14515,7 +14515,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -14681,7 +14681,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="garrion people's housing co-operative limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="1"
      data-properties="24"
@@ -14695,7 +14695,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -14843,7 +14843,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="gilmour property services ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="11"
@@ -14857,7 +14857,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -15227,7 +15227,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="globe housing (scotland) limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="27"
@@ -15241,7 +15241,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -15278,7 +15278,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="goldmont thompson ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="11"
@@ -15292,7 +15292,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -16034,7 +16034,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="grierson property management ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="2"
@@ -16048,7 +16048,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -16205,7 +16205,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="hlm management (scotland) limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="28"
@@ -16219,7 +16219,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -17774,7 +17774,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="individually designed homes ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="15"
@@ -17788,7 +17788,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -18098,7 +18098,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="j s campbell mrics" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="15"
@@ -18112,7 +18112,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -18200,7 +18200,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="j&e shepherd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="13"
@@ -18214,7 +18214,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -18539,7 +18539,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="jamie mcbride" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="6"
@@ -18553,7 +18553,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -19349,7 +19349,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="kingdom initiatives limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="8"
@@ -19363,7 +19363,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -19623,7 +19623,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="lar housing trust" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="40"
@@ -19637,7 +19637,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -19845,7 +19845,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="ladysbridge village ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="19"
@@ -19859,7 +19859,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -20715,7 +20715,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="loch tay highland lodge park ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="30"
@@ -20729,7 +20729,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -20835,7 +20835,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="lochaber housing association property services cic" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="40"
@@ -20849,7 +20849,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -21006,7 +21006,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="lochfield park housing association limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="1"
      data-properties="6"
@@ -21020,7 +21020,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -22320,7 +22320,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="manor estates associates ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="20"
@@ -22334,7 +22334,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -22593,7 +22593,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="martin jack limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="6"
@@ -22607,7 +22607,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -23055,7 +23055,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="mcneill maguire & mccreath surveyors limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="42"
@@ -23069,7 +23069,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -23371,7 +23371,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="mezzino limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="10"
@@ -23385,7 +23385,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -24232,7 +24232,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="nrv management glasgow limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="24"
@@ -24246,7 +24246,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -24344,7 +24344,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="naver ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="13"
@@ -24358,7 +24358,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -25082,7 +25082,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="northwood edinburgh ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="1"
@@ -25096,7 +25096,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -25253,7 +25253,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="ochil view housing association ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="1"
      data-properties="42"
@@ -25267,7 +25267,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -25313,7 +25313,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="on tranquil shores ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="19"
@@ -25327,7 +25327,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -25874,7 +25874,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="pada vastu ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="9"
@@ -25888,7 +25888,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -26036,7 +26036,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="palms property management ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="24"
@@ -26050,7 +26050,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -26615,7 +26615,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="pavillion properties limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="37"
@@ -26629,7 +26629,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -27545,7 +27545,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="premier properties perth limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="9"
@@ -27559,7 +27559,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -27980,7 +27980,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="provanhall housing association" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="1"
      data-properties="16"
@@ -27994,7 +27994,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -28040,7 +28040,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="quarriers" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="7"
@@ -28054,7 +28054,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -29057,7 +29057,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="ritchie leasing limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="9"
@@ -29071,7 +29071,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -29228,7 +29228,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="robert smith" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="22"
@@ -29242,7 +29242,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -29891,7 +29891,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="ruchazie housing association limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="1"
      data-properties="6"
@@ -29905,7 +29905,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -30002,7 +30002,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="rural stirling housing association" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="1"
      data-properties="43"
@@ -30016,7 +30016,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -30701,7 +30701,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="scott woods" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="7"
@@ -30715,7 +30715,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -30986,7 +30986,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="select premier letting ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="28"
@@ -31000,7 +31000,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -32228,7 +32228,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="staffin community trust ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="2"
@@ -32242,7 +32242,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -32612,7 +32612,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="the property factoring company ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="22"
@@ -32626,7 +32626,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -32663,7 +32663,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="the tenement company (scotland) ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="21"
@@ -32677,7 +32677,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -33719,7 +33719,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="thomsons uk limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="7"
@@ -33733,7 +33733,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -33882,7 +33882,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="tomintoul and glenlivet development trust" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="12"
@@ -33896,7 +33896,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -34174,7 +34174,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="town property management ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="26"
@@ -34188,7 +34188,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -34411,7 +34411,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="troon property factoring services ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="22"
@@ -34425,7 +34425,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -34999,7 +34999,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="vista properties and development ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="31"
@@ -35013,7 +35013,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -35212,7 +35212,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="wanrobe investments limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="20"
@@ -35226,7 +35226,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -35383,7 +35383,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="waverley property maintenance limited" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="20"
@@ -35397,7 +35397,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -36007,7 +36007,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="west one property management & factoring ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="46"
@@ -36021,7 +36021,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -36220,7 +36220,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="factor-card" 
      data-name="westburn services ltd" 
-     data-risk="CLEAN" 
+     data-risk="LIMITED" 
      data-expired="0" 
      data-rsl="0"
      data-properties="8"
@@ -36234,7 +36234,7 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
         </div>
         <div class="factor-badges">
             
-            <span class="badge badge-clean">Clean</span>
+            <span class="badge badge-limited">LIMITED</span>
         </div>
     </div>
     <div class="factor-stats">
@@ -37488,7 +37488,11 @@ function filterAndSort(){
     visibleCards.forEach(card=>grid.appendChild(card));
 }
 
-// Initialize
+// Initialize from URL params
+const urlParams = new URLSearchParams(window.location.search);
+const searchParam = urlParams.get('search');
+if(searchParam) searchInput.value = searchParam;
+
 filterAndSort();
 
 // Event listeners

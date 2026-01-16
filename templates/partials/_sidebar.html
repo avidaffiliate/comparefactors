@@ -1,0 +1,123 @@
+{# =============================================================================
+   SIDEBAR PARTIAL - With Conditional CTAs
+   
+   Hides switching CTAs for:
+   - Expired factors
+   - RSL / Housing Association / Local Authority factors
+   
+   Usage: {% include "partials/_sidebar.html" %}
+   ============================================================================= #}
+
+{# Define whether to show CTAs #}
+{% set show_ctas = profile.status == 'registered' and profile.trading_type not in ['Registered Social Landlord', 'Local Authority'] %}
+
+<aside class="sidebar">
+    
+    {% if show_ctas %}
+    {# ==================== CTA BOX (Commercial factors only) ==================== #}
+    <div class="sidebar-card">
+        <div class="cta-box">
+            <h3 class="cta-title">Unhappy with your factor?</h3>
+            {% if similar_factors and similar_factors|length > 0 %}
+            <div class="cta-highlight">{{ similar_factors|length }} alternatives serve your area</div>
+            {% endif %}
+            <p class="cta-text">Get free, no-obligation quotes from other factors.</p>
+            <a href="/get-quotes/?from={{ profile.registration_number }}" class="cta-button">
+                Get Quotes
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+        <a href="/contact/?subject=correction&factor={{ profile.registration_number }}" class="correction-link">
+            See something wrong? Submit a correction →
+        </a>
+    </div>
+    
+    {% else %}
+    {# ==================== NON-SWITCHABLE / EXPIRED BOX ==================== #}
+    <div class="sidebar-card">
+        <div class="info-box">
+            {% if profile.status != 'registered' %}
+            <h4 class="info-box-title">Historical Profile</h4>
+            <p>This factor's registration has expired. This profile is retained for reference purposes.</p>
+            {% else %}
+            <h4 class="info-box-title">{{ profile.trading_type }} Profile</h4>
+            <p>This organisation manages its own housing stock. Private homeowners cannot appoint them as a factor.</p>
+            <a href="/factors/?type=Company" class="btn btn--secondary btn--sm">Browse commercial factors →</a>
+            {% endif %}
+        </div>
+        <a href="/contact/?subject=correction&factor={{ profile.registration_number }}" class="correction-link">
+            See something wrong? Submit a correction →
+        </a>
+    </div>
+    {% endif %}
+    
+    {# ==================== CONTACT CARD ==================== #}
+    <div class="sidebar-card">
+        <h3 class="sidebar-title">Contact</h3>
+        <div class="contact-list">
+            {% if profile.website %}
+            <div class="contact-item">
+                <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+                <a href="{{ profile.website }}" target="_blank" rel="noopener" class="contact-value contact-link">
+                    {{ profile.website|replace('https://','')|replace('http://','')|replace('www.','')|truncate(30) }}
+                </a>
+            </div>
+            {% endif %}
+            
+            {% if profile.phone %}
+            <div class="contact-item">
+                <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+                <a href="tel:{{ profile.phone }}" class="contact-value contact-link">{{ profile.phone }}</a>
+            </div>
+            {% endif %}
+            
+            {% if profile.address %}
+            <div class="contact-item">
+                <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <span class="contact-value">{{ profile.address }}</span>
+            </div>
+            {% endif %}
+            
+            {% if not profile.website and not profile.phone and not profile.address %}
+            <p class="no-contact">No contact information available.</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    {# ==================== QUICK FACTS CARD ==================== #}
+    <div class="sidebar-card">
+        <h3 class="sidebar-title">Quick Facts</h3>
+        <dl class="facts-list">
+            <div class="fact-item">
+                <dt>Registration</dt>
+                <dd>{{ profile.registration_number }}</dd>
+            </div>
+            <div class="fact-item">
+                <dt>Type</dt>
+                <dd>{{ profile.trading_type }}</dd>
+            </div>
+            <div class="fact-item">
+                <dt>Properties</dt>
+                <dd>{{ "{:,}".format(profile.property_count) }}</dd>
+            </div>
+            {% if profile.tpi_member %}
+            <div class="fact-item">
+                <dt>TPI Member</dt>
+                <dd>Yes</dd>
+            </div>
+            {% endif %}
+        </dl>
+    </div>
+
+</aside>
