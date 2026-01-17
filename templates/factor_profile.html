@@ -3,8 +3,6 @@ Factor Profile Template v7.0 - Mobile Optimized
 Inherits: header, footer, navigation, base styles from base.html
 
 v7.0 Changes:
-- Single CTA strategy: sticky bottom bar on mobile only
-- Removed duplicate sidebar CTA and inline bottom CTA
 - Mobile content reordering: main content first, sidebar utilities at end
 - Improved mobile spacing and typography
 - Better data grid layout (3-2 on mobile instead of 2-2-1)
@@ -504,19 +502,6 @@ Required data context:
         
     </div><!-- /.profile-layout -->
 </div><!-- /.container -->
-
-<!-- ==================== MOBILE STICKY CTA (Single CTA) ==================== -->
-{% if is_switchable %}
-<div class="mobile-cta is-switchable">
-    <div class="mobile-cta-inner">
-        <div class="mobile-cta-text">
-            <strong>Considering a switch?</strong>
-            Compare quotes from vetted factors
-        </div>
-        <a href="/get-quotes/?from={{ profile.registration_number }}" class="mobile-cta-button">Get Quotes</a>
-    </div>
-</div>
-{% endif %}
 
 <!-- Page-specific footer disclaimer -->
 <div class="footer-disclaimer">
