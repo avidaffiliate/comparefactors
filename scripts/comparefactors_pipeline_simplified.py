@@ -297,6 +297,8 @@ CREATE TABLE IF NOT EXISTS reviews (
     review_date TEXT,
     author_name TEXT,
     source_id TEXT,
+    phone TEXT,
+    address TEXT,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -588,8 +590,8 @@ def step_4_import_reviews():
                 
                 try:
                     conn.execute("""
-                        INSERT INTO reviews (factor_registration_number, platform, rating, review_count, review_text, review_date, author_name, source_id)
-                        VALUES (?, 'google', ?, ?, ?, ?, ?, ?)
+                        INSERT INTO reviews (factor_registration_number, platform, rating, review_count, review_text, review_date, author_name, source_id, phone)
+                        VALUES (?, 'google', ?, ?, ?, ?, ?, ?, ?)
                     """, [
                         pf,
                         parse_float(get_csv_value(row, ['rating', 'google_rating'])),
@@ -598,6 +600,7 @@ def step_4_import_reviews():
                         parse_date(get_csv_value(row, ['review_date', 'date'])),
                         author_name,
                         source_id,
+                        get_csv_value(row, ['phone', 'phone_number']),
                     ])
                     imported += 1
                 except sqlite3.IntegrityError:
@@ -1305,7 +1308,7 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
         
         # Get Google locations
         google_locs = [dict(r) for r in conn.execute("""
-            SELECT source_id as place_id, author_name as name, rating, review_count
+            SELECT source_id as place_id, author_name as name, rating, review_count, phone
             FROM reviews WHERE factor_registration_number = ? AND platform = 'google'
             GROUP BY source_id ORDER BY review_count DESC
         """, [pf]).fetchall()]
@@ -1317,7 +1320,12 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
             if loc.get('review_count') is None:
                 loc['review_count'] = 0
         
-        google_places = {'place_id': google_locs[0]['place_id'], 'name': google_locs[0].get('name')} if google_locs else None
+        google_places = {
+            'place_id': google_locs[0]['place_id'], 
+            'name': google_locs[0].get('name'),
+            'phone': google_locs[0].get('phone'),
+            'address': profile.get('address')  # From factors table
+        } if google_locs else None
         
         # Get Trustpilot
         tp_row = conn.execute("""

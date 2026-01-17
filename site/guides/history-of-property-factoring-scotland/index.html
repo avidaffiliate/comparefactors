@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-GB">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-P9QSNCJEBQ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-P9QSNCJEBQ');
-</script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -38,25 +29,37 @@
     <meta property="article:author" content="Compare Factors">
     <meta property="article:section" content="Guides">
     
+    <!-- Optimized font loading: preconnect + async load to eliminate render blocking -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+    </noscript>
     
     <style>
+        /* ==================== CSS VARIABLES ==================== */
         :root {
+            /* Navy scale - primary dark colors */
             --navy-950: #0a0f1a;
             --navy-900: #0f172a;
             --navy-800: #1e293b;
             --navy-700: #334155;
+            
+            /* Slate scale - neutral grays */
+            /* Note: --slate-500 and lighter fail WCAG AA on white backgrounds */
+            /* Use --slate-600 minimum for body text */
+            --slate-700: #334155;
             --slate-600: #475569;
-            --slate-500: #64748b;
-            --slate-400: #94a3b8;
+            --slate-500: #64748b;  /* Use only for large text or non-essential UI */
+            --slate-400: #94a3b8;  /* Use only for borders/icons, not text */
             --slate-300: #cbd5e1;
             --slate-200: #e2e8f0;
             --slate-100: #f1f5f9;
             --slate-50: #f8fafc;
             --white: #ffffff;
 
+            /* Status colors */
             --red-700: #b91c1c;
             --red-600: #dc2626;
             --red-100: #fee2e2;
@@ -81,14 +84,44 @@
             --indigo-100: #e0e7ff;
             --indigo-50: #eef2ff;
             
+            /* Semantic aliases */
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --text-muted: #475569;  /* slate-600 for WCAG AA compliance */
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --bg-muted: #f8fafc;
+            --bg-hover: #f1f5f9;
+            
+            /* Typography */
             --font-display: 'Fraunces', Georgia, serif;
             --font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
         }
 
-        * {
+        /* ==================== RESET & BASE ==================== */
+        *, *::before, *::after { 
+            box-sizing: border-box; 
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         body {
@@ -100,7 +133,7 @@
         }
 
         /* ============================================
-           HEADER
+           HEADER - Aligned with base.html
         ============================================ */
         .site-header {
             background: var(--white);
@@ -121,60 +154,148 @@
         }
 
         .logo {
-            font-family: var(--font-display);
-            font-size: 1.35rem;
-            font-weight: 600;
-            color: var(--navy-900);
-            text-decoration: none;
             display: flex;
             align-items: center;
             gap: 10px;
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--navy-950);
+            text-decoration: none;
+        }
+        .logo:hover {
+            text-decoration: none;
         }
 
         .logo-mark {
-            width: 36px;
-            height: 36px;
-            background: var(--navy-900);
-            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            background: var(--navy-950);
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--white);
+            color: white;
+            font-size: 0.75rem;
             font-weight: 700;
-            font-size: 1.1rem;
-            letter-spacing: -0.5px;
         }
 
         .nav {
             display: flex;
             align-items: center;
-            gap: 32px;
+            gap: 24px;
         }
 
         .nav-link {
             color: var(--slate-600);
             text-decoration: none;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 500;
             transition: color 0.15s;
         }
-
         .nav-link:hover {
-            color: var(--navy-900);
+            color: var(--navy-950);
+            text-decoration: underline;
         }
 
         .nav-cta {
-            background: var(--navy-900);
-            color: var(--white);
-            padding: 10px 20px;
-            border-radius: 8px;
+            background: var(--navy-950);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
             font-weight: 600;
+            text-decoration: none;
             transition: background 0.15s;
         }
-
         .nav-cta:hover {
             background: var(--navy-800);
-            color: var(--white);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Mobile Menu */
+        .burger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            width: 28px;
+            height: 28px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .burger span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: var(--navy-800);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .burger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .burger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .burger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        .mobile-nav {
+            display: none;
+            position: absolute;
+            top: 68px;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border-bottom: 1px solid var(--slate-200);
+            padding: 16px 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .mobile-nav.active {
+            display: block;
+        }
+
+        .mobile-nav a {
+            display: block;
+            padding: 12px 0;
+            color: var(--slate-600);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            border-bottom: 1px solid var(--slate-100);
+        }
+
+        .mobile-nav a:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-nav a:hover {
+            color: var(--navy-900);
+        }
+
+        .mobile-nav a.nav-cta {
+            color: white;
+            background: var(--navy-950);
+            margin-top: 12px;
+            padding: 12px 16px;
+            border-radius: 6px;
+            text-align: center;
+            border-bottom: none;
+        }
+        
+        .mobile-nav a.nav-cta:hover {
+            background: var(--navy-800);
+            color: white;
         }
 
         /* ============================================
@@ -196,21 +317,22 @@
             align-items: center;
             gap: 8px;
             font-size: 0.9rem;
-            color: var(--slate-500);
+            color: var(--slate-600);  /* Changed from slate-500 for WCAG AA */
             margin-bottom: 24px;
         }
 
         .breadcrumb a {
-            color: var(--slate-500);
+            color: var(--slate-600);  /* Changed from slate-500 for WCAG AA */
             text-decoration: none;
         }
 
         .breadcrumb a:hover {
             color: var(--blue-600);
+            text-decoration: underline;
         }
 
         .breadcrumb-sep {
-            color: var(--slate-300);
+            color: var(--slate-400);
         }
 
         .article-badge {
@@ -249,7 +371,7 @@
             gap: 24px;
             flex-wrap: wrap;
             font-size: 0.9rem;
-            color: var(--slate-500);
+            color: var(--slate-600);  /* Changed from slate-500 for WCAG AA */
         }
 
         .article-meta-item {
@@ -667,12 +789,12 @@
         }
 
         /* ============================================
-           FOOTER
+           FOOTER - Aligned with base.html
         ============================================ */
         .footer {
             background: var(--navy-950);
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 64px 24px 32px;
+            padding: 48px 24px 24px;
         }
 
         .footer-inner {
@@ -684,22 +806,37 @@
             display: grid;
             grid-template-columns: 2fr 1fr 1fr 1fr;
             gap: 48px;
-            margin-bottom: 48px;
+            margin-bottom: 32px;
         }
 
-        .footer-brand p {
-            color: var(--slate-400);
-            font-size: 0.95rem;
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 12px;
+        }
+        .footer-brand .logo-mark {
+            background: white;
+            color: var(--navy-950);
+        }
+
+        .footer-about {
+            font-size: 0.9rem;
             line-height: 1.6;
-            margin-top: 16px;
+            color: rgba(255, 255, 255, 0.6);
             max-width: 280px;
         }
 
+        .footer-col h4,
         .footer-title {
-            font-family: var(--font-display);
-            font-size: 1rem;
+            font-family: var(--font-body);
             font-weight: 600;
-            color: var(--white);
+            color: white;
+            font-size: 0.9rem;
             margin-bottom: 16px;
         }
 
@@ -712,24 +849,23 @@
         }
 
         .footer-links a {
-            color: var(--slate-400);
+            color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
             font-size: 0.9rem;
             transition: color 0.15s;
         }
-
         .footer-links a:hover {
-            color: var(--white);
+            color: white;
         }
 
         .footer-bottom {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-top: 32px;
+            padding-top: 24px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--slate-500);
-            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
         }
 
         /* ============================================
@@ -762,6 +898,10 @@
         @media (max-width: 768px) {
             .nav {
                 display: none;
+            }
+            
+            .burger {
+                display: flex;
             }
 
             .related-guides-grid {
@@ -850,9 +990,21 @@
                 <a href="/areas" class="nav-link">By Area</a>
                 <a href="/methodology" class="nav-link">How We Score</a>
                 <a href="/guides" class="nav-link">Guides</a>
-                <a href="/get-quotes" class="nav-link nav-cta">Get Quotes</a>
+                <a href="/get-quotes" class="nav-cta">Get Quotes</a>
             </nav>
+            <button class="burger" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
+        <nav class="mobile-nav">
+            <a href="/factors">All Factors</a>
+            <a href="/areas">By Area</a>
+            <a href="/methodology">How We Score</a>
+            <a href="/guides">Guides</a>
+            <a href="/get-quotes" class="nav-cta">Get Quotes</a>
+        </nav>
     </header>
 
     <!-- ============================================
@@ -1392,14 +1544,14 @@
     <footer class="footer">
         <div class="footer-inner">
             <div class="footer-grid">
-                <div class="footer-brand">
-                    <a href="/" class="logo" style="color: white;">
+                <div>
+                    <div class="footer-brand">
                         <div class="logo-mark">CF</div>
                         Compare Factors
-                    </a>
-                    <p>Helping Scottish homeowners make informed decisions with transparent, independent data.</p>
+                    </div>
+                    <p class="footer-about">Helping Scottish homeowners make informed decisions with transparent, independent data.</p>
                 </div>
-                <div>
+                <div class="footer-col">
                     <h4 class="footer-title">Explore</h4>
                     <ul class="footer-links">
                         <li><a href="/factors">All Factors</a></li>
@@ -1408,7 +1560,7 @@
                         <li><a href="/tribunal">Tribunal Cases</a></li>
                     </ul>
                 </div>
-                <div>
+                <div class="footer-col">
                     <h4 class="footer-title">Guides</h4>
                     <ul class="footer-links">
                         <li><a href="/guides/choosing-a-factor">Choosing a Factor</a></li>
@@ -1417,7 +1569,7 @@
                         <li><a href="/guides/complaints">Making a Complaint</a></li>
                     </ul>
                 </div>
-                <div>
+                <div class="footer-col">
                     <h4 class="footer-title">About</h4>
                     <ul class="footer-links">
                         <li><a href="/methodology">Our Methodology</a></li>
@@ -1541,22 +1693,223 @@
     </div>
 </div>
 <button type="button" class="cf-cookie-settings-btn" id="cfFloatingSettings" aria-label="Cookie settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="8" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="8" r="1" fill="currentColor"/><circle cx="10" cy="14" r="1" fill="currentColor"/></svg></button>
+
+<!-- Mobile menu toggle -->
 <script>
-(function(){var COOKIE_NAME='cf_cookie_consent',VERSION='1.0',EXPIRY=365;var banner=document.getElementById('cfCookieBanner'),overlay=document.getElementById('cfCookieOverlay'),settings=document.getElementById('cfCookieSettings'),floatBtn=document.getElementById('cfFloatingSettings'),acceptBtn=document.getElementById('cfAcceptAll'),rejectBtn=document.getElementById('cfRejectAll'),showSettingsBtn=document.getElementById('cfShowSettings'),saveBtn=document.getElementById('cfSavePreferences'),analyticsToggle=document.getElementById('cfAnalyticsCookies'),marketingToggle=document.getElementById('cfMarketingCookies');
-function getConsent(){try{var c=document.cookie.split('; ').find(function(r){return r.startsWith(COOKIE_NAME+'=')});if(c){var v=JSON.parse(decodeURIComponent(c.split('=')[1]));if(v.version===VERSION)return v}}catch(e){}return null}
-function setConsent(p){var v={version:VERSION,timestamp:new Date().toISOString(),essential:true,analytics:p.analytics||false,marketing:p.marketing||false};var exp=new Date();exp.setDate(exp.getDate()+EXPIRY);document.cookie=COOKIE_NAME+'='+encodeURIComponent(JSON.stringify(v))+'; expires='+exp.toUTCString()+'; path=/; SameSite=Lax; Secure';window.dispatchEvent(new CustomEvent('cfConsentUpdated',{detail:v}));return v}
-function showBanner(){banner.classList.add('active');overlay.classList.add('active');floatBtn.classList.remove('active');document.body.style.overflow='hidden'}
-function hideBanner(){banner.classList.remove('active');overlay.classList.remove('active');settings.classList.remove('active');floatBtn.classList.add('active');document.body.style.overflow=''}
-function loadScripts(c){if(c.analytics&&!window.cfGA4Loaded){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=G-P9QSNCJEBQ';s.onload=function(){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}window.gtag=gtag;gtag('js',new Date());gtag('config','G-P9QSNCJEBQ',{anonymize_ip:true})};document.head.appendChild(s);window.cfGA4Loaded=true}}
-function removeNonEssential(c){c=c||{analytics:false,marketing:false};var cookies=['_ga','_gid','_gat','_fbp','_fbc','_gcl_au'];document.cookie.split(';').forEach(function(ck){var n=ck.split('=')[0].trim();if(cookies.some(function(p){return n===p||n.startsWith(p+'_')})){document.cookie=n+'=;expires=Thu,01 Jan 1970 00:00:00 GMT;path=/';document.cookie=n+'=;expires=Thu,01 Jan 1970 00:00:00 GMT;path=/;domain='+location.hostname}})}
-function init(){var c=getConsent();if(c){floatBtn.classList.add('active');analyticsToggle.checked=c.analytics;marketingToggle.checked=c.marketing;loadScripts(c)}else{showBanner()}
-acceptBtn.addEventListener('click',function(){var c=setConsent({analytics:true,marketing:true});hideBanner();loadScripts(c)});
-rejectBtn.addEventListener('click',function(){setConsent({analytics:false,marketing:false});hideBanner();removeNonEssential()});
-showSettingsBtn.addEventListener('click',function(){settings.classList.toggle('active');showSettingsBtn.textContent=settings.classList.contains('active')?'Hide preferences':'Manage preferences'});
-saveBtn.addEventListener('click',function(){var c=setConsent({analytics:analyticsToggle.checked,marketing:marketingToggle.checked});hideBanner();loadScripts(c);if(!c.analytics||!c.marketing)removeNonEssential(c)});
-floatBtn.addEventListener('click',function(){var c=getConsent();if(c){analyticsToggle.checked=c.analytics;marketingToggle.checked=c.marketing}showBanner()})}
-window.cfCookieConsent={getConsent:getConsent,hasAnalyticsConsent:function(){var c=getConsent();return c?c.analytics:false},hasMarketingConsent:function(){var c=getConsent();return c?c.marketing:false},showBanner:showBanner};
-if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init)}else{init()}})();
+    const burger = document.querySelector('.burger');
+    const mobileNav = document.querySelector('.mobile-nav');
+    
+    if (burger && mobileNav) {
+        burger.addEventListener('click', () => {
+            burger.classList.toggle('active');
+            mobileNav.classList.toggle('active');
+        });
+    }
+</script>
+
+<!-- Cookie Consent Manager - UK GDPR & PECR Compliant -->
+<script>
+(function() {
+    'use strict';
+
+    const CONSENT_COOKIE_NAME = 'cf_cookie_consent';
+    const CONSENT_VERSION = '1.0';
+    const CONSENT_EXPIRY_DAYS = 365;
+
+    const banner = document.getElementById('cfCookieBanner');
+    const overlay = document.getElementById('cfCookieOverlay');
+    const settingsPanel = document.getElementById('cfCookieSettings');
+    const floatingBtn = document.getElementById('cfFloatingSettings');
+    
+    const acceptAllBtn = document.getElementById('cfAcceptAll');
+    const rejectAllBtn = document.getElementById('cfRejectAll');
+    const showSettingsBtn = document.getElementById('cfShowSettings');
+    const savePreferencesBtn = document.getElementById('cfSavePreferences');
+    
+    const analyticsToggle = document.getElementById('cfAnalyticsCookies');
+    const marketingToggle = document.getElementById('cfMarketingCookies');
+
+    function getConsent() {
+        try {
+            const cookie = document.cookie
+                .split('; ')
+                .find(row => row.startsWith(CONSENT_COOKIE_NAME + '='));
+            
+            if (cookie) {
+                const value = JSON.parse(decodeURIComponent(cookie.split('=')[1]));
+                if (value.version === CONSENT_VERSION) {
+                    return value;
+                }
+            }
+        } catch (e) {
+            console.warn('Error reading consent cookie:', e);
+        }
+        return null;
+    }
+
+    function setConsent(preferences) {
+        const value = {
+            version: CONSENT_VERSION,
+            timestamp: new Date().toISOString(),
+            essential: true,
+            analytics: preferences.analytics || false,
+            marketing: preferences.marketing || false
+        };
+
+        const expires = new Date();
+        expires.setDate(expires.getDate() + CONSENT_EXPIRY_DAYS);
+
+        document.cookie = CONSENT_COOKIE_NAME + '=' + encodeURIComponent(JSON.stringify(value)) + '; ' +
+            'expires=' + expires.toUTCString() + '; ' +
+            'path=/; ' +
+            'SameSite=Lax; ' +
+            'Secure';
+
+        window.dispatchEvent(new CustomEvent('cfConsentUpdated', { detail: value }));
+        return value;
+    }
+
+    function showBanner() {
+        banner.classList.add('active');
+        overlay.classList.add('active');
+        floatingBtn.classList.remove('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function hideBanner() {
+        banner.classList.remove('active');
+        overlay.classList.remove('active');
+        settingsPanel.classList.remove('active');
+        floatingBtn.classList.add('active');
+        document.body.style.overflow = '';
+    }
+
+    function toggleSettings() {
+        settingsPanel.classList.toggle('active');
+        showSettingsBtn.textContent = settingsPanel.classList.contains('active') 
+            ? 'Hide preferences' 
+            : 'Manage preferences';
+    }
+
+    function loadConsentedScripts(consent) {
+        if (consent.analytics && !window.cfGA4Loaded) {
+            var script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-P9QSNCJEBQ';
+            script.onload = function() {
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                window.gtag = gtag;
+                gtag('js', new Date());
+                gtag('config', 'G-P9QSNCJEBQ', {
+                    'anonymize_ip': true,
+                    'cookie_flags': 'SameSite=Lax;Secure'
+                });
+            };
+            document.head.appendChild(script);
+            window.cfGA4Loaded = true;
+        }
+    }
+
+    function removeNonEssentialCookies(consent) {
+        consent = consent || { analytics: false, marketing: false };
+        var analyticsCookies = ['_ga', '_gid', '_gat'];
+        var marketingCookies = ['_fbp', '_fbc', '_gcl_au'];
+        var cookiesToRemove = [];
+        
+        if (!consent.analytics) cookiesToRemove = cookiesToRemove.concat(analyticsCookies);
+        if (!consent.marketing) cookiesToRemove = cookiesToRemove.concat(marketingCookies);
+
+        document.cookie.split(';').forEach(function(cookie) {
+            var name = cookie.split('=')[0].trim();
+            var shouldRemove = cookiesToRemove.some(function(pattern) {
+                return name === pattern || name.startsWith(pattern + '_');
+            });
+            if (shouldRemove) {
+                document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+                document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=' + window.location.hostname;
+                document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.' + window.location.hostname;
+            }
+        });
+    }
+
+    function acceptAll() {
+        var consent = setConsent({ analytics: true, marketing: true });
+        hideBanner();
+        loadConsentedScripts(consent);
+    }
+
+    function rejectAll() {
+        setConsent({ analytics: false, marketing: false });
+        hideBanner();
+        removeNonEssentialCookies();
+    }
+
+    function savePreferences() {
+        var consent = setConsent({
+            analytics: analyticsToggle.checked,
+            marketing: marketingToggle.checked
+        });
+        hideBanner();
+        loadConsentedScripts(consent);
+        if (!consent.analytics || !consent.marketing) {
+            removeNonEssentialCookies(consent);
+        }
+    }
+
+    function updateTogglesFromConsent(consent) {
+        analyticsToggle.checked = consent.analytics;
+        marketingToggle.checked = consent.marketing;
+    }
+
+    function init() {
+        var existingConsent = getConsent();
+
+        if (existingConsent) {
+            floatingBtn.classList.add('active');
+            updateTogglesFromConsent(existingConsent);
+            loadConsentedScripts(existingConsent);
+        } else {
+            showBanner();
+        }
+
+        acceptAllBtn.addEventListener('click', acceptAll);
+        rejectAllBtn.addEventListener('click', rejectAll);
+        showSettingsBtn.addEventListener('click', toggleSettings);
+        savePreferencesBtn.addEventListener('click', savePreferences);
+        floatingBtn.addEventListener('click', function() {
+            var consent = getConsent();
+            if (consent) updateTogglesFromConsent(consent);
+            showBanner();
+        });
+
+        banner.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                var consent = getConsent();
+                if (consent) hideBanner();
+            }
+        });
+    }
+
+    window.cfCookieConsent = {
+        getConsent: getConsent,
+        hasAnalyticsConsent: function() {
+            var consent = getConsent();
+            return consent ? consent.analytics : false;
+        },
+        hasMarketingConsent: function() {
+            var consent = getConsent();
+            return consent ? consent.marketing : false;
+        },
+        showBanner: showBanner
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
 </script>
 </body>
 </html>

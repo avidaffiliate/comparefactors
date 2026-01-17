@@ -39,7 +39,7 @@ Uses client-side filtering for fast interaction
             <option value="name">Name (A-Z)</option>
             <option value="properties">Properties (most)</option>
             <option value="postcodes">Postcodes (most)</option>
-            <option value="tribunal">Tribunal Cases (fewest)</option>
+            <option value="tribunal">Tribunal Cases 5yr (fewest)</option>
         </select>
     </div>
     <div class="filter-divider"></div>
@@ -77,7 +77,7 @@ Uses client-side filtering for fast interaction
      data-rsl="{{ '1' if is_rsl else '0' }}"
      data-properties="{{ f.property_count or 0 }}"
      data-postcodes="{{ f.postcode_count or 0 }}"
-     data-tribunal="{{ f.tribunal_case_count or 0 }}"
+     data-tribunal="{{ f.tribunal_case_count_5yr or 0 }}"
      {% if is_expired or is_rsl %}style="display:none"{% endif %}>
     <div class="factor-card-header">
         <div>
@@ -95,8 +95,8 @@ Uses client-side filtering for fast interaction
             <div class="factor-stat-label">Properties</div>
         </div>
         <div class="factor-stat">
-            <div class="factor-stat-value">{{ f.tribunal_case_count or 0 }}</div>
-            <div class="factor-stat-label">Cases</div>
+            <div class="factor-stat-value">{{ f.tribunal_case_count_5yr or 0 }}</div>
+            <div class="factor-stat-label">Cases (5yr)</div>
         </div>
         <div class="factor-stat">
             <div class="factor-stat-value">{{ f.postcode_count if f.postcode_count else '—' }}</div>

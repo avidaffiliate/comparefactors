@@ -1,18 +1,13 @@
 {#
-Factor Profile Template v6.0 - Refactored with partials
+Factor Profile Template v7.0 - Mobile Optimized
 Inherits: header, footer, navigation, base styles from base.html
 
-v6.0 Changes:
-- Refactored to use Jinja2 partials for reusable components
-- Moved CSS to external file: /static/css/factor-profile.css
-- JSON-LD schema moved to partials/_schema_factor.html
-- Icons use macros from partials/_icons.html
-- Case cards use partials/_case_card.html
-- Review snippets use partials/_review_snippet.html
-- Risk badges use partials/_risk_badge.html
-- Data sources sidebar uses partials/_data_sources.html
-- At a glance and verdict use partials/_at_a_glance.html
-- Tooltips use partials/_tooltip.html
+v7.0 Changes:
+- Single CTA strategy: sticky bottom bar on mobile only
+- Removed duplicate sidebar CTA and inline bottom CTA
+- Mobile content reordering: main content first, sidebar utilities at end
+- Improved mobile spacing and typography
+- Better data grid layout (3-2 on mobile instead of 2-2-1)
 
 Required data context:
 - profile: Row from v_factor_profiles view
@@ -54,17 +49,20 @@ Required data context:
 {% set band_class = 'expired' if profile.status != 'registered' else band_lower %}
 {% set is_switchable = profile.status == 'registered' and profile.factor_type not in ['RSL', 'Housing Association', 'Local Authority'] %}
 
-{% block title %}{{ profile.name }} | Compare Factors Scotland{% endblock %}
+{% block title %}{{ profile.name }} - Complaints & Ratings | Compare Factors{% endblock %}
 
 {% block meta %}
-<meta name="description" content="{% if profile.status != 'registered' %}Historical profile for {{ profile.name }} (registration expired). {% else %}Independent profile for {{ profile.name }}. Tribunal rating: {{ band }}. {% endif %}Reviews, fees, and registration status. Compare Scottish property factors.">
+{# SEO-optimized meta description with actual data #}
+{% set case_count = tribunal_last_5_years.case_count|default(0) %}
+{% set prop_count = profile.property_count|default(0) %}
+<meta name="description" content="{% if profile.status != 'registered' %}Historical profile for {{ profile.name }} (registration expired). {% elif case_count > 0 and prop_count > 0 %}{{ profile.name }} manages {{ "{:,}".format(prop_count) }} properties. {{ case_count }} tribunal case{{ 's' if case_count != 1 else '' }}, {{ band }} rating.{% if profile.google_rating %} {{ "%.1f"|format(profile.google_rating) }}★ on Google.{% endif %} Compare Scottish factors.{% elif prop_count > 0 %}{{ profile.name }} manages {{ "{:,}".format(prop_count) }} properties in Scotland. {{ band }} tribunal rating.{% if profile.google_rating %} {{ "%.1f"|format(profile.google_rating) }}★ on Google.{% endif %} Independent comparison data.{% else %}{{ profile.name }}: {{ band }} tribunal rating.{% if profile.google_rating %} {{ "%.1f"|format(profile.google_rating) }}★ reviews.{% endif %} Independent Scottish property factor comparison.{% endif %}">
 <link rel="canonical" href="https://comparefactors.co.uk/factors/{{ profile.registration_number|lower }}/">
 
 <!-- Open Graph / Social Sharing -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://comparefactors.co.uk/factors/{{ profile.registration_number|lower }}/">
-<meta property="og:title" content="{{ profile.name }} - Property Factor Profile | Compare Factors">
-<meta property="og:description" content="{% if profile.risk_band %}{{ profile.risk_band }} tribunal rating. {% endif %}{% if profile.combined_rating %}{{ "%.1f"|format(profile.combined_rating) }}★ average review rating. {% endif %}Independent comparison data for Scottish property factors.">
+<meta property="og:title" content="{{ profile.name }} - Complaints & Ratings | Compare Factors">
+<meta property="og:description" content="{% if profile.risk_band %}{{ profile.risk_band }} tribunal rating. {% endif %}{% if tribunal_last_5_years.case_count %}{{ tribunal_last_5_years.case_count }} cases. {% endif %}{% if profile.combined_rating %}{{ "%.1f"|format(profile.combined_rating) }}★ rating. {% endif %}Compare Scottish property factors.">
 <meta property="og:image" content="https://comparefactors.co.uk/images/og-factor-profile.png">
 <meta name="twitter:card" content="summary_large_image">
 
@@ -92,10 +90,8 @@ Required data context:
 <div class="container">
     <div class="profile-layout">
 
-    <main class="main-content">
-        
         <!-- ==================== ALERT BANNERS ==================== -->
-        {% include "partials/_alert_banners.html" %}
+        <div class="alert-banners-wrapper">{% include "partials/_alert_banners.html" %}</div>
         
         <!-- ==================== PROFILE HEADER ==================== -->
         <div class="profile-header">
@@ -120,13 +116,12 @@ Required data context:
                         <span class="profile-meta-item">
                             {{ icon_building(size=14) }}
                             {{ profile.factor_type }}
-                            {{ tooltip("i", "A private company providing factoring services for profit." if profile.factor_type == 'Commercial' else "A Registered Social Landlord or housing association, typically non-profit." if profile.factor_type in ['RSL', 'Housing Association'] else "An individual operating as a property factor." if profile.factor_type == 'Sole Proprietor' else "A council or local government body." if profile.factor_type == 'Local Authority' else profile.factor_type, id="factor-type-tooltip") }}
                         </span>
                         {% endif %}
-                        {% if profile.property_count %}
+                        {% if profile.property_count and profile.property_count > 0 %}
                         <span class="profile-meta-item">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-                            {{ "{:,}".format(profile.property_count) }} properties
+                            {{ "{:,}".format(profile.property_count) }}
                         </span>
                         {% endif %}
                     </div>
@@ -143,6 +138,94 @@ Required data context:
             {{ at_a_glance_box(at_a_glance) }}
         </div>
         
+        <!-- ==================== SIDEBAR (moves to bottom on mobile) ==================== -->
+        <aside class="sidebar">
+            <div class="sidebar-card">
+                <!-- Quick Links -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Quick Links</h3>
+                    <ul class="source-list">
+                        <li class="source-item">
+                            {{ icon_external_link(size=14, class="", stroke_width=2) }}
+                            <a href="{{ registry_url|default('https://www.propertyfactorregister.gov.scot/property-factor/' ~ profile.registration_number) }}" target="_blank" rel="noopener">View on Official Register</a>
+                        </li>
+                        {% if profile.website %}
+                        <li class="source-item">
+                            {{ icon_globe(size=14) }}
+                            <a href="{{ profile.website }}" target="_blank" rel="noopener">Official Website</a>
+                        </li>
+                        {% endif %}
+                        <li class="source-item">
+                            {{ icon_file(size=14) }}
+                            <a href="/guides/how-to-switch-factors-scotland/">How to Switch Factors</a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Contact Info -->
+                {% if google_places or profile.website or profile.address %}
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Contact</h3>
+                    {% if profile.website %}
+                    <div class="contact-item">
+                        {{ icon_globe(size=14, class="contact-icon") }}
+                        <span class="contact-value"><a href="{{ profile.website }}" target="_blank" rel="noopener">{{ profile.website|replace('https://', '')|replace('http://', '')|replace('www.', '')|truncate(30) }}</a></span>
+                    </div>
+                    {% endif %}
+                    {% if google_places and google_places.phone %}
+                    <div class="contact-item">
+                        {{ icon_phone(size=14, class="contact-icon") }}
+                        <span class="contact-value">{{ google_places.phone }}</span>
+                    </div>
+                    {% endif %}
+                    {% if (google_places and google_places.address) or profile.address %}
+                    <div class="contact-item">
+                        {{ icon_map_pin(size=14, class="contact-icon") }}
+                        <span class="contact-value">{{ google_places.address if (google_places and google_places.address) else profile.address }}</span>
+                    </div>
+                    {% endif %}
+                    {% if not google_places and not profile.website and not profile.address %}
+                    <p class="no-contact">No contact information available.</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+                
+                <!-- Data Sources -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Data Sources</h3>
+                    <ul class="source-list">
+                        {% if wss_url %}
+                        <li class="source-item">
+                            {{ icon_document(size=14) }}
+                            <a href="{{ wss_url }}" target="_blank" rel="noopener">Written Statement of Services</a>
+                        </li>
+                        {% endif %}
+                        {% if profile.ch_number %}
+                        <li class="source-item">
+                            {{ icon_building(size=14) }}
+                            <a href="https://find-and-update.company-information.service.gov.uk/company/{{ profile.ch_number }}" target="_blank" rel="noopener">Companies House</a>
+                        </li>
+                        {% endif %}
+                        {% if trustpilot and trustpilot.url %}
+                        <li class="source-item">
+                            {{ icon_trustpilot(size=14) }}
+                            <a href="{{ trustpilot.url }}" target="_blank" rel="noopener">Trustpilot</a>
+                        </li>
+                        {% endif %}
+                        {% if google_places and google_places.place_id %}
+                        <li class="source-item">
+                            {{ icon_google(size=14) }}
+                            <a href="https://search.google.com/local/reviews?placeid={{ google_places.place_id }}" target="_blank" rel="noopener">Google Reviews</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ==================== MAIN CONTENT ==================== -->
+        <main class="main-content">
+        
         <!-- ==================== REVIEWS CARD ==================== -->
         {% if profile.google_rating or profile.trustpilot_rating %}
         <div class="card">
@@ -150,7 +233,6 @@ Required data context:
                 <h2 class="card-title">
                     {{ icon_star(size=18) }}
                     Ratings & Reviews
-                    {{ tooltip("i", "Public reviews collected from Google Maps and Trustpilot. We weight the average by review count.", id="reviews-tooltip") }}
                 </h2>
             </div>
             <div class="card-body">
@@ -226,25 +308,23 @@ Required data context:
                 <h2 class="card-title">
                     {{ icon_document(size=18) }}
                     Tribunal Record
-                    {{ tooltip("i", "Cases heard by the Housing & Property Chamber. Homeowners can raise complaints about code breaches, fees, or service failures.", id="tribunal-tooltip") }}
                 </h2>
                 <div class="card-header-links">
                     {% if tribunal_last_5_years.case_count > 0 %}
                     <a href="/factors/{{ profile.registration_number|lower }}/tribunal/" class="card-link">View cases →</a>
                     {% endif %}
-                    <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions" class="card-link" target="_blank" rel="noopener">HPC decisions ↗</a>
                 </div>
             </div>
             <div class="card-body">
                 {% if tribunal_last_5_years.case_count == 0 %}
-                <div class="empty-state" style="text-align: center; padding: var(--space-xl); color: var(--slate-500);">
+                <div class="empty-state">
                     {{ icon_check_circle(size=48, class="", stroke_width=1.5) }}
                     <p style="margin-top: var(--space-md);">No tribunal cases in the last 5 years.</p>
                 </div>
                 {% else %}
                 <div style="margin-bottom: var(--space-lg);">
-                    <div style="font-size: var(--text-sm); font-weight: 600; color: var(--navy-800); margin-bottom: var(--space-md); text-transform: uppercase; letter-spacing: 0.05em;">Last 5 Years</div>
-                    <div class="data-grid" style="grid-template-columns: repeat(5, 1fr);">
+                    <div style="font-size: var(--text-xs); font-weight: 600; color: var(--navy-800); margin-bottom: var(--space-md); text-transform: uppercase; letter-spacing: 0.05em;">Last 5 Years</div>
+                    <div class="data-grid">
                         <div class="data-item">
                             <div class="data-value">{{ tribunal_last_5_years.case_count|default(0) }}</div>
                             <div class="data-label">Cases</div>
@@ -262,37 +342,36 @@ Required data context:
                         <div class="data-item">
                             <div class="data-value {% if tribunal_last_5_years.pfeo_count and tribunal_last_5_years.pfeo_count > 0 %}red{% endif %}">{{ tribunal_last_5_years.pfeo_count|default(0) }}</div>
                             <div class="data-label">PFEOs</div>
-                            <div class="data-benchmark">Enforcement orders</div>
+                            <div class="data-benchmark">Enforcement</div>
                         </div>
                         <div class="data-item">
                             <div class="data-value {% if tribunal_last_5_years.compensation and tribunal_last_5_years.compensation > 1000 %}red{% endif %}">£{{ "{:,.0f}".format(tribunal_last_5_years.compensation|default(0)) }}</div>
-                            <div class="data-label">Compensation</div>
-                            <div class="data-benchmark">Total awarded</div>
+                            <div class="data-label">Paid</div>
+                            <div class="data-benchmark">Compensation</div>
                         </div>
                     </div>
                 </div>
                 
                 {# Complaint Categories #}
                 {% if complaint_categories and complaint_categories|length > 0 %}
-                <div style="margin-bottom: var(--space-lg);">
-                    <div style="font-size: var(--text-sm); font-weight: 600; color: var(--navy-800); margin-bottom: var(--space-md); text-transform: uppercase; letter-spacing: 0.05em;">Common Complaint Types</div>
-                    <div style="display: flex; flex-wrap: wrap; gap: var(--space-sm);">
+                <div style="margin-bottom: var(--space-md);">
+                    <div style="font-size: var(--text-xs); font-weight: 600; color: var(--navy-800); margin-bottom: var(--space-sm); text-transform: uppercase; letter-spacing: 0.05em;">Common Complaints</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs);">
                         {% for cat, count in complaint_categories.items() %}
                         {% if loop.index <= 5 %}
-                        <span class="complaint-tag" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: var(--slate-100); border-radius: var(--radius-sm); font-size: var(--text-sm);">
+                        <span class="complaint-tag">
                             {{ cat|title }} <span style="color: var(--slate-500);">({{ count }})</span>
                         </span>
                         {% endif %}
                         {% endfor %}
                     </div>
-                    <p style="font-size: var(--text-xs); color: var(--slate-500); margin-top: var(--space-sm);">Categories extracted from tribunal decision summaries.</p>
                 </div>
                 {% endif %}
 
                 {% endif %}
             </div>
             <div class="card-footer">
-                Case summaries and statistics are AI-generated from official HPC decisions. <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions" target="_blank" rel="noopener">Verify with official records ↗</a>
+                Case summaries from official HPC decisions. <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions" target="_blank" rel="noopener">Verify with official records ↗</a>
             </div>
         </div>
         
@@ -306,14 +385,10 @@ Required data context:
                 </h2>
                 <div class="card-header-links">
                     <a href="/factors/{{ profile.registration_number|lower }}/tribunal/" class="card-link">Full history →</a>
-                    <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions" class="card-link" target="_blank" rel="noopener">HPC decisions ↗</a>
                 </div>
             </div>
             <div class="card-body">
                 {{ case_card_list(recent_cases, max_visible=3) }}
-            </div>
-            <div class="card-footer">
-                Case data extracted by AI from official Housing & Property Chamber decision PDFs. Verify important details with <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions" target="_blank" rel="noopener">official records</a>.
             </div>
         </div>
         {% endif %}
@@ -325,7 +400,7 @@ Required data context:
             <div class="card-header">
                 <h2 class="card-title">
                     {{ icon_building(size=18) }}
-                    Company Information
+                    Company Info
                 </h2>
                 <a href="https://find-and-update.company-information.service.gov.uk/company/{{ profile.ch_number }}" class="card-link" target="_blank" rel="noopener">Companies House →</a>
             </div>
@@ -333,10 +408,7 @@ Required data context:
                 <div class="info-grid">
                     <div>
                         <div class="info-row">
-                            <span class="info-label">
-                                Status
-                                {{ tooltip("i", '"Active" means the company is operational and filing required documents.') }}
-                            </span>
+                            <span class="info-label">Status</span>
                             <span class="info-value {% if profile.ch_status == 'active' %}green{% elif profile.ch_status %}red{% endif %}">
                                 {{ profile.ch_status|capitalize if profile.ch_status else '—' }}
                             </span>
@@ -346,16 +418,13 @@ Required data context:
                             <span class="info-value">{{ profile.ch_incorporated or '—' }}</span>
                         </div>
                         <div class="info-row" style="border-bottom: none;">
-                            <span class="info-label">Company Number</span>
+                            <span class="info-label">Company No.</span>
                             <span class="info-value">{{ profile.ch_number }}</span>
                         </div>
                     </div>
                     <div>
                         <div class="info-row">
-                            <span class="info-label">
-                                Accounts
-                                {{ tooltip("i", "Whether the company is up to date with annual accounts filing.") }}
-                            </span>
+                            <span class="info-label">Accounts</span>
                             <span class="info-value {% if profile.ch_accounts_overdue %}red{% else %}green{% endif %}">
                                 {% if profile.ch_accounts_overdue %}Overdue{% else %}Up to date{% endif %}
                             </span>
@@ -365,29 +434,24 @@ Required data context:
                             <span class="info-value">{{ profile.ch_directors or '—' }}</span>
                         </div>
                         <div class="info-row" style="border-bottom: none;">
-                            <span class="info-label">
-                                Avg. Tenure
-                                {{ tooltip("i", "Average years directors have served. Longer tenure often indicates stability.") }}
-                            </span>
+                            <span class="info-label">Avg. Tenure</span>
                             <span class="info-value">{% if profile.ch_avg_tenure %}{{ "%.1f"|format(profile.ch_avg_tenure) }} yrs{% else %}—{% endif %}</span>
                         </div>
                     </div>
                 </div>
                 
                 {% if profile.ch_insolvency or profile.ch_charges %}
-                <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--slate-200); display: flex; gap: var(--space-lg);">
+                <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--slate-200); display: flex; gap: var(--space-lg); flex-wrap: wrap;">
                     {% if profile.ch_insolvency %}
                     <div style="display: flex; align-items: center; gap: var(--space-xs); color: var(--red-600); font-size: var(--text-sm);">
                         {{ icon_warning(size=14) }}
                         <span>Insolvency history</span>
-                        {{ tooltip("i", "This company has insolvency proceedings in its history. Check Companies House for details.") }}
                     </div>
                     {% endif %}
                     {% if profile.ch_charges %}
                     <div style="display: flex; align-items: center; gap: var(--space-xs); color: var(--amber-600); font-size: var(--text-sm);">
                         {{ icon_alert_circle(size=14) }}
                         <span>Outstanding charges</span>
-                        {{ tooltip("i", "The company has charges (e.g. mortgages or debentures) registered against it.") }}
                     </div>
                     {% endif %}
                 </div>
@@ -401,7 +465,7 @@ Required data context:
             <div class="card-header">
                 <h2 class="card-title">
                     {{ icon_info(size=18) }}
-                    Frequently Asked Questions
+                    FAQ
                 </h2>
             </div>
             <div class="card-body" style="padding: 0;">
@@ -424,7 +488,7 @@ Required data context:
                         </div>
                     </details>
                     
-                    {% if tribunal_last_5_years.case_count > 3 %}
+                    {% if is_switchable %}
                     <details class="faq-item">
                         <summary>How do I switch away from {{ profile.name }}?</summary>
                         <div class="faq-answer">
@@ -436,120 +500,23 @@ Required data context:
             </div>
         </div>
         
-        <!-- ==================== QUICK ACTIONS CTA ==================== -->
-        {% if is_switchable %}
-        <div class="card" style="background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-950) 100%); color: white; border: none;">
-            <div class="card-body" style="text-align: center; padding: var(--space-xl);">
-                <h3 style="font-family: var(--font-display); font-size: 1.25rem; margin-bottom: var(--space-sm); color: white;">Considering a switch?</h3>
-                <p style="margin-bottom: var(--space-lg); opacity: 0.9;">Compare quotes from vetted factors serving your area. Free, no obligation.</p>
-                <a href="/get-quotes/?from={{ profile.registration_number }}" class="cta-btn">Get Free Quotes →</a>
-            </div>
-        </div>
-        {% endif %}
+        </main>
         
-    </main>
-    
-    <!-- ==================== SIDEBAR ==================== -->
-    <aside class="sidebar">
-        <div class="sidebar-card">
-            <!-- CTA Box (if switchable) -->
-            {% if is_switchable %}
-            <div class="cta-box">
-                <h3 class="cta-title">Unhappy with {{ profile.name.split()[0] }}?</h3>
-                <p class="cta-text">Compare quotes from better-rated factors in your area</p>
-                <a href="/get-quotes/?from={{ profile.registration_number }}" class="cta-btn">Get Free Quotes</a>
-            </div>
-            {% endif %}
-            
-            <!-- Quick Links -->
-            <div class="sidebar-section">
-                <h3 class="sidebar-title">Quick Links</h3>
-                <ul class="source-list">
-                    <li class="source-item">
-                        {{ icon_external_link(size=14, class="", stroke_width=2) }}
-                        <a href="{{ registry_url|default('https://www.propertyfactorregister.gov.scot/property-factor/' ~ profile.registration_number) }}" target="_blank" rel="noopener">View on Official Register</a>
-                    </li>
-                    {% if profile.website %}
-                    <li class="source-item">
-                        {{ icon_globe(size=14) }}
-                        <a href="{{ profile.website }}" target="_blank" rel="noopener">Official Website</a>
-                    </li>
-                    {% endif %}
-                    <li class="source-item">
-                        {{ icon_file(size=14) }}
-                        <a href="/guides/how-to-switch-factors-scotland/">How to Switch Factors</a>
-                    </li>
-                </ul>
-            </div>
-            
-            <!-- Contact Info -->
-            {% if google_places or profile.website %}
-            <div class="sidebar-section">
-                <h3 class="sidebar-title">Contact</h3>
-                {% if profile.website %}
-                <div class="contact-item">
-                    {{ icon_globe(size=14, class="contact-icon") }}
-                    <span class="contact-value"><a href="{{ profile.website }}" target="_blank" rel="noopener">{{ profile.website|replace('https://', '')|replace('http://', '')|replace('www.', '')|truncate(30) }}</a></span>
-                </div>
-                {% endif %}
-                {% if google_places and google_places.phone %}
-                <div class="contact-item">
-                    {{ icon_phone(size=14, class="contact-icon") }}
-                    <span class="contact-value">{{ google_places.phone }}</span>
-                </div>
-                {% endif %}
-                {% if google_places and google_places.address %}
-                <div class="contact-item">
-                    {{ icon_map_pin(size=14, class="contact-icon") }}
-                    <span class="contact-value">{{ google_places.address }}</span>
-                </div>
-                {% endif %}
-                {% if not google_places and not profile.website %}
-                <p style="color: var(--slate-500); font-size: var(--text-sm);">No contact information available.</p>
-                {% endif %}
-            </div>
-            {% endif %}
-            
-            <!-- Data Sources -->
-            <div class="sidebar-section">
-                <h3 class="sidebar-title">Data Sources</h3>
-                <ul class="source-list">
-                    {% if wss_url %}
-                    <li class="source-item">
-                        {{ icon_document(size=14) }}
-                        <a href="{{ wss_url }}" target="_blank" rel="noopener">Written Statement of Services</a>
-                    </li>
-                    {% endif %}
-                    {% if profile.ch_number %}
-                    <li class="source-item">
-                        {{ icon_building(size=14) }}
-                        <a href="https://find-and-update.company-information.service.gov.uk/company/{{ profile.ch_number }}" target="_blank" rel="noopener">Companies House</a>
-                    </li>
-                    {% endif %}
-                    {% if trustpilot and trustpilot.url %}
-                    <li class="source-item">
-                        {{ icon_trustpilot(size=14) }}
-                        <a href="{{ trustpilot.url }}" target="_blank" rel="noopener">Trustpilot</a>
-                    </li>
-                    {% endif %}
-                    {% if google_places and google_places.place_id %}
-                    <li class="source-item">
-                        {{ icon_google(size=14) }}
-                        <a href="https://search.google.com/local/reviews?placeid={{ google_places.place_id }}" target="_blank" rel="noopener">Google Reviews</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
+    </div><!-- /.profile-layout -->
+</div><!-- /.container -->
+
+<!-- ==================== MOBILE STICKY CTA (Single CTA) ==================== -->
+{% if is_switchable %}
+<div class="mobile-cta is-switchable">
+    <div class="mobile-cta-inner">
+        <div class="mobile-cta-text">
+            <strong>Considering a switch?</strong>
+            Compare quotes from vetted factors
         </div>
-        
-    </aside>
-    
+        <a href="/get-quotes/?from={{ profile.registration_number }}" class="mobile-cta-button">Get Quotes</a>
+    </div>
 </div>
-
-</div>
-
-<!-- Mobile Sticky CTA -->
-{% include "partials/_mobile_cta.html" %}
+{% endif %}
 
 <!-- Page-specific footer disclaimer -->
 <div class="footer-disclaimer">
@@ -560,11 +527,6 @@ Required data context:
 {% block scripts %}
 {{ case_toggle_script() }}
 <script>
-// Add body class for mobile CTA padding
-{% if is_switchable %}
-document.body.classList.add('has-mobile-cta');
-{% endif %}
-
 function toggleLocations(btn) {
     const container = btn.closest('.review-locations-list');
     const hiddenLocations = container.querySelector('.hidden-locations');

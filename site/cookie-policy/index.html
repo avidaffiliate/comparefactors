@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" href="/favicon-48x48.png" sizes="48x48">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+    <link rel="manifest" href="/site.webmanifest">
+    <title>Cookie Policy | Compare Factors Scotland</title>
+    <meta name="description" content="Learn about the cookies we use on Compare Factors Scotland and how to manage your preferences.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --font-display: 'Fraunces', Georgia, serif; --font-body: 'Source Sans 3', system-ui, sans-serif; --navy-950: #0a1628; --navy-900: #0f2137; --navy-800: #1a3a5c; --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155; }
+        *, *::before, *::after { box-sizing: border-box; }
+        body { margin: 0; font-family: var(--font-body); font-size: 16px; line-height: 1.6; color: var(--slate-700); background: var(--slate-50); }
+        a { color: var(--navy-900); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .site-header { background: white; border-bottom: 1px solid var(--slate-200); position: sticky; top: 0; z-index: 100; }
+        .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+        .logo { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: var(--navy-950); }
+        .logo-mark { width: 32px; height: 32px; background: var(--navy-950); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: 700; }
+        .nav { display: flex; align-items: center; gap: 24px; }
+        .nav-link { font-size: 0.9rem; font-weight: 500; color: var(--slate-600); }
+        .nav-link:hover { color: var(--navy-950); text-decoration: none; }
+        .nav-cta { -webkit-appearance: none; appearance: none; background: var(--navy-950); color: white !important; padding: 8px 16px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; }
+        .nav-cta:hover { background: var(--navy-800); color: white; text-decoration: none; }
+        .burger { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 28px; height: 28px; background: none; border: none; cursor: pointer; padding: 0; }
+        .burger span { display: block; width: 100%; height: 2px; background: var(--navy-900); border-radius: 2px; transition: all 0.3s; }
+        .burger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+        .mobile-nav { display: none; position: absolute; top: 64px; left: 0; right: 0; background: white; border-bottom: 1px solid var(--slate-200); padding: 16px 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .mobile-nav.active { display: block; }
+        .mobile-nav a { display: block; padding: 12px 0; color: var(--slate-700); font-size: 1rem; font-weight: 500; border-bottom: 1px solid var(--slate-100); }
+        .mobile-nav a:last-child { border-bottom: none; }
+        .mobile-nav a:hover { color: var(--navy-950); text-decoration: none; }
+        .mobile-nav .nav-cta { display: inline-block; margin-top: 12px; }
+        .breadcrumb { max-width: 1200px; margin: 0 auto; padding: 16px 24px; font-size: 0.85rem; color: var(--slate-500); }
+        .breadcrumb a { color: var(--slate-500); }
+        .breadcrumb-sep { margin: 0 8px; color: #cbd5e1; }
+        .main { max-width: 800px; margin: 0 auto; padding: 48px 24px 96px; }
+        .page-title { font-family: var(--font-display); font-size: 2.25rem; font-weight: 700; color: var(--navy-950); margin: 0 0 8px 0; }
+        .last-updated { font-size: 0.9rem; color: var(--slate-500); margin: 0 0 32px 0; }
+        .page-desc { font-size: 1.1rem; color: var(--slate-600); margin: 0 0 40px 0; }
+
+        .content-section { margin-bottom: 40px; }
+        .section-title { font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; color: var(--navy-950); margin: 0 0 12px 0; }
+        .content-section p { margin: 0 0 16px 0; }
+        .content-section p:last-child { margin-bottom: 0; }
+        .content-section ul { margin: 0 0 16px 0; padding-left: 24px; }
+        .content-section li { margin-bottom: 8px; }
+
+        .cookie-table { width: 100%; border-collapse: collapse; margin: 16px 0; background: white; border-radius: 8px; overflow: hidden; border: 1px solid var(--slate-200); }
+        .cookie-table th, .cookie-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--slate-100); }
+        .cookie-table th { background: var(--slate-50); font-weight: 600; color: var(--navy-950); font-size: 0.9rem; }
+        .cookie-table td { font-size: 0.9rem; vertical-align: top; }
+        .cookie-table tr:last-child td { border-bottom: none; }
+        .cookie-table code { background: var(--slate-100); padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; }
+
+        .category-badge { display: inline-block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; padding: 4px 8px; border-radius: 4px; margin-bottom: 8px; }
+        .badge-essential { background: #dbeafe; color: #1e40af; }
+        .badge-analytics { background: #fef3c7; color: #92400e; }
+        .badge-marketing { background: #fce7f3; color: #9d174d; }
+
+        .manage-btn { display: inline-block; margin-top: 16px; background: var(--navy-950); color: white !important; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .manage-btn:hover { background: var(--navy-800); text-decoration: none; }
+
+        .back-link { display: inline-block; margin-top: 24px; color: var(--navy-900); font-weight: 500; }
+        .site-footer { background: var(--navy-950); color: rgba(255,255,255,0.7); padding: 48px 0 24px; margin-top: 64px; }
+        .footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 32px; }
+        .footer-brand { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: white; margin-bottom: 8px; }
+        .footer-desc { font-size: 0.9rem; line-height: 1.6; }
+        .footer-title { font-weight: 600; color: white; margin-bottom: 12px; font-size: 0.9rem; }
+        .footer-links { list-style: none; padding: 0; margin: 0; }
+        .footer-links li { margin-bottom: 8px; }
+        .footer-links a { color: rgba(255,255,255,0.7); font-size: 0.9rem; }
+        .footer-links a:hover { color: white; }
+        .footer-bottom { padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; font-size: 0.8rem; }
+        @media (max-width: 768px) {
+            .nav { display: none; }
+            .burger { display: flex; }
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+            .footer-bottom { flex-direction: column; gap: 8px; }
+            .cookie-table { font-size: 0.85rem; }
+            .cookie-table th, .cookie-table td { padding: 10px 12px; }
+        }
+    </style>
+<style>
+.cf-cookie-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.4);backdrop-filter:blur(2px);z-index:9998;opacity:0;visibility:hidden;transition:opacity 0.3s,visibility 0.3s}.cf-cookie-overlay.active{opacity:1;visibility:visible}
+.cf-cookie-banner{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e2e8f0;box-shadow:0 -4px 20px rgba(0,0,0,0.1);z-index:9999;transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.16,1,0.3,1)}.cf-cookie-banner.active{transform:translateY(0)}
+.cf-cookie-inner{max-width:1200px;margin:0 auto;padding:1.5rem}
+.cf-cookie-title{display:flex;align-items:center;gap:0.625rem;margin:0 0 1rem;font-size:1.125rem;font-weight:600;color:#0f172a}.cf-cookie-icon{width:24px;height:24px;flex-shrink:0}
+.cf-cookie-text{font-size:0.9375rem;line-height:1.6;color:#1e293b;margin:0 0 1.25rem}.cf-cookie-text a{color:#2563eb;text-decoration:underline}
+.cf-cookie-actions{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center}
+.cf-btn{padding:0.75rem 1.5rem;font-size:0.9375rem;font-weight:500;border-radius:8px;cursor:pointer;border:none;font-family:inherit;transition:all 0.2s}
+.cf-btn-accept{background:#16a34a;color:#fff}.cf-btn-accept:hover{background:#15803d}
+.cf-btn-reject{background:#fff;color:#1e293b;border:1.5px solid #e2e8f0}.cf-btn-reject:hover{background:#f8fafc}
+.cf-btn-settings{background:transparent;color:#64748b;text-decoration:underline}.cf-btn-settings:hover{color:#1e293b}
+.cf-cookie-settings{display:none;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid #e2e8f0}.cf-cookie-settings.active{display:block}
+.cf-settings-title{font-size:1rem;font-weight:600;color:#0f172a;margin:0 0 1rem}
+.cf-cookie-category{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1rem;background:#f8fafc;border-radius:8px;margin-bottom:0.75rem}
+.cf-category-info{flex:1}.cf-category-name{font-weight:600;color:#1e293b;margin:0 0 0.25rem;font-size:0.9375rem}.cf-category-desc{font-size:0.8125rem;color:#64748b;margin:0;line-height:1.5}
+.cf-toggle{position:relative;flex-shrink:0}.cf-toggle input{position:absolute;opacity:0;width:0;height:0}
+.cf-toggle-slider{display:block;width:48px;height:26px;background:#cbd5e1;border-radius:13px;cursor:pointer;transition:background 0.2s;position:relative}
+.cf-toggle-slider::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.15)}
+.cf-toggle input:checked+.cf-toggle-slider{background:#16a34a}.cf-toggle input:checked+.cf-toggle-slider::after{transform:translateX(22px)}
+.cf-toggle input:disabled+.cf-toggle-slider{background:#16a34a;opacity:0.6;cursor:not-allowed}
+.cf-required-badge{display:inline-block;font-size:0.6875rem;font-weight:500;text-transform:uppercase;color:#64748b;background:#e2e8f0;padding:0.125rem 0.5rem;border-radius:4px;margin-left:0.5rem}
+.cf-btn-save{background:#0f172a;color:#fff}.cf-btn-save:hover{background:#1e293b}
+.cf-cookie-settings-btn{position:fixed;bottom:20px;left:20px;width:44px;height:44px;background:#0f172a;border:none;border-radius:50%;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.15);z-index:9990;display:none;align-items:center;justify-content:center;transition:transform 0.2s,background 0.2s}.cf-cookie-settings-btn:hover{background:#1e293b;transform:scale(1.05)}.cf-cookie-settings-btn svg{width:22px;height:22px;color:#fff}.cf-cookie-settings-btn.active{display:flex}
+@media(max-width:640px){.cf-cookie-inner{padding:1.25rem}.cf-cookie-actions{flex-direction:column;width:100%}.cf-btn{width:100%;text-align:center}.cf-btn-settings{order:3}.cf-cookie-category{flex-direction:column;gap:0.75rem}.cf-toggle{align-self:flex-start}}
+</style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="/" class="logo"><div class="logo-mark">CF</div>Compare Factors</a>
+            <nav class="nav">
+                <a href="/factors/" class="nav-link">All Factors</a>
+                <a href="/areas/" class="nav-link">By Area</a>
+                <a href="/methodology/" class="nav-link">How We Score</a>
+                <a href="/guides/" class="nav-link">Guides</a>
+                <a href="/get-quotes/" class="nav-cta">Get Quotes</a>
+            </nav>
+            <button class="burger" aria-label="Menu" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div class="mobile-nav" id="mobileNav">
+            <a href="/factors/">All Factors</a>
+            <a href="/areas/">By Area</a>
+            <a href="/methodology/">How We Score</a>
+            <a href="/guides/">Guides</a>
+            <a href="/get-quotes/" class="nav-cta">Get Quotes</a>
+        </div>
+    </header>
+
+    <nav class="breadcrumb"><a href="/">Home</a><span class="breadcrumb-sep">›</span><span>Cookie Policy</span></nav>
+
+    <main class="main">
+        <h1 class="page-title">Cookie Policy</h1>
+        <p class="last-updated">Last updated: January 2026</p>
+        <p class="page-desc">This policy explains what cookies are, how we use them on Compare Factors Scotland, and how you can manage your preferences.</p>
+
+        <section class="content-section">
+            <h2 class="section-title">What are cookies?</h2>
+            <p>Cookies are small text files that websites place on your device when you visit them. They're widely used to make websites work efficiently, remember your preferences, and provide information to website owners.</p>
+            <p>Some cookies are "session cookies" that are deleted when you close your browser. Others are "persistent cookies" that remain on your device for a set period or until you delete them.</p>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">How we use cookies</h2>
+            <p>We use cookies for three main purposes:</p>
+            <ul>
+                <li><strong>Essential cookies</strong> - Required for our website to function properly</li>
+                <li><strong>Analytics cookies</strong> - Help us understand how visitors use our site so we can improve it</li>
+                <li><strong>Marketing cookies</strong> - Used to deliver relevant advertisements (currently not in use)</li>
+            </ul>
+            <p>You can choose which non-essential cookies to accept using the cookie preferences button at the bottom of your screen.</p>
+            <button class="manage-btn" onclick="window.cfCookieConsent && window.cfCookieConsent.showBanner()">Manage Cookie Preferences</button>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">Essential cookies</h2>
+            <p><span class="category-badge badge-essential">Always Active</span></p>
+            <p>These cookies are necessary for the website to function and cannot be switched off. They are usually only set in response to actions you take, such as setting your privacy preferences or filling in forms.</p>
+            <table class="cookie-table">
+                <thead>
+                    <tr>
+                        <th>Cookie Name</th>
+                        <th>Purpose</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>cf_cookie_consent</code></td>
+                        <td>Stores your cookie consent preferences so we remember your choices</td>
+                        <td>1 year</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">Analytics cookies</h2>
+            <p><span class="category-badge badge-analytics">Optional</span></p>
+            <p>These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously. We use Google Analytics 4 with IP anonymisation enabled, meaning your full IP address is never stored.</p>
+            <table class="cookie-table">
+                <thead>
+                    <tr>
+                        <th>Cookie Name</th>
+                        <th>Purpose</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>_ga</code></td>
+                        <td>Used by Google Analytics to distinguish unique users by assigning a randomly generated number</td>
+                        <td>2 years</td>
+                    </tr>
+                    <tr>
+                        <td><code>_ga_*</code></td>
+                        <td>Used by Google Analytics 4 to persist session state</td>
+                        <td>2 years</td>
+                    </tr>
+                    <tr>
+                        <td><code>_gid</code></td>
+                        <td>Used by Google Analytics to distinguish users</td>
+                        <td>24 hours</td>
+                    </tr>
+                    <tr>
+                        <td><code>_gat</code></td>
+                        <td>Used by Google Analytics to throttle request rate</td>
+                        <td>1 minute</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>Analytics data is retained for 14 months before being automatically deleted.</p>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">Marketing cookies</h2>
+            <p><span class="category-badge badge-marketing">Optional</span></p>
+            <p>These cookies may be set through our site by advertising partners to build a profile of your interests and show you relevant adverts on other sites. We currently do not use marketing cookies, but the option exists in our consent system for future use.</p>
+            <table class="cookie-table">
+                <thead>
+                    <tr>
+                        <th>Cookie Name</th>
+                        <th>Purpose</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>_fbp</code></td>
+                        <td>Used by Meta (Facebook) to deliver advertisements - not currently active</td>
+                        <td>3 months</td>
+                    </tr>
+                    <tr>
+                        <td><code>_fbc</code></td>
+                        <td>Used by Meta to track clicks from Facebook ads - not currently active</td>
+                        <td>3 months</td>
+                    </tr>
+                    <tr>
+                        <td><code>_gcl_au</code></td>
+                        <td>Used by Google Ads to track conversions - not currently active</td>
+                        <td>3 months</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">Third-party cookies</h2>
+            <p>We use Google Analytics to help us understand how our website is used. Google may set cookies on your device when analytics are enabled. You can learn more about how Google uses data at <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</p>
+            <p>We also use Google Fonts to display text on our website. Google Fonts does not set cookies but may log your IP address. Learn more at <a href="https://developers.google.com/fonts/faq/privacy" target="_blank" rel="noopener">Google Fonts Privacy FAQ</a>.</p>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">Managing cookies in your browser</h2>
+            <p>In addition to our cookie preferences panel, you can control cookies through your browser settings. Most browsers allow you to:</p>
+            <ul>
+                <li>See what cookies are stored and delete them individually</li>
+                <li>Block third-party cookies</li>
+                <li>Block cookies from specific websites</li>
+                <li>Block all cookies</li>
+                <li>Delete all cookies when you close your browser</li>
+            </ul>
+            <p>Please note that blocking all cookies may affect your experience on our website and others. Here are links to manage cookies in common browsers:</p>
+            <ul>
+                <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener">Google Chrome</a></li>
+                <li><a href="https://support.mozilla.org/en-US/kb/cookies-information-websites-store-on-your-computer" target="_blank" rel="noopener">Mozilla Firefox</a></li>
+                <li><a href="https://support.apple.com/en-gb/guide/safari/sfri11471/mac" target="_blank" rel="noopener">Safari</a></li>
+                <li><a href="https://support.microsoft.com/en-us/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener">Microsoft Edge</a></li>
+            </ul>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">Changes to this policy</h2>
+            <p>We may update this cookie policy from time to time. When we make changes, we'll update the "last updated" date at the top of this page. If we make significant changes to how we use cookies, we may also reset your consent preferences so you can make a new choice.</p>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">Contact us</h2>
+            <p>If you have questions about our use of cookies, please <a href="/contact/">contact us</a> or read our <a href="/privacy/">Privacy Policy</a> for more information about how we handle your data.</p>
+        </section>
+
+        <a href="/" class="back-link">← Back to homepage</a>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-grid">
+                <div>
+                    <div class="footer-brand">Compare Factors</div>
+                    <p class="footer-desc">Independent comparison of Scottish property factors. Helping homeowners make informed decisions.</p>
+                </div>
+                <div>
+                    <div class="footer-title">Explore</div>
+                    <ul class="footer-links">
+                        <li><a href="/factors/">All Factors</a></li>
+                        <li><a href="/areas/">By Area</a></li>
+                        <li><a href="/rankings/">Rankings</a></li>
+                        <li><a href="/tribunal/">Tribunal Cases</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="footer-title">Guides</div>
+                    <ul class="footer-links">
+                        <li><a href="/guides/how-to-switch-factors-scotland/">Switching Factors</a></li>
+                        <li><a href="/guides/complaints/">Making a Complaint</a></li>
+                        <li><a href="/guides/history-of-property-factoring-scotland/">History</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="footer-title">About</div>
+                    <ul class="footer-links">
+                        <li><a href="/methodology/">Our Methodology</a></li>
+                        <li><a href="/about/">About Us</a></li>
+                        <li><a href="/contact/">Contact</a></li>
+                        <li><a href="/privacy/">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div>© 2026 Compare Factors Scotland. Not affiliated with the Scottish Government.</div>
+                <div>Data last updated: January 2026</div>
+            </div>
+        </div>
+    </footer>
+    <script>
+    function toggleMenu() {
+        document.querySelector('.burger').classList.toggle('active');
+        document.getElementById('mobileNav').classList.toggle('active');
+    }
+    </script>
+
+<div class="cf-cookie-overlay" id="cfCookieOverlay"></div>
+<div class="cf-cookie-banner" id="cfCookieBanner" role="dialog" aria-modal="true" aria-labelledby="cfCookieTitle">
+    <div class="cf-cookie-inner">
+        <h2 class="cf-cookie-title" id="cfCookieTitle">
+            <svg class="cf-cookie-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="8" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="8" r="1" fill="currentColor"/><circle cx="10" cy="14" r="1" fill="currentColor"/><circle cx="16" cy="13" r="1" fill="currentColor"/><circle cx="13" cy="17" r="1" fill="currentColor"/></svg>
+            We value your privacy
+        </h2>
+        <p class="cf-cookie-text">We use cookies to improve your experience and analyse site traffic. You can choose which cookies you're happy with. Read our <a href="/privacy/">Privacy Policy</a> and <a href="/cookie-policy/">Cookie Policy</a> to learn more.</p>
+        <div class="cf-cookie-actions">
+            <button type="button" class="cf-btn cf-btn-accept" id="cfAcceptAll">Accept all cookies</button>
+            <button type="button" class="cf-btn cf-btn-reject" id="cfRejectAll">Reject non-essential</button>
+            <button type="button" class="cf-btn cf-btn-settings" id="cfShowSettings">Manage preferences</button>
+        </div>
+        <div class="cf-cookie-settings" id="cfCookieSettings">
+            <h3 class="cf-settings-title">Cookie preferences</h3>
+            <div class="cf-cookie-category">
+                <div class="cf-category-info">
+                    <p class="cf-category-name">Essential cookies <span class="cf-required-badge">Always on</span></p>
+                    <p class="cf-category-desc">Required for the website to function. These cannot be disabled.</p>
+                </div>
+                <label class="cf-toggle"><input type="checkbox" checked disabled><span class="cf-toggle-slider"></span></label>
+            </div>
+            <div class="cf-cookie-category">
+                <div class="cf-category-info">
+                    <p class="cf-category-name">Analytics cookies</p>
+                    <p class="cf-category-desc">Help us understand how visitors use our website so we can improve it. All data is anonymised.</p>
+                </div>
+                <label class="cf-toggle"><input type="checkbox" id="cfAnalyticsToggle"><span class="cf-toggle-slider"></span></label>
+            </div>
+            <div class="cf-cookie-category">
+                <div class="cf-category-info">
+                    <p class="cf-category-name">Marketing cookies</p>
+                    <p class="cf-category-desc">Used to show you relevant advertisements on other websites.</p>
+                </div>
+                <label class="cf-toggle"><input type="checkbox" id="cfMarketingToggle"><span class="cf-toggle-slider"></span></label>
+            </div>
+            <div class="cf-cookie-actions" style="margin-top:1rem">
+                <button type="button" class="cf-btn cf-btn-save" id="cfSaveSettings">Save preferences</button>
+            </div>
+        </div>
+    </div>
+</div>
+<button type="button" class="cf-cookie-settings-btn" id="cfSettingsBtn" aria-label="Cookie settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+</button>
+<script>
+(function(){
+    var CONSENT_COOKIE_NAME = 'cf_cookie_consent';
+    var CONSENT_VERSION = '1.0';
+
+    function getConsent() {
+        var match = document.cookie.match(new RegExp('(^| )' + CONSENT_COOKIE_NAME + '=([^;]+)'));
+        if (match) {
+            try { return JSON.parse(decodeURIComponent(match[2])); } catch(e) { return null; }
+        }
+        return null;
+    }
+
+    function setConsent(value) {
+        var expires = new Date();
+        expires.setFullYear(expires.getFullYear() + 1);
+        document.cookie = CONSENT_COOKIE_NAME + '=' + encodeURIComponent(JSON.stringify(value)) + '; ' +
+            'expires=' + expires.toUTCString() + '; ' +
+            'path=/; ' +
+            'SameSite=Lax; ' +
+            'Secure';
+    }
+
+    function showBanner() {
+        document.getElementById('cfCookieOverlay').classList.add('active');
+        document.getElementById('cfCookieBanner').classList.add('active');
+        document.getElementById('cfSettingsBtn').classList.remove('active');
+    }
+
+    function hideBanner() {
+        document.getElementById('cfCookieOverlay').classList.remove('active');
+        document.getElementById('cfCookieBanner').classList.remove('active');
+        document.getElementById('cfCookieSettings').classList.remove('active');
+        document.getElementById('cfSettingsBtn').classList.add('active');
+    }
+
+    function applyConsent(consent) {
+        if (consent.analytics && !window.cfGA4Loaded) {
+            var script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-P9QSNCJEBQ';
+            document.head.appendChild(script);
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            window.gtag = gtag;
+            gtag('js', new Date());
+            gtag('config', 'G-P9QSNCJEBQ', { anonymize_ip: true });
+            window.cfGA4Loaded = true;
+        }
+        if (!consent.analytics) {
+            var analyticsCookies = ['_ga', '_gid', '_gat'];
+            analyticsCookies.forEach(function(name) {
+                document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.' + location.hostname;
+                document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            });
+            var gaCookies = document.cookie.split(';').filter(function(c) { return c.trim().startsWith('_ga_'); });
+            gaCookies.forEach(function(c) {
+                var name = c.split('=')[0].trim();
+                document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.' + location.hostname;
+                document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            });
+        }
+        if (!consent.marketing) {
+            var marketingCookies = ['_fbp', '_fbc', '_gcl_au'];
+            marketingCookies.forEach(function(name) {
+                document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.' + location.hostname;
+                document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            });
+        }
+        window.dispatchEvent(new CustomEvent('cfConsentUpdated', { detail: consent }));
+    }
+
+    function saveAndApply(analytics, marketing) {
+        var consent = {
+            version: CONSENT_VERSION,
+            timestamp: new Date().toISOString(),
+            essential: true,
+            analytics: analytics,
+            marketing: marketing
+        };
+        setConsent(consent);
+        applyConsent(consent);
+        hideBanner();
+    }
+
+    document.getElementById('cfAcceptAll').addEventListener('click', function() { saveAndApply(true, true); });
+    document.getElementById('cfRejectAll').addEventListener('click', function() { saveAndApply(false, false); });
+    document.getElementById('cfShowSettings').addEventListener('click', function() {
+        document.getElementById('cfCookieSettings').classList.toggle('active');
+    });
+    document.getElementById('cfSaveSettings').addEventListener('click', function() {
+        saveAndApply(
+            document.getElementById('cfAnalyticsToggle').checked,
+            document.getElementById('cfMarketingToggle').checked
+        );
+    });
+    document.getElementById('cfSettingsBtn').addEventListener('click', showBanner);
+    document.getElementById('cfCookieOverlay').addEventListener('click', function() {
+        if (getConsent()) hideBanner();
+    });
+
+    var existing = getConsent();
+    if (existing && existing.version === CONSENT_VERSION) {
+        document.getElementById('cfAnalyticsToggle').checked = existing.analytics;
+        document.getElementById('cfMarketingToggle').checked = existing.marketing;
+        document.getElementById('cfSettingsBtn').classList.add('active');
+        applyConsent(existing);
+    } else {
+        showBanner();
+    }
+
+    window.cfCookieConsent = {
+        getConsent: getConsent,
+        hasAnalyticsConsent: function() { var c = getConsent(); return c && c.analytics; },
+        hasMarketingConsent: function() { var c = getConsent(); return c && c.marketing; },
+        showBanner: showBanner
+    };
+})();
+</script>
+</body>
+</html>

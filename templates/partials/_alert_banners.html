@@ -1,29 +1,28 @@
-{# =============================================================================
+{#- =============================================================================
    ALERT BANNERS PARTIAL
-   
+
    Displays contextual alerts for:
    - Expired registrations (historical profiles)
    - Non-switchable factors (RSL, Housing Association, Local Authority)
-   
+
    Uses factor_type field - flexible matching for various data formats
-   ============================================================================= #}
+   ============================================================================= -#}
+{#- Import icons if not already available -#}
+{%- from "partials/_icons.html" import icon_alert_circle, icon_info -%}
 
-{# Import icons if not already available #}
-{% from "partials/_icons.html" import icon_alert_circle, icon_info %}
-
-{# Flexible matching for RSL/Council factor types #}
-{# Exact values in DB: 'Local Authority', 'Registered Social Landlord' #}
-{% set is_rsl_or_council = profile.factor_type and (
+{#- Flexible matching for RSL/Council factor types -#}
+{#- Exact values in DB: 'Local Authority', 'Registered Social Landlord' -#}
+{%- set is_rsl_or_council = profile.factor_type and (
     profile.factor_type in ['Local Authority', 'Registered Social Landlord'] or
     'council' in profile.factor_type|lower or
     'authority' in profile.factor_type|lower or
     'social landlord' in profile.factor_type|lower or
     'rsl' in profile.factor_type|lower or
     'housing association' in profile.factor_type|lower
-) %}
+) -%}
 
-{# Expired Registration Banner #}
-{% if profile.status != 'registered' %}
+{#- Expired Registration Banner -#}
+{%- if profile.status != 'registered' %}
 <div class="alert-banner alert-banner--expired" role="alert">
     {{ icon_alert_circle(size=20) }}
     <div class="alert-banner-content">
@@ -31,10 +30,10 @@
         This profile is included for historical completeness. {{ profile.name }} is no longer registered with the Scottish Property Factor Register and cannot legally provide factoring services.
     </div>
 </div>
-{% endif %}
+{% endif -%}
 
-{# Non-Switchable Factor Banner (RSL / Housing Association / Local Authority) #}
-{% if profile.status == 'registered' and is_rsl_or_council %}
+{#- Non-Switchable Factor Banner (RSL / Housing Association / Local Authority) -#}
+{%- if profile.status == 'registered' and is_rsl_or_council %}
 <div class="alert-banner alert-banner--info" role="alert">
     {{ icon_info(size=20) }}
     <div class="alert-banner-content">
@@ -46,4 +45,4 @@
         {% endif %}
     </div>
 </div>
-{% endif %}
+{% endif -%}
