@@ -40,7 +40,7 @@
 {% block content %}
 <nav class="breadcrumb">
     <a href="/">Home</a><span class="sep">›</span>
-    <a href="/tribunal/">Tribunal Decisions</a><span class="sep">›</span>
+    <a href="/factors/{{ case.factor_slug }}/">{{ case.factor_name }}</a><span class="sep">›</span>
     <span>{{ case.case_ref }}</span>
 </nav>
 

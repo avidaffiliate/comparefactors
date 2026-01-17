@@ -31,24 +31,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://comparefactors.co.uk/rankings/</loc>
-    <lastmod>2026-01-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://comparefactors.co.uk/tribunal/</loc>
-    <lastmod>2026-01-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://comparefactors.co.uk/compare/</loc>
-    <lastmod>2026-01-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://comparefactors.co.uk/get-quotes/</loc>
     <lastmod>2026-01-08</lastmod>
     <changefreq>monthly</changefreq>
