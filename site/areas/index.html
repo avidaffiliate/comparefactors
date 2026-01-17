@@ -16,9 +16,7 @@
 <title>Property Factors by Area in Scotland | Compare Factors Scotland</title>
 <meta name="description" content="Find and compare property factors serving your area in Scotland. Browse 15 regions including Glasgow, Edinburgh, Aberdeen, Dundee, and more. Independent ratings and tribunal records.">
 <link rel="canonical" href="https://comparefactors.co.uk/areas/">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/fonts.css">
 <style>
 :root{--navy-950:#0a0f1a;--navy-900:#0f172a;--navy-800:#1e293b;--navy-700:#334155;--slate-600:#475569;--slate-500:#64748b;--slate-400:#94a3b8;--slate-300:#cbd5e1;--slate-200:#e2e8f0;--slate-100:#f1f5f9;--slate-50:#f8fafc;--white:#ffffff;--red-700:#b91c1c;--red-600:#dc2626;--red-100:#fee2e2;--orange-600:#ea580c;--orange-100:#ffedd5;--amber-600:#d97706;--amber-100:#fef3c7;--green-700:#15803d;--green-600:#16a34a;--green-100:#dcfce7;--green-50:#f0fdf4;--blue-700:#1d4ed8;--blue-600:#2563eb;--blue-100:#dbeafe;--font-display:'Fraunces',Georgia,serif;--font-body:'Source Sans 3',-apple-system,BlinkMacSystemFont,sans-serif;--space-xs:0.25rem;--space-sm:0.5rem;--space-md:1rem;--space-lg:1.5rem;--space-xl:2rem;--space-2xl:3rem}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -63,7 +61,9 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 .area-list{display:flex;flex-direction:column;gap:1px;background:var(--slate-200);border-radius:12px;overflow:hidden;margin-bottom:32px}
 .area-row{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:var(--white);text-decoration:none;transition:background 0.15s}.area-row:hover{background:var(--slate-50);text-decoration:none}
 .area-row .area-name{margin:0;font-size:1rem}
-.area-factor-count{color:var(--slate-500);font-size:0.9rem}
+.area-row .area-stats{display:flex;align-items:center;gap:16px}
+.area-property-count{color:var(--slate-600);font-size:0.9rem;font-weight:500}
+.area-factor-count{color:var(--slate-500);font-size:0.85rem}
 .search-bar{margin-bottom:16px}.search-bar .search-input{max-width:300px}
 .seo-content{margin-top:48px;padding-top:32px;border-top:1px solid var(--slate-200)}.seo-content h2{font-family:var(--font-display);font-size:1.25rem;font-weight:600;color:var(--navy-950);margin:0 0 12px}.seo-content p{color:var(--slate-600);line-height:1.7;margin:0 0 12px}.seo-content p:last-child{margin-bottom:0}
 .no-results{text-align:center;padding:48px 24px;color:var(--slate-500)}
@@ -118,79 +118,124 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 
 <div class="area-list" id="areaList">
 
-<a href="/areas/aberdeen/" class="area-row" data-name="aberdeen & aberdeenshire">
-    <span class="area-name">Aberdeen & Aberdeenshire</span>
-    <span class="area-factor-count">25 factors</span>
-</a>
-
-<a href="/areas/angus/" class="area-row" data-name="angus">
-    <span class="area-name">Angus</span>
-    <span class="area-factor-count">15 factors</span>
-</a>
-
-<a href="/areas/ayrshire/" class="area-row" data-name="ayrshire">
-    <span class="area-name">Ayrshire</span>
-    <span class="area-factor-count">38 factors</span>
-</a>
-
-<a href="/areas/dumfries/" class="area-row" data-name="dumfries & galloway">
-    <span class="area-name">Dumfries & Galloway</span>
-    <span class="area-factor-count">11 factors</span>
-</a>
-
-<a href="/areas/dundee/" class="area-row" data-name="dundee">
-    <span class="area-name">Dundee</span>
-    <span class="area-factor-count">27 factors</span>
-</a>
-
-<a href="/areas/edinburgh/" class="area-row" data-name="edinburgh">
-    <span class="area-name">Edinburgh</span>
-    <span class="area-factor-count">48 factors</span>
-</a>
-
-<a href="/areas/fife/" class="area-row" data-name="fife">
-    <span class="area-name">Fife</span>
-    <span class="area-factor-count">28 factors</span>
-</a>
-
-<a href="/areas/glasgow/" class="area-row" data-name="glasgow">
+<a href="/areas/glasgow/" class="area-row" data-name="glasgow" data-properties="574916">
     <span class="area-name">Glasgow</span>
-    <span class="area-factor-count">76 factors</span>
+    <span class="area-stats">
+        <span class="area-property-count">574,916 properties</span>
+        <span class="area-factor-count">76 factors</span>
+    </span>
 </a>
 
-<a href="/areas/inverness/" class="area-row" data-name="inverness & highlands">
-    <span class="area-name">Inverness & Highlands</span>
-    <span class="area-factor-count">16 factors</span>
-</a>
-
-<a href="/areas/lanarkshire/" class="area-row" data-name="lanarkshire">
-    <span class="area-name">Lanarkshire</span>
-    <span class="area-factor-count">32 factors</span>
-</a>
-
-<a href="/areas/lothians/" class="area-row" data-name="lothians">
-    <span class="area-name">Lothians</span>
-    <span class="area-factor-count">33 factors</span>
-</a>
-
-<a href="/areas/paisley/" class="area-row" data-name="paisley & renfrewshire">
+<a href="/areas/paisley/" class="area-row" data-name="paisley & renfrewshire" data-properties="427440">
     <span class="area-name">Paisley & Renfrewshire</span>
-    <span class="area-factor-count">46 factors</span>
+    <span class="area-stats">
+        <span class="area-property-count">427,440 properties</span>
+        <span class="area-factor-count">46 factors</span>
+    </span>
 </a>
 
-<a href="/areas/perth/" class="area-row" data-name="perth & kinross">
-    <span class="area-name">Perth & Kinross</span>
-    <span class="area-factor-count">27 factors</span>
-</a>
-
-<a href="/areas/borders/" class="area-row" data-name="scottish borders">
-    <span class="area-name">Scottish Borders</span>
-    <span class="area-factor-count">12 factors</span>
-</a>
-
-<a href="/areas/stirling/" class="area-row" data-name="stirling">
+<a href="/areas/stirling/" class="area-row" data-name="stirling" data-properties="412848">
     <span class="area-name">Stirling</span>
-    <span class="area-factor-count">32 factors</span>
+    <span class="area-stats">
+        <span class="area-property-count">412,848 properties</span>
+        <span class="area-factor-count">32 factors</span>
+    </span>
+</a>
+
+<a href="/areas/lothians/" class="area-row" data-name="lothians" data-properties="407697">
+    <span class="area-name">Lothians</span>
+    <span class="area-stats">
+        <span class="area-property-count">407,697 properties</span>
+        <span class="area-factor-count">33 factors</span>
+    </span>
+</a>
+
+<a href="/areas/fife/" class="area-row" data-name="fife" data-properties="405763">
+    <span class="area-name">Fife</span>
+    <span class="area-stats">
+        <span class="area-property-count">405,763 properties</span>
+        <span class="area-factor-count">28 factors</span>
+    </span>
+</a>
+
+<a href="/areas/edinburgh/" class="area-row" data-name="edinburgh" data-properties="402677">
+    <span class="area-name">Edinburgh</span>
+    <span class="area-stats">
+        <span class="area-property-count">402,677 properties</span>
+        <span class="area-factor-count">48 factors</span>
+    </span>
+</a>
+
+<a href="/areas/lanarkshire/" class="area-row" data-name="lanarkshire" data-properties="399657">
+    <span class="area-name">Lanarkshire</span>
+    <span class="area-stats">
+        <span class="area-property-count">399,657 properties</span>
+        <span class="area-factor-count">32 factors</span>
+    </span>
+</a>
+
+<a href="/areas/ayrshire/" class="area-row" data-name="ayrshire" data-properties="397860">
+    <span class="area-name">Ayrshire</span>
+    <span class="area-stats">
+        <span class="area-property-count">397,860 properties</span>
+        <span class="area-factor-count">38 factors</span>
+    </span>
+</a>
+
+<a href="/areas/dundee/" class="area-row" data-name="dundee" data-properties="380805">
+    <span class="area-name">Dundee</span>
+    <span class="area-stats">
+        <span class="area-property-count">380,805 properties</span>
+        <span class="area-factor-count">27 factors</span>
+    </span>
+</a>
+
+<a href="/areas/perth/" class="area-row" data-name="perth & kinross" data-properties="348837">
+    <span class="area-name">Perth & Kinross</span>
+    <span class="area-stats">
+        <span class="area-property-count">348,837 properties</span>
+        <span class="area-factor-count">27 factors</span>
+    </span>
+</a>
+
+<a href="/areas/angus/" class="area-row" data-name="angus" data-properties="326195">
+    <span class="area-name">Angus</span>
+    <span class="area-stats">
+        <span class="area-property-count">326,195 properties</span>
+        <span class="area-factor-count">15 factors</span>
+    </span>
+</a>
+
+<a href="/areas/aberdeen/" class="area-row" data-name="aberdeen & aberdeenshire" data-properties="306426">
+    <span class="area-name">Aberdeen & Aberdeenshire</span>
+    <span class="area-stats">
+        <span class="area-property-count">306,426 properties</span>
+        <span class="area-factor-count">25 factors</span>
+    </span>
+</a>
+
+<a href="/areas/borders/" class="area-row" data-name="scottish borders" data-properties="288964">
+    <span class="area-name">Scottish Borders</span>
+    <span class="area-stats">
+        <span class="area-property-count">288,964 properties</span>
+        <span class="area-factor-count">12 factors</span>
+    </span>
+</a>
+
+<a href="/areas/dumfries/" class="area-row" data-name="dumfries & galloway" data-properties="213733">
+    <span class="area-name">Dumfries & Galloway</span>
+    <span class="area-stats">
+        <span class="area-property-count">213,733 properties</span>
+        <span class="area-factor-count">11 factors</span>
+    </span>
+</a>
+
+<a href="/areas/inverness/" class="area-row" data-name="inverness & highlands" data-properties="212628">
+    <span class="area-name">Inverness & Highlands</span>
+    <span class="area-stats">
+        <span class="area-property-count">212,628 properties</span>
+        <span class="area-factor-count">16 factors</span>
+    </span>
 </a>
 
 </div>

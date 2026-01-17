@@ -47,10 +47,13 @@ SEO-optimized with search functionality
 </div>
 
 <div class="area-list" id="areaList">
-{% for area in areas|sort(attribute='name') %}
-<a href="/areas/{{ area.slug }}/" class="area-row" data-name="{{ area.name|lower }}">
+{% for area in areas|sort(attribute='property_count', reverse=true) %}
+<a href="/areas/{{ area.slug }}/" class="area-row" data-name="{{ area.name|lower }}" data-properties="{{ area.property_count or 0 }}">
     <span class="area-name">{{ area.name }}</span>
-    <span class="area-factor-count">{{ area.factor_count }} factor{{ 's' if area.factor_count != 1 else '' }}</span>
+    <span class="area-stats">
+        <span class="area-property-count">{{ "{:,}".format(area.property_count or 0) }} properties</span>
+        <span class="area-factor-count">{{ area.factor_count }} factor{{ 's' if area.factor_count != 1 else '' }}</span>
+    </span>
 </a>
 {% endfor %}
 </div>

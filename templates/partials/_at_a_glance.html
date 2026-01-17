@@ -35,29 +35,108 @@
 {% endif %}
 {% endmacro %}
 
-{# Verdict box #}
-{% macro verdict_box(profile, at_a_glance, band) %}
+{# Verdict box - Enhanced with comprehensive data-driven summary #}
+{% macro verdict_box(profile, at_a_glance, band, tribunal_stats=none, complaint_categories=none, wss=none, sector_avg=2.1, current_year=2025, override_text=none) %}
 {% set band_lower = band|lower %}
+{% set stats = tribunal_stats or {} %}
+{% set total_reviews = (profile.google_review_count|default(0)) + (profile.trustpilot_review_count|default(0)) %}
+{% set top_categories = (complaint_categories[:2]) if complaint_categories else [] %}
+
 <div class="verdict-box {{ band_lower }}">
     <div class="verdict-header">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
-        Our Verdict
+        At a Glance
     </div>
     <p class="verdict-text">
-        {% if at_a_glance and at_a_glance.summary %}
+        {# Priority 1: Manual override from CSV #}
+        {% if override_text %}
+            {{ override_text }}
+        {# Priority 2: AI-generated summary #}
+        {% elif at_a_glance and at_a_glance.summary %}
             {{ at_a_glance.summary }}
         {% else %}
-            {{ profile.name }} is a <strong>
-            {% if profile.property_count and profile.property_count > 5000 %}large{% elif profile.property_count and profile.property_count > 1000 %}mid-sized{% else %}small{% endif %}
-            </strong> Scottish property factor.
-            
-            Based on our data, they hold a <strong>{{ band }}</strong> risk rating.
-            {% if band == 'CLEAN' %}
-            They have no significant tribunal history, suggesting a reliable service record.
-            {% elif band == 'AMBER' %}
-            Potential clients should be aware of a moderate frequency of tribunal disputes relative to their size.
-            {% elif band == 'RED' %}
-            They have a higher-than-average volume of tribunal cases or enforcement orders, which is a significant concern.
+            {# === EXPIRED FACTOR === #}
+            {% if profile.status != 'registered' %}
+                <strong>{{ profile.name }}</strong>'s registration on the Scottish Property Factor Register has expired.
+                {% if profile.ch_incorporated %}
+                The company was incorporated in {{ profile.ch_incorporated[:4] if profile.ch_incorporated|length > 4 else profile.ch_incorporated }}
+                {% if profile.property_count and profile.property_count > 0 %}
+                and previously managed approximately {{ "{:,}".format(profile.property_count) }} properties.
+                {% else %}.
+                {% endif %}
+                {% endif %}
+                Homeowners should verify current registration status before engaging.
+
+            {# === LIMITED DATA (< 50 properties) === #}
+            {% elif band == 'LIMITED' %}
+                <strong>{{ profile.name }}</strong>
+                {% if profile.ch_incorporated %}
+                has been operating since {{ profile.ch_incorporated[:4] if profile.ch_incorporated|length > 4 else profile.ch_incorporated }},
+                {% else %}
+                is a Scottish property factor
+                {% endif %}
+                managing
+                {% if profile.property_count %}approximately {{ "{:,}".format(profile.property_count) }} properties{% else %}a small portfolio{% endif %}.
+                Due to limited portfolio size, insufficient data exists for a meaningful tribunal risk comparison.
+                {% if profile.combined_rating and total_reviews >= 10 %}
+                Customer reviews average <strong>{{ "%.1f"|format(profile.combined_rating) }}</strong> stars across {{ "{:,}".format(total_reviews) }} ratings.
+                {% endif %}
+
+            {# === STANDARD FACTORS === #}
+            {% else %}
+                {# Use geographic_reach from database: national, regional, local #}
+                <strong>{{ profile.name }}</strong> is a
+                {% if profile.geographic_reach == 'national' %}
+                <strong>national</strong> property factor{% if profile.property_count and profile.property_count > 0 %}, managing around <strong>{{ "{:,}".format(profile.property_count) }}</strong> properties across Scotland{% endif %}.
+                {% elif profile.geographic_reach == 'regional' %}
+                <strong>regional</strong> property factor{% if profile.property_count and profile.property_count > 0 %}, managing approximately <strong>{{ "{:,}".format(profile.property_count) }}</strong> properties{% endif %}.
+                {% elif profile.geographic_reach == 'local' %}
+                <strong>local</strong> property factor{% if profile.property_count and profile.property_count > 0 %}, managing approximately <strong>{{ "{:,}".format(profile.property_count) }}</strong> properties{% endif %}.
+                {% elif profile.property_count and profile.property_count > 0 %}
+                Scottish property factor managing approximately <strong>{{ "{:,}".format(profile.property_count) }}</strong> properties.
+                {% else %}
+                Scottish property factor.
+                {% endif %}
+
+                {# Risk sentence #}
+                {% if band in ['CLEAN', 'GREEN'] %}
+                    It holds a <strong>{{ band }}</strong> risk rating
+                    {% if stats.case_count is defined and stats.case_count == 0 %}
+                    with no tribunal cases in the last five years.
+                    {% elif stats.rate_per_10k is defined and stats.rate_per_10k > 0 %}
+                    with a tribunal case rate of {{ "%.1f"|format(stats.rate_per_10k) }} per 10,000 properties—{% if stats.rate_per_10k < sector_avg * 0.9 %}below{% elif stats.rate_per_10k > sector_avg * 1.1 %}above{% else %}in line with{% endif %} the sector average of {{ "%.1f"|format(sector_avg) }}.
+                    {% else %}.
+                    {% endif %}
+                {% else %}
+                    {# ORANGE/RED - needs "However" pivot #}
+                    However, it holds {{ 'an' if band == 'ORANGE' else 'a' }} <strong>{{ band }}</strong> risk rating
+                    {% if stats.rate_per_10k is defined and stats.rate_per_10k > 0 %}
+                    based on {{ stats.case_count }} adverse tribunal outcome{{ 's' if stats.case_count != 1 else '' }} in the last 5 years ({{ "%.1f"|format(stats.rate_per_10k) }} per 10,000 properties, {% if stats.rate_per_10k > sector_avg * 1.5 %}significantly above{% elif stats.rate_per_10k > sector_avg * 1.1 %}above{% elif stats.rate_per_10k < sector_avg * 0.9 %}below{% else %}around{% endif %} the sector average of {{ "%.1f"|format(sector_avg) }}){% if stats.pfeo_count is defined and stats.pfeo_count > 0 %}, including <strong>{{ stats.pfeo_count }} PFEO{{ 's' if stats.pfeo_count > 1 else '' }}</strong> (Property Factor Enforcement Order{{ 's' if stats.pfeo_count > 1 else '' }}){% endif %}{% if top_categories|length >= 2 %}, primarily involving {{ top_categories[0].name|replace('_', ' ') }} and {{ top_categories[1].name|replace('_', ' ') }} issues{% elif top_categories|length == 1 %}, primarily involving {{ top_categories[0].name|replace('_', ' ') }} issues{% endif %}.
+                    {% elif stats.pfeo_count is defined and stats.pfeo_count > 0 %}
+                    due to <strong>{{ stats.pfeo_count }} PFEO{{ 's' if stats.pfeo_count > 1 else '' }}</strong> (Property Factor Enforcement Order{{ 's' if stats.pfeo_count > 1 else '' }}) on record.
+                    {% else %}.
+                    {% endif %}
+                {% endif %}
+
+                {# Reviews #}
+                {% if profile.combined_rating and total_reviews >= 50 %}
+                Customer reviews average <strong>{{ "%.1f"|format(profile.combined_rating) }}</strong> stars across {{ "{:,}".format(total_reviews) }} Google and Trustpilot ratings.
+                {% elif profile.combined_rating and total_reviews >= 10 %}
+                Reviews average {{ "%.1f"|format(profile.combined_rating) }} stars ({{ "{:,}".format(total_reviews) }} ratings).
+                {% endif %}
+
+                {# WSS features #}
+                {% if wss and wss.portal %}
+                The firm offers an online homeowner portal.
+                {% endif %}
+            {% endif %}
+
+            {# Company health warnings #}
+            {% if profile.ch_accounts_overdue %}
+            <em>Note: Company accounts are currently overdue at Companies House.</em>
+            {% endif %}
+            {% if profile.ch_insolvency %}
+            <em>Note: This company has insolvency history on record.</em>
             {% endif %}
         {% endif %}
     </p>

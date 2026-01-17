@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" href="/favicon-48x48.png" sizes="48x48">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+    <title>Page Not Found | Compare Factors Scotland</title>
+    <meta name="robots" content="noindex">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --font-display: 'Fraunces', Georgia, serif; --font-body: 'Source Sans 3', system-ui, sans-serif; --navy-950: #0a1628; --navy-900: #0f2137; --navy-800: #1a3a5c; --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155; --blue-600: #2563eb; }
+        *, *::before, *::after { box-sizing: border-box; }
+        body { margin: 0; font-family: var(--font-body); font-size: 16px; line-height: 1.6; color: var(--slate-700); background: var(--slate-50); min-height: 100vh; display: flex; flex-direction: column; }
+        a { color: var(--blue-600); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .site-header { background: white; border-bottom: 1px solid var(--slate-200); }
+        .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+        .logo { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: var(--navy-950); text-decoration: none; }
+        .logo:hover { text-decoration: none; }
+        .logo-mark { width: 32px; height: 32px; background: var(--navy-950); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: 700; }
+        .nav { display: flex; align-items: center; gap: 24px; }
+        .nav-link { font-size: 0.9rem; font-weight: 500; color: var(--slate-600); text-decoration: none; }
+        .nav-link:hover { color: var(--navy-950); }
+        .burger { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 28px; height: 28px; background: none; border: none; cursor: pointer; padding: 0; }
+        .burger span { display: block; width: 100%; height: 2px; background: var(--navy-900); border-radius: 2px; }
+        @media (max-width: 768px) { .nav { display: none; } .burger { display: flex; } }
+
+        .main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 48px 24px; }
+        .error-container { text-align: center; max-width: 500px; }
+        .error-code { font-family: var(--font-display); font-size: 6rem; font-weight: 700; color: var(--slate-200); line-height: 1; margin-bottom: 16px; }
+        .error-title { font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; color: var(--navy-950); margin: 0 0 12px 0; }
+        .error-message { color: var(--slate-600); margin: 0 0 32px 0; font-size: 1.1rem; }
+        .error-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 8px; font-size: 1rem; font-weight: 600; text-decoration: none; transition: all 0.15s; }
+        .btn:hover { text-decoration: none; }
+        .btn--primary { background: var(--navy-950); color: white; }
+        .btn--primary:hover { background: var(--navy-800); }
+        .btn--secondary { background: white; color: var(--navy-950); border: 1px solid var(--slate-200); }
+        .btn--secondary:hover { border-color: var(--slate-300); background: var(--slate-50); }
+
+        .suggestions { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--slate-200); }
+        .suggestions-title { font-size: 0.9rem; font-weight: 600; color: var(--slate-500); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .suggestions-list { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+        .suggestions-list a { color: var(--blue-600); font-weight: 500; }
+
+        .site-footer { background: var(--navy-950); color: rgba(255,255,255,0.7); padding: 24px; text-align: center; font-size: 0.9rem; }
+        .site-footer a { color: rgba(255,255,255,0.9); }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="/" class="logo"><div class="logo-mark">CF</div>Compare Factors</a>
+            <nav class="nav">
+                <a href="/factors/" class="nav-link">All Factors</a>
+                <a href="/areas/" class="nav-link">By Area</a>
+                <a href="/methodology/" class="nav-link">How We Score</a>
+            </nav>
+            <button class="burger" onclick="window.location.href='/'"><span></span><span></span><span></span></button>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="error-container">
+            <div class="error-code">404</div>
+            <h1 class="error-title">Page not found</h1>
+            <p class="error-message">The page you're looking for doesn't exist or may have been moved.</p>
+            <div class="error-actions">
+                <a href="/" class="btn btn--primary">Go to Homepage</a>
+                <a href="/factors/" class="btn btn--secondary">Browse All Factors</a>
+            </div>
+            <div class="suggestions">
+                <div class="suggestions-title">Try these instead</div>
+                <div class="suggestions-list">
+                    <a href="/areas/edinburgh/">Edinburgh Factors</a>
+                    <a href="/areas/glasgow/">Glasgow Factors</a>
+                    <a href="/guides/">Guides</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <a href="/">Compare Factors Scotland</a> · Independent property factor comparison
+    </footer>
+</body>
+</html>

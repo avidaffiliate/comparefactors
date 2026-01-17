@@ -11,6 +11,7 @@ Required data context:
 - profile: Row from v_factor_profiles view
 - at_a_glance: Parsed JSON {bullets: [...], overall_sentiment: ..., summary: ...}
 - wss_url: URL to the WSS PDF document (or None if not available)
+- wss: Dict with extracted WSS fields (management_fee_amount, emergency_response, etc.) or None
 - registry_url: URL to specific factor page on Property Factor Register
 - coverage_areas_list: Pre-split list of coverage areas
 - recent_reviews: List of reviews (with review_text, author_name, review_date, rating, platform for snippets)
@@ -61,7 +62,7 @@ Required data context:
 <meta property="og:url" content="https://comparefactors.co.uk/factors/{{ profile.registration_number|lower }}/">
 <meta property="og:title" content="{{ profile.name }} - Complaints & Ratings | Compare Factors">
 <meta property="og:description" content="{% if profile.risk_band %}{{ profile.risk_band }} tribunal rating. {% endif %}{% if tribunal_last_5_years.case_count %}{{ tribunal_last_5_years.case_count }} cases. {% endif %}{% if profile.combined_rating %}{{ "%.1f"|format(profile.combined_rating) }}★ rating. {% endif %}Compare Scottish property factors.">
-<meta property="og:image" content="https://comparefactors.co.uk/images/og-factor-profile.png">
+<meta property="og:image" content="https://comparefactors.co.uk/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 
 <!-- Structured Data -->
@@ -124,13 +125,13 @@ Required data context:
                         {% endif %}
                     </div>
                 </div>
-                
-                <!-- Risk Badge -->
+
+                <!-- Risk Badge (hidden on mobile) -->
                 {{ risk_badge(profile) }}
             </div>
-            
+
             <!-- Verdict Box -->
-            {{ verdict_box(profile, at_a_glance, band) }}
+            {{ verdict_box(profile, at_a_glance, band, tribunal_stats=tribunal_last_5_years, complaint_categories=complaint_categories, wss=wss, sector_avg=sector_avg_rate|default(2.1), current_year=current_year, override_text=at_a_glance_override) }}
             
             <!-- At a Glance -->
             {{ at_a_glance_box(at_a_glance) }}
@@ -223,10 +224,28 @@ Required data context:
 
         <!-- ==================== MAIN CONTENT ==================== -->
         <main class="main-content">
-        
+
+        <!-- ==================== SECTION NAVIGATION ==================== -->
+        <nav class="section-nav" aria-label="Page sections">
+            <span class="section-nav-label">Jump to:</span>
+            <div class="section-nav-links">
+                {% if profile.google_rating or profile.trustpilot_rating %}
+                <a href="#reviews" class="section-nav-item">Reviews</a>
+                {% endif %}
+                <a href="#wss" class="section-nav-item">Services</a>
+                <a href="#tribunal" class="section-nav-item">Tribunal</a>
+                {% if recent_cases %}
+                <a href="#decisions" class="section-nav-item">Decisions</a>
+                {% endif %}
+                {% if profile.ch_number %}
+                <a href="#company" class="section-nav-item">Company</a>
+                {% endif %}
+            </div>
+        </nav>
+
         <!-- ==================== REVIEWS CARD ==================== -->
         {% if profile.google_rating or profile.trustpilot_rating %}
-        <div class="card">
+        <div class="card" id="reviews">
             <div class="card-header">
                 <h2 class="card-title">
                     {{ icon_star(size=18) }}
@@ -299,9 +318,138 @@ Required data context:
             </div>
         </div>
         {% endif %}
-        
+
+        <!-- ==================== WRITTEN STATEMENT OF SERVICES ==================== -->
+        <div class="card" id="wss">
+            <div class="card-header">
+                <h2 class="card-title">
+                    {{ icon_document(size=18) }}
+                    Written Statement of Services
+                </h2>
+                {% if wss_url %}
+                <div class="card-header-links">
+                    <a href="{{ wss_url }}" class="card-link" target="_blank" rel="noopener">View PDF →</a>
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if wss and wss.confidence_score %}
+                {# We have extracted WSS data - show as description list #}
+                <dl class="wss-list">
+                    {# Response Times #}
+                    {% if wss.emergency_response %}
+                    <div class="wss-item wss-item--emergency">
+                        <dt>Emergency Response</dt>
+                        <dd>{{ wss.emergency_response }}</dd>
+                    </div>
+                    {% endif %}
+                    {% if wss.urgent_response %}
+                    <div class="wss-item wss-item--urgent">
+                        <dt>Urgent Response</dt>
+                        <dd>{{ wss.urgent_response }}</dd>
+                    </div>
+                    {% endif %}
+                    {% if wss.routine_response %}
+                    <div class="wss-item">
+                        <dt>Routine Response</dt>
+                        <dd>{{ wss.routine_response }}</dd>
+                    </div>
+                    {% endif %}
+
+                    {# Communication #}
+                    {% if wss.enquiry_response %}
+                    <div class="wss-item">
+                        <dt>Enquiry Response</dt>
+                        <dd>{{ wss.enquiry_response }}</dd>
+                    </div>
+                    {% endif %}
+                    {% if wss.complaint_response %}
+                    <div class="wss-item">
+                        <dt>Complaint Response</dt>
+                        <dd>{{ wss.complaint_response }}</dd>
+                    </div>
+                    {% endif %}
+
+                    {# Service Terms #}
+                    {% if wss.billing_frequency %}
+                    <div class="wss-item">
+                        <dt>Billing Frequency</dt>
+                        <dd>{{ wss.billing_frequency }}</dd>
+                    </div>
+                    {% endif %}
+                    {% if wss.notice_period %}
+                    <div class="wss-item">
+                        <dt>Notice Period</dt>
+                        <dd>{{ wss.notice_period }}</dd>
+                    </div>
+                    {% endif %}
+                    {% if wss.delegated_authority_limit %}
+                    <div class="wss-item">
+                        <dt>Delegated Authority</dt>
+                        <dd>{{ wss.delegated_authority_limit }}</dd>
+                    </div>
+                    {% endif %}
+                </dl>
+
+                {# Digital & Compliance badges #}
+                {% if wss.portal or wss.app or wss.code_of_conduct_version or wss.professional_memberships %}
+                <div style="margin-top: var(--space-md); display: flex; flex-wrap: wrap; gap: var(--space-xs); align-items: center;">
+                    {% if wss.portal %}
+                    <span class="wss-badge wss-badge--feature">{{ icon_check(size=12) }} Online Portal</span>
+                    {% endif %}
+                    {% if wss.app %}
+                    <span class="wss-badge wss-badge--feature">{{ icon_check(size=12) }} Mobile App</span>
+                    {% endif %}
+                    {% if wss.code_of_conduct_version %}
+                    <span class="wss-badge">Code of Conduct {{ wss.code_of_conduct_version }}</span>
+                    {% endif %}
+                    {% if wss.professional_memberships %}
+                    <span class="wss-badge">{{ wss.professional_memberships }}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                {# Download link #}
+                <div style="margin-top: var(--space-lg); padding: var(--space-md); background: var(--slate-50); border-radius: var(--radius-md); border-left: 3px solid var(--navy-600);">
+                    <a href="{{ wss_url }}" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: var(--space-xs); color: var(--navy-700); font-weight: 500; text-decoration: none;">
+                        {{ icon_file(size=16) }}
+                        Download Full Written Statement
+                        {{ icon_external_link(size=14) }}
+                    </a>
+                </div>
+
+                {% elif wss_url %}
+                {# We have a URL but no extracted data #}
+                <p style="margin-bottom: var(--space-md);">
+                    Every registered property factor must provide a Written Statement of Services (WSS) outlining their scope, responsibilities, fee structure, and complaints procedure.
+                </p>
+                <div style="padding: var(--space-md); background: var(--slate-50); border-radius: var(--radius-md); border-left: 3px solid var(--navy-600);">
+                    <a href="{{ wss_url }}" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: var(--space-xs); color: var(--navy-700); font-weight: 500; text-decoration: none;">
+                        {{ icon_file(size=16) }}
+                        Download {{ profile.name }}'s Written Statement
+                        {{ icon_external_link(size=14) }}
+                    </a>
+                </div>
+                {% else %}
+                {# No WSS on file #}
+                <div style="text-align: center; padding: var(--space-lg) 0;">
+                    {{ icon_document(size=48, class="", stroke_width=1) }}
+                    <p style="margin-top: var(--space-md); color: var(--slate-600);">
+                        We don't have {{ profile.name }}'s Written Statement of Services on file.
+                    </p>
+                    <p style="margin-top: var(--space-sm); font-size: var(--text-sm); color: var(--slate-500);">
+                        Are you {{ profile.name }} or a homeowner with a copy? <a href="mailto:hello@comparefactors.co.uk?subject=WSS for {{ profile.name }} ({{ profile.registration_number }})&body=Hi,%0D%0A%0D%0AI'd like to share the Written Statement of Services for {{ profile.name }}.%0D%0A%0D%0A[Please attach the WSS document or provide a link]" style="color: var(--navy-600); font-weight: 500;">Send it our way</a> and we'll add it to this profile.
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                The WSS is a legal requirement under the Property Factors (Scotland) Act 2011.{% if wss and wss.confidence_score %} Data extracted from official document.{% endif %}
+            </div>
+        </div>
+
         <!-- ==================== TRIBUNAL RECORD CARD ==================== -->
-        <div class="card">
+        <div class="card" id="tribunal">
             <div class="card-header">
                 <h2 class="card-title">
                     {{ icon_document(size=18) }}
@@ -347,20 +495,25 @@ Required data context:
                             <div class="data-label">Paid</div>
                             <div class="data-benchmark">Compensation</div>
                         </div>
+                        {% if complaint_categories and complaint_categories|length > 0 %}
+                        <div class="data-item">
+                            <div class="data-value" style="font-size: var(--text-sm);">{{ complaint_categories[0].name|replace('_', ' ')|title }}</div>
+                            <div class="data-label">Top Issue</div>
+                            <div class="data-benchmark">{{ complaint_categories[0].count }} case{{ 's' if complaint_categories[0].count != 1 else '' }}</div>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
-                
-                {# Complaint Categories #}
-                {% if complaint_categories and complaint_categories|length > 0 %}
+
+                {# All Complaint Categories #}
+                {% if complaint_categories and complaint_categories|length > 1 %}
                 <div style="margin-bottom: var(--space-md);">
-                    <div style="font-size: var(--text-xs); font-weight: 600; color: var(--navy-800); margin-bottom: var(--space-sm); text-transform: uppercase; letter-spacing: 0.05em;">Common Complaints</div>
+                    <div style="font-size: var(--text-xs); font-weight: 600; color: var(--navy-800); margin-bottom: var(--space-sm); text-transform: uppercase; letter-spacing: 0.05em;">All Complaint Types</div>
                     <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs);">
-                        {% for cat, count in complaint_categories.items() %}
-                        {% if loop.index <= 5 %}
-                        <span class="complaint-tag">
-                            {{ cat|title }} <span style="color: var(--slate-500);">({{ count }})</span>
+                        {% for cat in complaint_categories %}
+                        <span class="complaint-tag tag-{{ cat.name }}">
+                            {{ cat.name|replace('_', ' ')|title }} <span style="opacity: 0.7;">({{ cat.count }})</span>
                         </span>
-                        {% endif %}
                         {% endfor %}
                     </div>
                 </div>
@@ -369,13 +522,13 @@ Required data context:
                 {% endif %}
             </div>
             <div class="card-footer">
-                Case summaries from official HPC decisions. <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions" target="_blank" rel="noopener">Verify with official records ↗</a>
+                Case summaries from official HPC decisions. <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions?field_property_factor_registrati={{ profile.registration_number }}" target="_blank" rel="noopener">Verify with official records ↗</a>
             </div>
         </div>
         
         <!-- ==================== RECENT DECISIONS ==================== -->
         {% if recent_cases %}
-        <div class="card">
+        <div class="card" id="decisions">
             <div class="card-header">
                 <h2 class="card-title">
                     {{ icon_clock(size=18) }}
@@ -394,7 +547,7 @@ Required data context:
         
         <!-- ==================== COMPANIES HOUSE CARD ==================== -->
         {% if profile.ch_number %}
-        <div class="card">
+        <div class="card" id="company">
             <div class="card-header">
                 <h2 class="card-title">
                     {{ icon_building(size=18) }}
@@ -505,7 +658,7 @@ Required data context:
 
 <!-- Page-specific footer disclaimer -->
 <div class="footer-disclaimer">
-    Some summaries and statistics on this page are AI-generated from official sources. Always verify important information with <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions" target="_blank" rel="noopener">official HPC records</a>.
+    Some summaries and statistics on this page are AI-generated from official sources. Always verify important information with <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions?field_property_factor_registrati={{ profile.registration_number }}" target="_blank" rel="noopener">official HPC records</a>.
 </div>
 {% endblock %}
 

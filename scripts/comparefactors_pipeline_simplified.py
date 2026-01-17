@@ -187,11 +187,68 @@ def log_step(num: int, title: str):
 
 
 def log_info(msg: str):
-    print(f"  ℹ️  {msg}")
+    print(f"  [i] {msg}")
 
 
 def log_success(msg: str):
-    print(f"  ✅ {msg}")
+    print(f"  [+] {msg}")
+
+
+# Complaint category extraction from case summaries
+COMPLAINT_CATEGORY_KEYWORDS = {
+    'communication': [
+        'communication', 'respond', 'reply', 'contact', 'notify', 'notification',
+        'informed', 'update', 'correspondence', 'email', 'letter', 'phone',
+        'failed to respond', 'no response', 'lack of communication'
+    ],
+    'financial': [
+        'fee', 'charge', 'invoice', 'payment', 'account', 'money', 'cost',
+        'budget', 'fund', 'reserve', 'float', 'arrears', 'debt', 'billing',
+        'overcharge', 'financial', 'statement of account'
+    ],
+    'maintenance': [
+        'repair', 'maintenance', 'common area', 'cleaning', 'garden', 'roof',
+        'gutter', 'close', 'stair', 'entry', 'door', 'window', 'lift',
+        'damp', 'leak', 'damage', 'defect', 'contractor', 'works'
+    ],
+    'insurance': [
+        'insurance', 'policy', 'cover', 'claim', 'premium', 'underwriter',
+        'buildings insurance', 'block insurance'
+    ],
+    'governance': [
+        'meeting', 'vote', 'agm', 'minutes', 'decision', 'consultation',
+        'ballot', 'majority', 'quorum', 'resolution', 'deed of conditions'
+    ],
+    'disclosure': [
+        'disclosure', 'information', 'document', 'record', 'access',
+        'written statement', 'wss', 'transparency', 'provide information'
+    ],
+    'health_safety': [
+        'health', 'safety', 'fire', 'hazard', 'risk', 'emergency',
+        'dangerous', 'unsafe', 'asbestos', 'legionella'
+    ],
+    'debt_recovery': [
+        'debt recovery', 'debt collection', 'sheriff officer', 'legal action',
+        'court', 'pursue', 'arrears recovery', 'charging order'
+    ],
+}
+
+
+def extract_complaint_categories(text: str) -> List[str]:
+    """Extract complaint categories from case summary text using keyword matching."""
+    if not text:
+        return []
+
+    text_lower = text.lower()
+    categories = []
+
+    for category, keywords in COMPLAINT_CATEGORY_KEYWORDS.items():
+        for keyword in keywords:
+            if keyword in text_lower:
+                categories.append(category)
+                break  # Only add each category once
+
+    return categories
 
 
 # =============================================================================
@@ -281,7 +338,8 @@ CREATE TABLE IF NOT EXISTS tribunal_cases (
     summary TEXT,
     key_quote TEXT,
     outcome_reasoning TEXT,
-    
+    complaint_categories TEXT,  -- JSON array of categories extracted from summary
+
     -- Metadata
     validation_errors TEXT,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
@@ -320,6 +378,23 @@ CREATE TABLE IF NOT EXISTS companies (
 CREATE TABLE IF NOT EXISTS wss (
     registration_number TEXT PRIMARY KEY,
     document_url TEXT,
+    -- Key extracted fields
+    management_fee_amount TEXT,
+    management_fee_frequency TEXT,
+    delegated_authority_limit TEXT,
+    emergency_response TEXT,
+    urgent_response TEXT,
+    routine_response TEXT,
+    enquiry_response TEXT,
+    complaint_response TEXT,
+    billing_frequency TEXT,
+    float_required INTEGER,
+    notice_period TEXT,
+    code_of_conduct_version TEXT,
+    professional_memberships TEXT,
+    portal TEXT,
+    app TEXT,
+    confidence_score REAL,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -368,7 +443,7 @@ def step_2_import_factors():
     
     csv_path = CONFIG.csv_dir / "factors_register.csv"
     if not csv_path.exists():
-        print(f"  ❌ Not found: {csv_path}")
+        print(f"  [X] Not found: {csv_path}")
         return
     
     with open(csv_path, 'r', encoding='utf-8-sig') as f:
@@ -460,7 +535,7 @@ def step_3_import_tribunal():
     if not CONFIG.tribunal_db_path.exists():
         csv_path = CONFIG.csv_dir / "tribunal_cases.csv"
         if not csv_path.exists():
-            print(f"  ❌ No tribunal data found")
+            print(f"  [X] No tribunal data found")
             return
         # CSV import path...
         return
@@ -480,7 +555,7 @@ def step_3_import_tribunal():
             break
     
     if not pf_column:
-        print(f"  ❌ Could not find PF number column. Available: {columns}")
+        print(f"  [X] Could not find PF number column. Available: {columns}")
         source.close()
         return
     
@@ -494,18 +569,24 @@ def step_3_import_tribunal():
             if not pf:
                 continue
             
+            # Handle complaint_categories - may be JSON string or already parsed
+            complaint_cats = row_dict.get('complaint_categories')
+            if complaint_cats and not isinstance(complaint_cats, str):
+                complaint_cats = json.dumps(complaint_cats)
+
             conn.execute("""
                 INSERT INTO tribunal_cases (
                     case_reference, factor_registration_number, decision_date, outcome,
                     application_dismissed, application_withdrawn, breach_found,
                     pfeo_proposed, pfeo_issued, pfeo_complied, pfeo_breached,
                     compensation_awarded, refund_ordered, pdf_url, summary, key_quote,
-                    outcome_reasoning, validation_errors
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    outcome_reasoning, complaint_categories, validation_errors
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(case_reference) DO UPDATE SET
                     outcome = excluded.outcome,
                     summary = COALESCE(excluded.summary, summary),
-                    compensation_awarded = excluded.compensation_awarded
+                    compensation_awarded = excluded.compensation_awarded,
+                    complaint_categories = COALESCE(excluded.complaint_categories, complaint_categories)
             """, [
                 row_dict.get('case_reference'),
                 pf,
@@ -524,6 +605,7 @@ def step_3_import_tribunal():
                 row_dict.get('summary'),
                 row_dict.get('key_quote'),
                 row_dict.get('outcome_reasoning'),
+                complaint_cats,
                 row_dict.get('validation_errors'),
             ])
             imported += 1
@@ -737,7 +819,7 @@ def step_4_import_reviews():
         log_info("Google reviews text CSV not found")
     
     if total_imported == 0:
-        print("  ⚠️  No review data imported")
+        print("  [!]  No review data imported")
     
     # Update factor aggregates
     # NOTE: Only use aggregate location records (review_text IS NULL) to avoid double-counting
@@ -799,7 +881,7 @@ def step_5_import_companies_house():
     
     csv_path = CONFIG.csv_dir / "companies_house.csv"
     if not csv_path.exists():
-        print(f"  ⏭️  No companies CSV found")
+        print(f"  [>]  No companies CSV found")
         return
     
     with open(csv_path, 'r', encoding='utf-8-sig') as f:
@@ -855,43 +937,100 @@ def step_5_import_companies_house():
 
 
 # =============================================================================
-# STEP 6: IMPORT WSS (Simplified - URL only)
+# STEP 6: IMPORT WSS (With extracted fields)
 # =============================================================================
 
 def step_6_import_wss():
     log_step(6, "Import WSS Data")
-    
+
     if not CONFIG.wss_db_path.exists():
-        print(f"  ⏭️  WSS database not found")
+        print(f"  [>]  WSS database not found")
         return
-    
+
     source = sqlite3.connect(CONFIG.wss_db_path)
     source.row_factory = sqlite3.Row
-    
+
+    # Join documents, mappings, and extracted key fields
     cursor = source.execute("""
-        SELECT m.registration_number, d.url AS document_url
+        SELECT
+            m.registration_number,
+            d.url AS document_url,
+            k.management_fee_amount,
+            k.management_fee_frequency,
+            k.delegated_authority_limit,
+            k.emergency_response,
+            k.urgent_response,
+            k.routine_response,
+            k.enquiry_response,
+            k.complaint_response,
+            k.billing_frequency,
+            k.float_required,
+            k.notice_period,
+            k.code_of_conduct_version,
+            k.professional_memberships,
+            k.portal,
+            k.app,
+            k.confidence_score
         FROM wss_factor_mapping m
         JOIN wss_documents d ON m.document_id = d.id
+        LEFT JOIN wss_key_fields k ON m.document_id = k.document_id
         WHERE m.registration_number IS NOT NULL
     """)
-    
+
     imported = 0
+    with_fields = 0
     with get_db() as conn:
         for row in cursor:
             pf = normalize_pf_number(row['registration_number'])
             if not pf:
                 continue
-            
+
             conn.execute("""
-                INSERT INTO wss (registration_number, document_url)
-                VALUES (?, ?)
-                ON CONFLICT(registration_number) DO UPDATE SET document_url = excluded.document_url
-            """, [pf, row['document_url']])
+                INSERT INTO wss (
+                    registration_number, document_url,
+                    management_fee_amount, management_fee_frequency,
+                    delegated_authority_limit,
+                    emergency_response, urgent_response, routine_response,
+                    enquiry_response, complaint_response,
+                    billing_frequency, float_required,
+                    notice_period, code_of_conduct_version, professional_memberships,
+                    portal, app, confidence_score
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(registration_number) DO UPDATE SET
+                    document_url = excluded.document_url,
+                    management_fee_amount = excluded.management_fee_amount,
+                    management_fee_frequency = excluded.management_fee_frequency,
+                    delegated_authority_limit = excluded.delegated_authority_limit,
+                    emergency_response = excluded.emergency_response,
+                    urgent_response = excluded.urgent_response,
+                    routine_response = excluded.routine_response,
+                    enquiry_response = excluded.enquiry_response,
+                    complaint_response = excluded.complaint_response,
+                    billing_frequency = excluded.billing_frequency,
+                    float_required = excluded.float_required,
+                    notice_period = excluded.notice_period,
+                    code_of_conduct_version = excluded.code_of_conduct_version,
+                    professional_memberships = excluded.professional_memberships,
+                    portal = excluded.portal,
+                    app = excluded.app,
+                    confidence_score = excluded.confidence_score
+            """, [
+                pf, row['document_url'],
+                row['management_fee_amount'], row['management_fee_frequency'],
+                row['delegated_authority_limit'],
+                row['emergency_response'], row['urgent_response'], row['routine_response'],
+                row['enquiry_response'], row['complaint_response'],
+                row['billing_frequency'], row['float_required'],
+                row['notice_period'], row['code_of_conduct_version'], row['professional_memberships'],
+                row['portal'], row['app'], row['confidence_score']
+            ])
             imported += 1
+            if row['confidence_score']:
+                with_fields += 1
         conn.commit()
-    
+
     source.close()
-    log_success(f"Imported WSS URLs for {imported} factors")
+    log_success(f"Imported WSS for {imported} factors ({with_fields} with extracted fields)")
 
 
 # =============================================================================
@@ -1028,11 +1167,11 @@ def step_8_generate_summaries(skip_ai: bool = False):
     log_step(8, "Generate AI Summaries")
     
     if skip_ai:
-        print("  ⏭️  Skipping AI generation")
+        print("  [>]  Skipping AI generation")
         return
     
     if not HAS_VERTEX:
-        print("  ⏭️  Vertex AI not available")
+        print("  [>]  Vertex AI not available")
         return
     
     # AI summary generation logic would go here
@@ -1067,7 +1206,7 @@ def step_9_generate_site():
     log_step(9, "Generate Static Site")
     
     if not HAS_JINJA:
-        print("  ❌ Jinja2 required")
+        print("  [X] Jinja2 required")
         return
     
     env = Environment(loader=FileSystemLoader(CONFIG.template_dir), autoescape=False)
@@ -1242,7 +1381,29 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
     """Generate individual factor profile pages."""
     # Use the view to get factors with Companies House data joined
     factors = conn.execute("SELECT * FROM v_factor_profiles ORDER BY name").fetchall()
-    
+
+    # Calculate sector average tribunal rate (for context in summaries)
+    # Include ALL factors with >= 50 properties (including those with 0 cases)
+    rate_data = conn.execute("""
+        SELECT COALESCE(tribunal_rate_per_10k, 0) as rate
+        FROM factors
+        WHERE property_count >= 50
+    """).fetchall()
+    rates = [r[0] for r in rate_data]
+    sector_avg_rate = sum(rates) / len(rates) if rates else 8.0  # Mean across all factors
+
+    # Load manual overrides from CSV (full text replacement for at-a-glance)
+    overrides = {}
+    overrides_path = CONFIG.csv_dir / "factor_overrides.csv"
+    if overrides_path.exists():
+        with open(overrides_path, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(row for row in f if not row.strip().startswith('#'))
+            for row in reader:
+                pf_num = normalize_pf_number(row.get('registration_number', ''))
+                override_text = row.get('at_a_glance_override', '').strip()
+                if pf_num and override_text:
+                    overrides[pf_num] = override_text
+
     generated = 0
     for f in factors:
         pf = f['registration_number']
@@ -1284,6 +1445,16 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
             case['hearing_date'] = case.get('decision_date')
             # Add case_ref alias (template uses case_ref, DB has case_reference)
             case['case_ref'] = case.get('case_reference')
+            # Parse complaint categories from DB (JSON string) or extract from summary as fallback
+            stored_cats = case.get('complaint_categories')
+            if stored_cats:
+                try:
+                    case['complaint_categories'] = json.loads(stored_cats) if isinstance(stored_cats, str) else stored_cats
+                except (json.JSONDecodeError, TypeError):
+                    case['complaint_categories'] = extract_complaint_categories(case.get('summary', ''))
+            else:
+                # Fallback: extract from summary if no stored categories
+                case['complaint_categories'] = extract_complaint_categories(case.get('summary', ''))
         
         # Filter to 5-year horizon (consistent with risk band calculation)
         cases = [
@@ -1339,12 +1510,33 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
             'review_count': tp_row['review_count'] or 0
         } if tp_row else None
         
-        # Get WSS URL
-        wss = conn.execute("SELECT document_url FROM wss WHERE registration_number = ?", [pf]).fetchone()
-        wss_url = wss['document_url'] if wss else None
+        # Get WSS data (URL + extracted fields)
+        wss_row = conn.execute("""
+            SELECT document_url, management_fee_amount, management_fee_frequency,
+                   delegated_authority_limit, emergency_response, urgent_response,
+                   routine_response, enquiry_response, complaint_response,
+                   billing_frequency, float_required, notice_period,
+                   code_of_conduct_version, professional_memberships, portal, app,
+                   confidence_score
+            FROM wss WHERE registration_number = ?
+        """, [pf]).fetchone()
+        wss_url = wss_row['document_url'] if wss_row else None
+        wss_data = dict(wss_row) if wss_row else None
         
-        # Build complaint categories (v2: not extracted, use empty dict)
-        complaint_cats = {}
+        # Build complaint categories from case summaries
+        category_counts = {}
+        categorized_case_count = 0
+        for c in cases:
+            case_cats = c.get('complaint_categories', [])
+            if case_cats:
+                categorized_case_count += 1
+                for cat in case_cats:
+                    category_counts[cat] = category_counts.get(cat, 0) + 1
+        # Sort by count descending and format for template
+        complaint_cats = [
+            {'name': cat, 'count': count}
+            for cat, count in sorted(category_counts.items(), key=lambda x: -x[1])
+        ]
         
         # Cases by year (use same range as five_year_cutoff filter)
         cases_by_year = {}
@@ -1389,6 +1581,7 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
             'factor': profile,  # Alias for templates that use 'factor' instead of 'profile'
             'at_a_glance': at_a_glance,
             'wss_url': wss_url,
+            'wss': wss_data,  # Full WSS data with extracted fields
             'registry_url': f"https://www.propertyfactorregister.gov.scot/property-factor/{pf}",
             'companies_house_url': f"https://find-and-update.company-information.service.gov.uk/search?q={profile.get('name', '').replace(' ', '+')}" if profile.get('name') else None,
             'coverage_areas_list': [a.strip() for a in (profile.get('coverage_areas') or '').split(',') if a.strip()],
@@ -1436,6 +1629,8 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
             
             'generated_date': datetime.now().strftime('%Y-%m-%d'),
             'current_year': datetime.now().year,
+            'sector_avg_rate': sector_avg_rate,
+            'at_a_glance_override': overrides.get(pf),  # Full text override from CSV
         }
         
         try:
@@ -1518,9 +1713,9 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
                     # Breakdowns
                     'outcomes': outcomes_list,
                     'cases_by_year': cases_by_year_dict,
-                    'complaint_categories': [],  # v2: not extracted
-                    'categorized_cases': 0,  # v2: not extracted
-                    
+                    'complaint_categories': complaint_cats,
+                    'categorized_cases': categorized_case_count,
+
                     # Optional (not computed but template checks for them)
                     'code_breaches': None,
                     'pfeo_requirements': None,
@@ -1552,7 +1747,7 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
             
             generated += 1
         except Exception as e:
-            print(f"  ⚠️  Failed {pf}: {e}")
+            print(f"  [!]  Failed {pf}: {e}")
     
     return generated
 
@@ -1619,9 +1814,9 @@ def main():
             try:
                 steps[step_num]()
             except Exception as e:
-                print(f"  ❌ Step {step_num} failed: {e}")
+                print(f"  [X] Step {step_num} failed: {e}")
     
-    print(f"\n⏱️  Total time: {(datetime.now() - start).total_seconds():.1f}s")
+    print(f"\nTotal time: {(datetime.now() - start).total_seconds():.1f}s")
 
 
 if __name__ == "__main__":

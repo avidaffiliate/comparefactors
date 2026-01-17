@@ -12,13 +12,8 @@
     <title>{% block title %}Compare Factors Scotland{% endblock %}</title>
     {% block meta %}{% endblock %}
     
-    <!-- Optimized font loading: preconnect + async load to eliminate render blocking -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript>
-        <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-    </noscript>
+    <!-- Self-hosted fonts - eliminates render-blocking external requests -->
+    <link rel="stylesheet" href="/static/css/fonts.css">
     
     <style>
         /* ==================== CSS VARIABLES ==================== */
