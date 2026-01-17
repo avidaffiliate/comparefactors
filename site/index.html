@@ -56,7 +56,8 @@
 
 
 <link rel="dns-prefetch" href="https://www.googletagmanager.com">
-<link rel="stylesheet" href="/static/css/fonts.css">
+<link rel="preload" href="/static/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/static/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
 
 
 <script type="application/ld+json">
@@ -181,6 +182,8 @@
 </script>
 
 <style>
+@font-face{font-family:'Fraunces';font-style:normal;font-weight:400 700;font-display:swap;src:url('/static/fonts/fraunces-latin.woff2') format('woff2')}
+@font-face{font-family:'Source Sans 3';font-style:normal;font-weight:400 700;font-display:swap;src:url('/static/fonts/source-sans-3-latin.woff2') format('woff2')}
 :root{--navy-950:#0a0f1a;--navy-900:#0f172a;--navy-800:#1e293b;--navy-700:#334155;--slate-600:#475569;--slate-500:#64748b;--slate-400:#94a3b8;--slate-300:#cbd5e1;--slate-200:#e2e8f0;--slate-100:#f1f5f9;--slate-50:#f8fafc;--white:#ffffff;--red-700:#b91c1c;--red-600:#dc2626;--red-100:#fee2e2;--orange-600:#ea580c;--orange-100:#ffedd5;--amber-600:#d97706;--amber-100:#fef3c7;--green-700:#15803d;--green-600:#16a34a;--green-100:#dcfce7;--green-50:#f0fdf4;--blue-700:#1d4ed8;--blue-600:#2563eb;--blue-100:#dbeafe;--indigo-600:#4f46e5;--indigo-100:#e0e7ff;--indigo-50:#eef2ff;--font-display:'Fraunces',Georgia,serif;--font-body:'Source Sans 3',-apple-system,BlinkMacSystemFont,sans-serif}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:var(--font-body);background:var(--slate-50);color:var(--navy-800);line-height:1.6;-webkit-font-smoothing:antialiased}

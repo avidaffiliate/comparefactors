@@ -171,10 +171,27 @@
 </script>
 
     
-    <!-- Self-hosted fonts - eliminates render-blocking external requests -->
-    <link rel="stylesheet" href="/static/css/fonts.css">
-    
+    <!-- Preload fonts for faster rendering -->
+    <link rel="preload" href="/static/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/static/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
+
     <style>
+        /* Inlined @font-face - eliminates render-blocking CSS request */
+        @font-face {
+            font-family: 'Fraunces';
+            font-style: normal;
+            font-weight: 400 700;
+            font-display: swap;
+            src: url('/static/fonts/fraunces-latin.woff2') format('woff2');
+        }
+        @font-face {
+            font-family: 'Source Sans 3';
+            font-style: normal;
+            font-weight: 400 700;
+            font-display: swap;
+            src: url('/static/fonts/source-sans-3-latin.woff2') format('woff2');
+        }
+
         /* ==================== CSS VARIABLES ==================== */
         :root {
             /* Navy scale - primary dark colors */
