@@ -9,22 +9,55 @@
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
     <link rel="manifest" href="/site.webmanifest">
-    <title>Tribunal Record | MXM Property Solutions Limited | Compare Factors</title>
+    <title>MXM Property Solutions Limited Tribunal Cases & Complaints | Compare Factors</title>
     
-<meta name="description" content="Full tribunal history for MXM Property Solutions Limited. 1 cases since 2017, 0% upheld. View complaint patterns, enforcement orders, and compensation awarded.">
+
+<meta name="description" content="MXM Property Solutions Limited: 1 tribunal case (2021–2026), 0% upheld. CLEAN risk rating. Full complaint history and analysis.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://comparefactors.co.uk/factors/pf000979/tribunal/">
 
+<!-- Open Graph -->
+<meta property="og:title" content="MXM Property Solutions Limited - Tribunal Record | Compare Factors">
+<meta property="og:description" content="1 tribunal cases, 0% upheld. CLEAN risk rating.">
+<meta property="og:url" content="https://comparefactors.co.uk/factors/pf000979/tribunal/">
+<meta property="og:type" content="website">
+
+<!-- Structured Data: BreadcrumbList -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://comparefactors.co.uk/"},
+        {"@type": "ListItem", "position": 2, "name": "Factors", "item": "https://comparefactors.co.uk/factors/"},
+        {"@type": "ListItem", "position": 3, "name": "MXM Property Solutions Limited", "item": "https://comparefactors.co.uk/factors/pf000979/"},
+        {"@type": "ListItem", "position": 4, "name": "Tribunal Record"}
+    ]
+}
+</script>
+
     
-    <!-- Optimized font loading: preconnect + async load to eliminate render blocking -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript>
-        <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-    </noscript>
-    
+    <!-- Preload fonts for faster rendering -->
+    <link rel="preload" href="/static/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/static/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
+
     <style>
+        /* Inlined @font-face - eliminates render-blocking CSS request */
+        @font-face {
+            font-family: 'Fraunces';
+            font-style: normal;
+            font-weight: 400 700;
+            font-display: swap;
+            src: url('/static/fonts/fraunces-latin.woff2') format('woff2');
+        }
+        @font-face {
+            font-family: 'Source Sans 3';
+            font-style: normal;
+            font-weight: 400 700;
+            font-display: swap;
+            src: url('/static/fonts/source-sans-3-latin.woff2') format('woff2');
+        }
+
         /* ==================== CSS VARIABLES ==================== */
         :root {
             /* Navy scale - primary dark colors */
@@ -166,6 +199,8 @@
         .nav-cta,
         .logo,
         .btn,
+        .cta-btn,
+        .mobile-cta-button,
         .footer-col a,
         .breadcrumb a,
         .mobile-nav a {
@@ -179,8 +214,20 @@
         }
         .nav-cta:hover,
         .logo:hover,
-        .btn:hover {
+        .btn:hover,
+        .cta-btn:hover,
+        .mobile-cta-button:hover {
             text-decoration: none;
+        }
+        
+        /* Mobile CTA button - white background with navy text */
+        .mobile-cta-button,
+        .mobile-cta-button:link,
+        .mobile-cta-button:visited,
+        .mobile-cta-button:hover,
+        .mobile-cta-button:active {
+            color: var(--navy-900);
+            background: white;
         }
 
         /* ==================== HEADER ==================== */
@@ -331,10 +378,19 @@
             color: var(--navy-900);
         }
 
-        .mobile-nav .nav-cta {
-            display: inline-block;
+        .mobile-nav a.nav-cta {
+            color: white;
+            background: var(--navy-950);
             margin-top: 12px;
+            padding: 12px 16px;
+            border-radius: 6px;
             text-align: center;
+            border-bottom: none;
+        }
+        
+        .mobile-nav a.nav-cta:hover {
+            background: var(--navy-800);
+            color: white;
         }
 
         /* ==================== BREADCRUMB ==================== */
@@ -449,10 +505,10 @@
             background: var(--green-100);
             color: var(--green-700);
         }
-        .risk-badge--amber,
-        .risk-badge.amber {
-            background: var(--amber-100);
-            color: var(--amber-600);
+        .risk-badge--limited,
+        .risk-badge.limited {
+            background: var(--gray-100);
+            color: var(--gray-600);
         }
         .risk-badge--orange,
         .risk-badge.orange {
@@ -473,7 +529,7 @@
         
         .risk-clean { color: var(--green-600); }
         .risk-green { color: var(--green-600); }
-        .risk-amber { color: var(--amber-600); }
+        .risk-limited { color: var(--gray-600); }
         .risk-orange { color: var(--orange-600); }
         .risk-red { color: var(--red-600); }
 
@@ -881,22 +937,68 @@
     </style>
     
 <style>
-/* Tribunal History Page Styles */
-.tribunal-history-page {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 1rem 3rem;
+/* =============================================================================
+   TRIBUNAL HISTORY PAGE - Mobile Optimized
+   ============================================================================= */
+
+:root {
+    --primary: #1e40af;
+    --primary-dark: #1e3a8a;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --bg: #ffffff;
+    --bg-muted: #f8fafc;
+    --bg-hover: #f1f5f9;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --red-50: #fef2f2;
+    --red-600: #dc2626;
+    --red-700: #b91c1c;
+    --amber-50: #fffbeb;
+    --amber-700: #b45309;
+    --green-50: #f0fdf4;
+    --green-600: #16a34a;
+    --green-700: #15803d;
+    --orange-50: #fff7ed;
+    --orange-600: #ea580c;
 }
 
-/* Header */
+/* Card Component */
+.card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.card-body {
+    padding: 1.25rem;
+}
+
+/* Layout */
+.tribunal-history-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1rem 2rem;
+}
+
+.breadcrumb {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.breadcrumb a { color: var(--text-muted); text-decoration: none; }
+.breadcrumb a:hover { color: var(--primary); }
+.breadcrumb .sep { margin: 0 0.4rem; color: var(--border); }
+
+/* Page Header */
 .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 1.5rem 0 2rem;
+    padding: 1rem 0 1.5rem;
     border-bottom: 1px solid var(--border);
-    margin-bottom: 2rem;
-    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .back-link {
@@ -905,92 +1007,89 @@
     text-decoration: none;
 }
 
-.back-link:hover {
-    text-decoration: underline;
-}
-
 .page-header h1 {
-    font-size: 1.75rem;
-    margin: 0.25rem 0 0.5rem;
+    font-size: 1.5rem;
+    margin: 0.5rem 0 0.25rem;
+    color: var(--text);
 }
 
 .last-updated {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
     margin: 0;
 }
 
-.btn-primary {
-    display: inline-block;
-    background: var(--primary);
-    color: #fff;
-    padding: 0.75rem 1.25rem;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.9rem;
-    white-space: nowrap;
-}
-
-.btn-primary:hover {
-    background: var(--primary-dark);
-}
-
-.btn-large {
-    padding: 1rem 2rem;
-    font-size: 1rem;
-}
-
 /* Sections */
 .section {
-    margin-bottom: 2.5rem;
-    padding-bottom: 2.5rem;
-    border-bottom: 1px solid var(--border-light);
-}
-
-.section:last-child {
-    border-bottom: none;
+    margin-bottom: 1.5rem;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
 }
 
 .section-title {
     font-size: 1.1rem;
     font-weight: 600;
-    margin: 0 0 1rem;
     color: var(--text);
+    margin: 0 0 1rem;
 }
 
 .section-intro {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--text-muted);
+    margin: -0.5rem 0 1rem;
+}
+
+/* Summary Section - no box */
+.summary-section {
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+/* Summary Narrative */
+.summary-narrative {
+    font-size: 0.95rem;
+    line-height: 1.6;
     margin-bottom: 1rem;
 }
 
-/* Summary Section */
-.summary-narrative {
-    background: var(--bg-muted);
-    padding: 1.25rem;
+/* Risk Band Banner */
+.risk-band-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
     border-radius: 8px;
-    margin-bottom: 1.5rem;
-    font-size: 1.05rem;
-    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
 }
 
-.summary-narrative p {
-    margin: 0;
-}
+.risk-band-label { font-weight: 500; opacity: 0.9; }
+.risk-band-value { font-size: 1.1rem; font-weight: 700; text-transform: uppercase; }
+.risk-band-link { font-size: 0.75rem; opacity: 0.8; text-decoration: none; }
+.risk-band-link:hover { text-decoration: underline; }
 
+.risk-band-banner--clean { background: #ecfdf5; color: #047857; }
+.risk-band-banner--green { background: #f0fdf4; color: var(--green-700); }
+.risk-band-banner--orange { background: var(--orange-50); color: var(--orange-600); }
+.risk-band-banner--red { background: var(--red-50); color: var(--red-700); }
+.risk-band-banner--limited { background: var(--bg-muted); color: var(--text-muted); }
+
+/* Summary Grid */
 .summary-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .summary-stat {
-    background: #fff;
-    border: 1px solid var(--border);
-    padding: 1rem;
-    border-radius: 8px;
     text-align: center;
+    padding: 1rem 0.5rem;
+    background: var(--bg-muted);
+    border-radius: 8px;
 }
 
 .stat-value {
@@ -998,61 +1097,51 @@
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--text);
+    line-height: 1.2;
 }
 
 .stat-label {
     display: block;
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin: 0.25rem 0;
-}
-
-.stat-context {
-    display: block;
     font-size: 0.7rem;
     color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-top: 0.25rem;
 }
 
-.stat-context a {
-    color: var(--primary);
+.stat-benchmark {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
 }
 
-/* Risk band colors */
-.risk-clean { color: #059669; }
-.risk-green { color: #10b981; }
-.risk-amber { color: #f59e0b; }
-.risk-orange { color: #f97316; }
-.risk-red { color: #dc2626; }
+.stat-value.stat-worse { color: var(--red-600); }
+.stat-value.stat-better { color: var(--green-600); }
 
 /* Trend Chart */
 .trend-chart {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1.25rem;
 }
 
 .trend-row {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 .trend-year {
-    width: 50px;
-    font-size: 0.85rem;
-    font-weight: 500;
+    width: 45px;
+    font-size: 0.8rem;
     color: var(--text-muted);
+    flex-shrink: 0;
 }
 
 .trend-bar-container {
     flex: 1;
-    height: 24px;
+    height: 20px;
     background: var(--bg-muted);
     border-radius: 4px;
     overflow: hidden;
@@ -1063,142 +1152,86 @@
     background: var(--primary);
     border-radius: 4px;
     min-width: 4px;
-    position: relative;
-}
-
-.trend-annotation {
-    position: absolute;
-    right: 4px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #fff;
-    font-weight: 700;
-    font-size: 0.75rem;
-    cursor: help;
 }
 
 .trend-count {
-    width: 30px;
-    font-size: 0.9rem;
+    width: 28px;
+    font-size: 0.85rem;
     font-weight: 600;
     text-align: right;
-}
-
-.trend-note {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-left: 0.5rem;
-    font-style: italic;
-}
-
-.trend-context {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin-top: 1rem;
-    font-style: italic;
-}
-
-/* Peer Comparison */
-.peer-comparison {
-    background: #eff6ff;
-    border: 1px solid #bfdbfe;
-    border-radius: 8px;
-    padding: 1rem 1.25rem;
-    margin-top: 1.5rem;
-    font-size: 0.95rem;
-}
-
-.peer-comparison p {
-    margin: 0;
-}
-
-.text-success {
-    color: #059669;
-}
-
-.text-warning {
-    color: #b45309;
+    flex-shrink: 0;
 }
 
 /* Outcome Grid */
 .outcome-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
+    gap: 0.5rem;
 }
 
 .outcome-item {
-    padding: 1.25rem;
-    border-radius: 8px;
     text-align: center;
-    border: 1px solid var(--border-light);
+    padding: 0.75rem 0.5rem;
+    border-radius: 8px;
+    background: var(--bg-muted);
 }
 
 .outcome-count {
     display: block;
-    font-size: 2rem;
+    font-size: 1.25rem;
     font-weight: 700;
 }
 
 .outcome-label {
     display: block;
-    font-size: 0.85rem;
-    font-weight: 500;
-    margin: 0.25rem 0;
+    font-size: 0.7rem;
+    margin-top: 0.2rem;
 }
 
 .outcome-pct {
     display: block;
-    font-size: 0.8rem;
-    opacity: 0.8;
+    font-size: 0.7rem;
+    opacity: 0.7;
 }
 
-.outcome-upheld {
-    background: #fef2f2;
-    color: #b91c1c;
-}
+/* Red: Breach outcomes (homeowner won, factor found at fault) */
+.outcome-upheld { background: var(--red-50); color: var(--red-700); }
+.outcome-partially-upheld { background: var(--amber-50); color: var(--amber-700); }
+.outcome-pfeo-issued, .outcome-pfeo-breached, .outcome-pfeo, .outcome-pfeo-pending { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+.outcome-pfeo-complied, .outcome-pfeo-proposed { background: #fef2f2; color: #991b1b; }
+.outcome-breach---no-order, .outcome-breach { background: #fef2f2; color: #991b1b; }
 
-.outcome-partially-upheld {
-    background: #fffbeb;
-    color: #b45309;
-}
+/* Green: Factor won on merits (homeowner lost) */
+.outcome-factor-complied { background: var(--green-50); color: var(--green-700); }
+.outcome-dismissed, .outcome-rejected, .outcome-dismissed-rejected { background: var(--green-50); color: var(--green-700); }
 
-.outcome-dismissed {
-    background: #f0fdf4;
-    color: #15803d;
-}
-
-.outcome-withdrawn {
-    background: #f8fafc;
-    color: #64748b;
-}
+/* Grey: Neutral outcomes (procedural, withdrawn, ambiguous) */
+.outcome-rejected---procedural { background: var(--bg-muted); color: var(--text-muted); }
+.outcome-withdrawn, .outcome-withdrawn---settled { background: var(--bg-muted); color: var(--text-muted); }
+.outcome-ambiguous { background: var(--bg-muted); color: var(--text-muted); }
 
 /* Category Chart */
-.category-chart, .geo-chart {
+.category-chart {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1.25rem;
+    gap: 0.5rem;
 }
 
-.category-row, .geo-row {
+.category-row {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.5rem;
 }
 
-.category-name, .geo-area {
-    width: 140px;
-    font-size: 0.9rem;
-    font-weight: 500;
+.category-name {
+    width: 100px;
+    font-size: 0.8rem;
+    flex-shrink: 0;
 }
 
-.category-bar-container, .geo-bar-container {
+.category-bar-container {
     flex: 1;
-    height: 20px;
+    height: 16px;
     background: var(--bg-muted);
     border-radius: 4px;
     overflow: hidden;
@@ -1208,95 +1241,94 @@
     height: 100%;
     background: #6366f1;
     border-radius: 4px;
+    min-width: 4px;
 }
 
-.geo-bar {
-    height: 100%;
-    background: #10b981;
-    border-radius: 4px;
-}
-
-.category-stats, .geo-count {
-    width: 120px;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    text-align: right;
-}
-
-/* Data Table */
-.data-table-wrapper {
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
-}
-
-.data-table th,
-.data-table td {
-    padding: 0.75rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border-light);
-}
-
-.data-table th {
-    font-weight: 600;
-    color: var(--text-muted);
+.category-stats {
+    width: 30px;
     font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    background: var(--bg-muted);
-}
-
-.data-table tbody tr:hover {
-    background: var(--bg-muted);
-}
-
-.data-table td:last-child {
+    font-weight: 600;
     text-align: right;
+    flex-shrink: 0;
+}
+
+/* Category-specific bar colors */
+.cat-communication { background: #3b82f6; }
+.cat-financial { background: #f59e0b; }
+.cat-maintenance { background: #ef4444; }
+.cat-insurance { background: #14b8a6; }
+.cat-governance { background: #6366f1; }
+.cat-disclosure { background: #8b5cf6; }
+.cat-health_safety { background: #dc2626; }
+.cat-debt_recovery { background: #ea580c; }
+
+/* Code Breaches - Mobile friendly list instead of table */
+.breach-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.breach-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: var(--bg-muted);
+    border-radius: 6px;
+}
+
+.breach-section {
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.breach-desc {
+    flex: 1;
+    font-size: 0.85rem;
+    color: var(--text);
+}
+
+.breach-count {
+    font-weight: 600;
+    font-size: 0.9rem;
+    flex-shrink: 0;
 }
 
 /* Enforcement Grid */
 .enforcement-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
 }
 
 .enforcement-block {
-    background: #fff;
-    border: 1px solid var(--border);
-    padding: 1.25rem;
+    padding: 1rem;
+    background: var(--bg-muted);
     border-radius: 8px;
 }
 
 .enforcement-block h3 {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    margin: 0 0 0.75rem;
-    color: var(--text);
+    margin: 0 0 0.5rem;
 }
 
 .enforcement-headline {
-    font-size: 1.1rem;
-    margin: 0 0 0.75rem;
+    font-size: 0.9rem;
+    margin: 0 0 0.5rem;
 }
 
-.enforcement-subhead {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin: 0.75rem 0 0.5rem;
+.enforcement-headline strong {
+    font-size: 1.25rem;
 }
 
 .enforcement-list {
+    font-size: 0.8rem;
     margin: 0;
     padding-left: 1.25rem;
-    font-size: 0.9rem;
 }
 
 .enforcement-list li {
@@ -1304,23 +1336,9 @@
 }
 
 .enforcement-note {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
-    margin: 0.75rem 0 0;
-}
-
-.mini-table {
-    width: 100%;
-    font-size: 0.85rem;
-}
-
-.mini-table td {
-    padding: 0.25rem 0;
-}
-
-.mini-table td:last-child {
-    text-align: right;
-    color: var(--text-muted);
+    margin: 0.5rem 0 0;
 }
 
 /* Notable Cases */
@@ -1331,101 +1349,147 @@
 }
 
 .notable-case {
-    background: #fff;
+    padding: 1.25rem;
+    background: var(--bg-muted);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 1.25rem;
+}
+
+.notable-case.has-pfeo {
+    border-left: 3px solid var(--red-600);
+    background: var(--red-50);
 }
 
 .notable-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    gap: 0.5rem;
     margin-bottom: 0.5rem;
 }
 
+.notable-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
 .notable-ref {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    color: var(--text-muted);
-}
-
-.outcome-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
+    font-family: monospace;
+    font-size: 0.9rem;
     font-weight: 600;
-    text-transform: uppercase;
-}
-
-.outcome-badge.outcome-upheld {
-    background: #fef2f2;
-    color: #b91c1c;
-}
-
-.outcome-badge.outcome-partially-upheld {
-    background: #fffbeb;
-    color: #b45309;
-}
-
-.outcome-badge.outcome-dismissed {
-    background: #f0fdf4;
-    color: #15803d;
-}
-
-.outcome-badge.outcome-withdrawn,
-.outcome-badge.outcome-unknown {
-    background: #f8fafc;
-    color: #64748b;
 }
 
 .notable-meta {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
     margin-bottom: 0.75rem;
 }
 
-.notable-quote {
-    font-size: 0.95rem;
-    font-style: italic;
+.notable-summary {
+    font-size: 0.9rem;
+    line-height: 1.6;
     color: var(--text);
-    border-left: 3px solid var(--border);
-    padding-left: 1rem;
-    margin: 0.75rem 0;
-    line-height: 1.5;
+    margin: 0 0 0.75rem;
+}
+
+.notable-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+}
+
+.category-tag {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    background: #e0e7ff;
+    color: #3730a3;
+}
+
+.tag-communication { background: #dbeafe; color: #1e40af; }
+.tag-financial { background: #fef3c7; color: #92400e; }
+.tag-maintenance { background: #fee2e2; color: #991b1b; }
+.tag-code_breach { background: #ede9fe; color: #5b21b6; }
+.tag-disclosure { background: #f3e8ff; color: #7c3aed; }
+.tag-insurance { background: #ccfbf1; color: #0f766e; }
+.tag-governance { background: #e0e7ff; color: #4338ca; }
+.tag-health_safety { background: #fecaca; color: #b91c1c; }
+.tag-debt_recovery { background: #fed7aa; color: #c2410c; }
+
+.notable-quote {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--text-muted);
+    margin: 0 0 0.75rem;
+    padding: 0.75rem 1rem;
+    border-left: 3px solid var(--primary);
+    background: #fff;
+    border-radius: 0 6px 6px 0;
+    line-height: 1.6;
 }
 
 .notable-footer {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-top: 0.75rem;
+    flex-wrap: wrap;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border-light);
 }
 
 .notable-tag {
-    background: var(--bg-muted);
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: 600;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
 }
 
+.tag-pfeo { background: var(--red-50); color: var(--red-700); border: 1px solid #fecaca; }
+.tag-comp { background: var(--amber-50); color: var(--amber-700); }
+
 .notable-link {
-    margin-left: auto;
     font-size: 0.85rem;
     color: var(--primary);
     text-decoration: none;
+    margin-left: auto;
+    font-weight: 500;
 }
 
 .notable-link:hover {
     text-decoration: underline;
 }
 
-/* Case Table */
+/* Outcome Badge */
+.outcome-badge {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* Red: Breach outcomes */
+.outcome-badge.outcome-upheld { background: var(--red-50); color: var(--red-700); }
+.outcome-badge.outcome-partially-upheld { background: var(--amber-50); color: var(--amber-700); }
+.outcome-badge.outcome-pfeo-issued, .outcome-badge.outcome-pfeo-breached, .outcome-badge.outcome-pfeo, .outcome-badge.outcome-pfeo-pending { background: #fef2f2; color: #991b1b; }
+.outcome-badge.outcome-pfeo-complied, .outcome-badge.outcome-pfeo-proposed { background: #fef2f2; color: #991b1b; }
+.outcome-badge.outcome-breach---no-order, .outcome-badge.outcome-breach { background: #fef2f2; color: #991b1b; }
+/* Green: Factor won */
+.outcome-badge.outcome-factor-complied { background: var(--green-50); color: var(--green-700); }
+.outcome-badge.outcome-dismissed, .outcome-badge.outcome-rejected { background: var(--green-50); color: var(--green-700); }
+/* Grey: Neutral */
+.outcome-badge.outcome-rejected---procedural, .outcome-badge.outcome-withdrawn, .outcome-badge.outcome-withdrawn---settled, .outcome-badge.outcome-ambiguous { background: var(--bg-muted); color: var(--text-muted); }
+
+/* Case Filters */
 .case-filters {
     display: flex;
     gap: 1rem;
     margin-bottom: 1rem;
+    flex-wrap: wrap;
 }
 
 .case-filters label {
@@ -1438,15 +1502,20 @@
 .case-filters select {
     padding: 0.4rem 0.75rem;
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 0.85rem;
+    background: #fff;
 }
 
+/* =============================================================================
+   CASE TABLE
+   ============================================================================= */
+
 .case-table-wrapper {
+    overflow-x: auto;
     background: #fff;
     border: 1px solid var(--border);
     border-radius: 8px;
-    overflow: hidden;
 }
 
 .case-table {
@@ -1457,7 +1526,7 @@
 
 .case-table th,
 .case-table td {
-    padding: 0.75rem 0.5rem;
+    padding: 0.65rem 0.5rem;
     text-align: left;
     border-bottom: 1px solid var(--border-light);
 }
@@ -1465,7 +1534,7 @@
 .case-table th {
     font-weight: 600;
     color: var(--text-muted);
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
     background: var(--bg-muted);
 }
@@ -1477,118 +1546,254 @@
 .case-table code {
     font-size: 0.8rem;
     background: var(--bg-muted);
-    padding: 0.15rem 0.35rem;
+    padding: 0.1rem 0.3rem;
     border-radius: 3px;
 }
 
-.case-table a {
+.case-table .pdf-link {
     color: var(--primary);
     text-decoration: none;
+    font-size: 0.8rem;
 }
 
 .outcome-pill {
     display: inline-block;
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Red: Breach outcomes (homeowner won) */
+.outcome-pill.outcome-breach { background: var(--red-50); color: var(--red-700); }
+.outcome-pill.outcome-upheld { background: var(--red-50); color: var(--red-700); }
+.outcome-pill.outcome-partial { background: var(--amber-50); color: var(--amber-700); }
+/* Green: Factor won on merits */
+.outcome-pill.outcome-factor-won { background: var(--green-50); color: var(--green-700); }
+.outcome-pill.outcome-dismissed { background: var(--green-50); color: var(--green-700); }
+/* Grey: Procedural/Withdrawn/Other */
+.outcome-pill.outcome-procedural { background: var(--bg-muted); color: var(--text-muted); }
+.outcome-pill.outcome-withdrawn { background: var(--bg-muted); color: var(--text-muted); }
+.outcome-pill.outcome-other { background: var(--bg-muted); color: var(--text-muted); }
+
+.pfeo-badge {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    background: var(--red-50);
+    color: var(--red-700);
+    border: 1px solid #fecaca;
+}
+
+.comp-badge {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    background: var(--amber-50);
+    color: var(--amber-700);
+}
+
+.view-details-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 0.8rem;
     font-weight: 500;
 }
 
-.outcome-pill.outcome-upheld {
-    background: #fef2f2;
-    color: #b91c1c;
+.view-details-link:hover {
+    text-decoration: underline;
 }
 
-.outcome-pill.outcome-partially-upheld {
-    background: #fffbeb;
-    color: #b45309;
+.clear-filters-btn {
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    background: #fff;
+    cursor: pointer;
+    color: var(--text-muted);
 }
 
-.outcome-pill.outcome-dismissed {
-    background: #f0fdf4;
-    color: #15803d;
+.clear-filters-btn:hover {
+    background: var(--bg-muted);
+    color: var(--text);
 }
 
-.outcome-pill.outcome-withdrawn {
-    background: #f8fafc;
-    color: #64748b;
+.no-results-message {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
 }
 
-.outcome-pill.outcome-unknown {
-    background: #f8fafc;
-    color: #64748b;
+.results-count {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.75rem;
+}
+
+/* Case Details Section */
+.case-details-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.case-detail-card {
+    padding: 1.25rem;
+    background: var(--bg-muted);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    scroll-margin-top: 1rem;
+}
+
+.case-detail-card:target {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+.case-detail-card.highlight {
+    animation: highlight-flash 1.5s ease-out;
+}
+
+@keyframes highlight-flash {
+    0% { background: #dbeafe; border-color: var(--primary); }
+    100% { background: var(--bg-muted); border-color: var(--border); }
+}
+
+.case-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.case-detail-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.case-detail-title .case-ref {
+    font-size: 0.95rem;
+    font-weight: 600;
+    background: #fff;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.case-detail-title .case-date {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.case-detail-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.case-summary {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--text);
+    margin: 0 0 0.75rem;
+}
+
+.case-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+}
+
+.case-quote {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--text-muted);
+    margin: 0 0 0.75rem;
+    padding: 0.75rem 1rem;
+    border-left: 3px solid var(--primary);
+    background: #fff;
+    border-radius: 0 6px 6px 0;
+    line-height: 1.6;
+}
+
+.case-detail-footer {
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-light);
+}
+
+.hpc-link {
+    font-size: 0.85rem;
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.hpc-link:hover {
+    text-decoration: underline;
 }
 
 .hidden-row {
     display: none;
 }
 
-.show-all-btn {
-    display: block;
-    width: 100%;
-    padding: 0.75rem;
+.hidden-card {
+    display: none;
+}
+
+/* =============================================================================
+   RESPONSIVE TABLE
+   ============================================================================= */
+
+/* Source Note */
+.source-note {
     margin-top: 1rem;
-    background: var(--bg-muted);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 0.9rem;
-    cursor: pointer;
-}
-
-.show-all-btn:hover {
-    background: var(--bg-hover);
-}
-
-/* Recent Decisions Note */
-.recent-decisions-note {
-    margin-top: 1.5rem;
-    padding: 1rem 1.25rem;
+    padding: 0.75rem 1rem;
     background: #fefce8;
     border: 1px solid #fef08a;
     border-radius: 8px;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
-.recent-decisions-note p {
+.source-note p {
     margin: 0;
-    line-height: 1.5;
 }
 
-.recent-decisions-note a {
+.source-note a {
     color: var(--primary);
 }
 
-/* Methodology */
+/* Methodology - section already has box, so toggle is transparent */
 .methodology-toggle {
-    background: #fff;
-    border-radius: 8px;
-    border: 1px solid var(--border);
+    background: transparent;
 }
 
 .methodology-toggle summary {
-    padding: 1rem 1.25rem;
     cursor: pointer;
     list-style: none;
     display: flex;
     align-items: center;
     justify-content: space-between;
     font-weight: 500;
-    transition: background 0.15s ease;
-}
-
-.methodology-toggle summary:hover {
-    background: var(--bg-hover, #f1f5f9);
 }
 
 .methodology-toggle summary::after {
-    content: "▸";
-    font-size: 0.85rem;
+    content: "+";
+    font-size: 1.1rem;
     color: var(--text-muted);
-    transition: transform 0.2s ease;
 }
 
 .methodology-toggle[open] summary::after {
-    transform: rotate(90deg);
+    content: "−";
 }
 
 .methodology-toggle summary::-webkit-details-marker {
@@ -1598,103 +1803,265 @@
 .inline-title {
     display: inline;
     margin: 0;
+    font-size: 1rem;
 }
 
 .methodology-content {
-    padding: 0 1.25rem 1.25rem;
+    padding: 0 1rem 1rem;
 }
 
 .methodology-content h3 {
-    font-size: 0.95rem;
-    margin: 1.25rem 0 0.5rem;
+    font-size: 0.9rem;
+    margin: 1rem 0 0.4rem;
 }
 
 .methodology-content p,
 .methodology-content ul {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     line-height: 1.6;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
 }
 
 .methodology-content ul {
-    padding-left: 1.5rem;
+    padding-left: 1.25rem;
 }
 
-/* CTA */
+/* Rating Bands */
+.rating-bands {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.rating-band {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.band-badge {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    min-width: 70px;
+    text-align: center;
+}
+
+.band-clean { background: #ecfdf5; color: #047857; }
+.band-green { background: var(--green-50); color: var(--green-700); }
+.band-orange { background: var(--orange-50); color: var(--orange-600); }
+.band-red { background: var(--red-50); color: var(--red-700); }
+.band-limited { background: var(--bg-muted); color: var(--text-muted); }
+
+.band-desc {
+    font-size: 0.8rem;
+    color: var(--text);
+}
+
+.methodology-link {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+/* CTA Section - inherits section box styling */
 .cta-section {
     text-align: center;
-    background: var(--bg-muted);
-    padding: 2rem;
-    border-radius: 8px;
-    border: none;
+    background: var(--primary);
+    color: #fff;
 }
 
 .cta-section h2 {
-    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+    margin: 0 0 0.4rem;
+    color: #fff;
 }
 
 .cta-section > p {
-    color: var(--text-muted);
-    margin-bottom: 1.25rem;
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 1rem;
+}
+
+.cta-section .btn-primary {
+    display: inline-block;
+    padding: 0.65rem 1.5rem;
+    background: #fff;
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    text-decoration: none;
+}
+
+.cta-section .btn-primary:hover {
+    background: var(--bg-muted);
 }
 
 .cta-back {
-    margin-top: 1rem;
-    font-size: 0.9rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
 }
 
 .cta-back a {
-    color: var(--text-muted);
+    color: rgba(255,255,255,0.8);
     text-decoration: none;
 }
 
 .cta-back a:hover {
-    color: var(--primary);
+    color: #fff;
 }
 
-/* Responsive */
-@media (max-width: 800px) {
-    .summary-grid {
-        grid-template-columns: repeat(3, 1fr);
+/* =============================================================================
+   MOBILE RESPONSIVE
+   ============================================================================= */
+
+@media (max-width: 700px) {
+    /* Tighter spacing */
+    .tribunal-history-page {
+        padding: 0 0.75rem 1.5rem;
     }
     
+    .breadcrumb {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+    }
+    
+    .page-header {
+        padding: 0.75rem 0 1rem;
+    }
+    
+    .page-header h1 {
+        font-size: 1.25rem;
+    }
+    
+    /* Summary grid: 2x2 */
+    .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stat-value {
+        font-size: 1.25rem;
+    }
+    
+    /* Risk band */
+    .risk-band-banner {
+        flex-wrap: wrap;
+        padding: 0.6rem 0.75rem;
+    }
+    
+    .risk-band-label {
+        width: 100%;
+        text-align: center;
+        font-size: 0.75rem;
+    }
+    
+    /* Outcome grid: 2x2 */
     .outcome-grid {
         grid-template-columns: repeat(2, 1fr);
     }
     
+    /* Enforcement: stack */
     .enforcement-grid {
         grid-template-columns: 1fr;
     }
-}
-
-@media (max-width: 600px) {
-    .page-header {
-        flex-direction: column;
-    }
     
-    .summary-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .category-name, .geo-area {
-        width: 100px;
-        font-size: 0.8rem;
-    }
-    
-    .category-stats {
+    /* Category names shorter */
+    .category-name {
         width: 80px;
         font-size: 0.75rem;
     }
     
+    /* Notable cases */
+    .notable-case {
+        padding: 0.75rem;
+    }
+    
+    .notable-quote {
+        font-size: 0.8rem;
+    }
+    
+    /* Sections */
+    .section {
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1rem;
+    }
+
+    /* Case filters */
+    .case-filters {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .case-filters label {
+        width: 100%;
+    }
+
+    .case-filters select {
+        flex: 1;
+    }
+
+    /* Table - make compact on mobile */
     .case-table {
         font-size: 0.75rem;
     }
+
+    .case-table th,
+    .case-table td {
+        padding: 0.5rem 0.35rem;
+    }
+
+    .case-table code {
+        font-size: 0.7rem;
+    }
+
+    /* Case detail cards */
+    .case-detail-card {
+        padding: 1rem;
+    }
+
+    .case-detail-header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .case-detail-title {
+        flex-wrap: wrap;
+    }
+
+    .case-quote {
+        font-size: 0.8rem;
+        padding: 0.5rem 0.75rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .summary-stat {
+        padding: 0.75rem 0.25rem;
+    }
     
-    .case-table th:nth-child(5),
-    .case-table td:nth-child(5),
-    .case-table th:nth-child(6),
-    .case-table td:nth-child(6) {
-        display: none;
+    .stat-value {
+        font-size: 1.1rem;
+    }
+    
+    .stat-label {
+        font-size: 0.65rem;
+    }
+    
+    .breach-item {
+        flex-wrap: wrap;
+    }
+    
+    .breach-desc {
+        width: 100%;
+        order: 3;
+        margin-top: 0.25rem;
     }
 }
 </style>
@@ -1745,109 +2112,151 @@
         <div class="header-main">
             <a href="/factors/pf000979/" class="back-link">← MXM Property Solutions Limited</a>
             <h1>Tribunal Record</h1>
-            <p class="last-updated">Analysis period: 2017–2025 · Last updated: Q1 2026 · <a href="#data-freshness">Update schedule</a></p>
+            <p class="last-updated">2021–2026 · Updated 2026-01-18</p>
         </div>
-        <a href="/get-quotes/?exclude=PF000979" class="btn-primary">Get Alternative Quotes</a>
     </header>
 
     <!-- EXECUTIVE SUMMARY -->
     <section class="section summary-section">
-        <div class="summary-narrative">
-            <p>
-                <strong>MXM Property Solutions Limited</strong> has faced <strong>1 tribunal complaint</strong> between 2017 and 2025,
-                with <strong>0 upheld or partially upheld</strong> (0%).
-                
-                Their case rate is <strong class="text-success">lower than average</strong> for factors managing similar property counts.
-                
-                
-            </p>
-        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="summary-narrative">
+                    <p>
+                        <strong>MXM Property Solutions Limited</strong> has faced <strong>1 tribunal case</strong> in the last 5 years,
+                        with <strong>0 upheld or partially upheld</strong> (0%).
+                        
+                        Most recent: <strong>2022-10-17</strong>.
+                        
+                    </p>
+                </div>
 
-        <div class="summary-grid">
-            <div class="summary-stat">
-                <span class="stat-value">1</span>
-                <span class="stat-label">Total Cases</span>
-                <span class="stat-context">Since 2017</span>
-            </div>
-            <div class="summary-stat">
-                <span class="stat-value">0%</span>
-                <span class="stat-label">Upheld Rate</span>
-                <span class="stat-context">Peer avg: 64.0%</span>
-            </div>
-            <div class="summary-stat">
-                <span class="stat-value">0</span>
-                <span class="stat-label">PFEOs Issued</span>
-                <span class="stat-context">0% of cases</span>
-            </div>
-            <div class="summary-stat">
-                <span class="stat-value">£0</span>
-                <span class="stat-label">Compensation</span>
-                <span class="stat-context">Total ordered</span>
-            </div>
-            <div class="summary-stat">
-                <span class="stat-value ">
-                    0%
-                </span>
-                <span class="stat-label">Attendance</span>
-                <span class="stat-context">Hearings attended</span>
-            </div>
-            <div class="summary-stat">
-                <span class="stat-value risk-clean">CLEAN</span>
-                <span class="stat-label">Risk Band</span>
-                <span class="stat-context"><a href="#methodology">What's this?</a></span>
-            </div>
-        </div>
+                <!-- Risk Band Banner -->
+                <div class="risk-band-banner risk-band-banner--clean">
+                    <span class="risk-band-label">Tribunal Rating</span>
+                    <span class="risk-band-value">CLEAN</span>
+                    <a href="#methodology" class="risk-band-link">How is this calculated?</a>
+                </div>
 
-        
-        <div class="peer-comparison">
-            <p>
-                <strong>Peer comparison:</strong> Factors managing 0-500 properties average 
-                <strong>2.2</strong> cases with a 
-                <strong>64.0%</strong> upheld rate.
-                MXM Property Solutions Limited has 
-                
-                <strong class="text-success">fewer cases</strong>
-                
-                and a 
-                
-                <strong class="text-success">lower upheld rate</strong>
-                
-                than peers.
-            </p>
+                <div class="summary-grid">
+                    <div class="summary-stat">
+                        <span class="stat-value">1</span>
+                        <span class="stat-label">Cases</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-value stat-better">0%</span>
+                        <span class="stat-label">Upheld</span>
+                        <span class="stat-benchmark">(avg: 71%)</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-value stat-better">0.0</span>
+                        <span class="stat-label">Rate/10k</span>
+                        <span class="stat-benchmark">(avg: 5.3)</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-value">0</span>
+                        <span class="stat-label">PFEOs</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-value">£0</span>
+                        <span class="stat-label">Compensation</span>
+                    </div>
+                </div>
+            </div>
         </div>
-        
     </section>
 
     <!-- TREND CHART -->
     
+    <section class="section">
+        <h2 class="section-title">Cases Over Time</h2>
+        <div class="trend-chart">
+            
+            
+            
+            
+            <div class="trend-row">
+                <span class="trend-year">2021</span>
+                <div class="trend-bar-container">
+                    <div class="trend-bar" style="width: 0.0%">
+                        
+                    </div>
+                </div>
+                <span class="trend-count">0</span>
+            </div>
+            
+            
+            
+            <div class="trend-row">
+                <span class="trend-year">2022</span>
+                <div class="trend-bar-container">
+                    <div class="trend-bar" style="width: 100.0%">
+                        
+                    </div>
+                </div>
+                <span class="trend-count">1</span>
+            </div>
+            
+            
+            
+            <div class="trend-row">
+                <span class="trend-year">2023</span>
+                <div class="trend-bar-container">
+                    <div class="trend-bar" style="width: 0.0%">
+                        
+                    </div>
+                </div>
+                <span class="trend-count">0</span>
+            </div>
+            
+            
+            
+            <div class="trend-row">
+                <span class="trend-year">2024</span>
+                <div class="trend-bar-container">
+                    <div class="trend-bar" style="width: 0.0%">
+                        
+                    </div>
+                </div>
+                <span class="trend-count">0</span>
+            </div>
+            
+            
+            
+            <div class="trend-row">
+                <span class="trend-year">2025</span>
+                <div class="trend-bar-container">
+                    <div class="trend-bar" style="width: 0.0%">
+                        
+                    </div>
+                </div>
+                <span class="trend-count">0</span>
+            </div>
+            
+            
+            
+            <div class="trend-row">
+                <span class="trend-year">2026</span>
+                <div class="trend-bar-container">
+                    <div class="trend-bar" style="width: 0.0%">
+                        
+                    </div>
+                </div>
+                <span class="trend-count">0</span>
+            </div>
+            
+        </div>
+    </section>
+    
 
     <!-- OUTCOME BREAKDOWN -->
     <section class="section">
-        <h2 class="section-title">Outcome Breakdown</h2>
+        <h2 class="section-title">Outcomes</h2>
         <div class="outcome-grid">
             
-            <div class="outcome-item outcome-upheld">
-                <span class="outcome-count">0</span>
-                <span class="outcome-label">Upheld</span>
-                <span class="outcome-pct">0.0%</span>
-            </div>
-            
-            <div class="outcome-item outcome-partially-upheld">
-                <span class="outcome-count">0</span>
-                <span class="outcome-label">Partially Upheld</span>
-                <span class="outcome-pct">0.0%</span>
-            </div>
-            
-            <div class="outcome-item outcome-dismissed">
-                <span class="outcome-count">0</span>
-                <span class="outcome-label">Dismissed</span>
-                <span class="outcome-pct">0.0%</span>
-            </div>
-            
-            <div class="outcome-item outcome-withdrawn">
-                <span class="outcome-count">0</span>
-                <span class="outcome-label">Withdrawn</span>
-                <span class="outcome-pct">0.0%</span>
+            <div class="outcome-item outcome-rejected---procedural">
+                <span class="outcome-count">1</span>
+                <span class="outcome-label">Rejected - Procedural</span>
+                <span class="outcome-pct">100%</span>
             </div>
             
         </div>
@@ -1855,17 +2264,34 @@
 
     <!-- COMPLAINT PATTERNS -->
     
+    <section class="section">
+        <h2 class="section-title">Complaint Types</h2>
+        <p class="section-intro">Based on 1 analysed case.</p>
+        <div class="category-chart">
+            
+            
+            <div class="category-row">
+                <span class="category-name">Disclosure</span>
+                <div class="category-bar-container">
+                    <div class="category-bar cat-disclosure" style="width: 100.0%"></div>
+                </div>
+                <span class="category-stats">1</span>
+            </div>
+            
+        </div>
+    </section>
+    
 
     <!-- CODE BREACHES -->
     
 
     <!-- ENFORCEMENT SUMMARY -->
     <section class="section">
-        <h2 class="section-title">Enforcement &amp; Compensation</h2>
+        <h2 class="section-title">Enforcement & Compensation</h2>
         
         <div class="enforcement-grid">
             <div class="enforcement-block">
-                <h3>Property Factor Enforcement Orders</h3>
+                <h3>Enforcement Orders (PFEOs)</h3>
                 <p class="enforcement-headline">
                     <strong>0</strong> of 1 cases (0%)
                 </p>
@@ -1873,22 +2299,10 @@
             </div>
 
             <div class="enforcement-block">
-                <h3>Compensation Ordered</h3>
+                <h3>Compensation Awarded</h3>
                 <p class="enforcement-headline">
                     <strong>£0</strong> total
                 </p>
-                
-                <table class="mini-table">
-                    <tbody>
-                        
-                        <tr>
-                            <td>£0</td>
-                            <td>1 case</td>
-                        </tr>
-                        
-                    </tbody>
-                </table>
-                
                 
             </div>
         </div>
@@ -1900,54 +2314,89 @@
     <!-- FULL CASE LIST -->
     <section class="section">
         <h2 class="section-title">All Cases</h2>
+
+        
+        
+        
         
         <div class="case-filters">
             <label>
-                <span>Outcome:</span>
-                <select id="filter-outcome">
-                    <option value="">All</option>
-                    <option value="upheld">Upheld</option>
-                    <option value="partially-upheld">Partially Upheld</option>
-                    <option value="dismissed">Dismissed</option>
-                    <option value="withdrawn">Withdrawn</option>
+                <span>Year:</span>
+                <select id="filter-year">
+                    <option value="" selected>All Years</option>
+                    
+                    <option value="2026" >2026</option>
+                    
+                    <option value="2025" >2025</option>
+                    
+                    <option value="2024" >2024</option>
+                    
+                    <option value="2023" >2023</option>
+                    
+                    <option value="2022" >2022</option>
+                    
+                    <option value="2021" >2021</option>
+                    
                 </select>
             </label>
             <label>
-                <span>PFEO:</span>
-                <select id="filter-pfeo">
-                    <option value="">Any</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
+                <span>Outcome:</span>
+                <select id="filter-outcome">
+                    <option value="">All Outcomes</option>
+                    <option value="breach">Breach Found</option>
+                    <option value="factor-won">Factor Won</option>
+                    <option value="procedural">Procedural</option>
+                    <option value="withdrawn">Withdrawn/Settled</option>
                 </select>
             </label>
+            
+            <label>
+                <span>Complaint:</span>
+                <select id="filter-complaint">
+                    <option value="">All Types</option>
+                    
+                    <option value="disclosure">Disclosure</option>
+                    
+                </select>
+            </label>
+            
+            <button type="button" id="clear-filters" class="clear-filters-btn" style="display: none;">Clear filters</button>
         </div>
 
+        <!-- Case Table -->
         <div class="case-table-wrapper">
             <table class="case-table" id="case-table">
                 <thead>
                     <tr>
                         <th>Date</th>
-                        <th>Case Ref</th>
+                        <th>Reference</th>
                         <th>Outcome</th>
                         <th>PFEO</th>
-                        <th>Compensation</th>
-                        <th>Severity</th>
+                        <th>Comp.</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     
-                    <tr data-outcome="rejected" data-pfeo="no">
-                        <td>—</td>
+                    
+                    
+                    
+                    
+                    
+                        
+                    
+                    <tr class="case-row"
+                        data-year="2022"
+                        data-outcome="procedural"
+                        data-complaint="disclosure"
+                        data-case-id="FTS-HPC-PF-22-3792">
+                        <td>2022-10-17</td>
                         <td><code>FTS/HPC/PF/22/3792</code></td>
-                        <td><span class="outcome-pill outcome-rejected">Rejected</span></td>
+                        <td><span class="outcome-pill outcome-procedural">Rejected - Procedural</span></td>
                         <td>—</td>
                         <td>—</td>
-                        <td>1.0</td>
                         <td>
-                            
-                            <a href="https://housingandpropertychamber.scot/sites/default/files/property_factor_decisions/Written%20Decision%20%28Signed%29%20PF.22.3792_Redacted.pdf" target="_blank" rel="noopener">PDF</a>
-                            
+                            <a href="#case-FTS-HPC-PF-22-3792" class="view-details-link">Details</a>
                         </td>
                     </tr>
                     
@@ -1955,85 +2404,132 @@
             </table>
         </div>
 
-        
+        <div class="no-results-message" id="no-results" style="display: none;">
+            <p>No cases match your filters.</p>
+        </div>
 
-        <div class="recent-decisions-note">
+        <div class="results-count" id="results-count"></div>
+
+        <div class="source-note">
             <p>
-                <strong>Looking for more recent decisions?</strong><br>
-                This analysis covers decisions through 2025. 
-                <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions" target="_blank" rel="noopener">
-                    Search the Housing &amp; Property Chamber for the latest →
-                </a>
+                Data from <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions" target="_blank" rel="noopener">Housing & Property Chamber</a>.
+                Last 5 years (2021–2026).
             </p>
         </div>
     </section>
 
-    <!-- GEOGRAPHIC DISTRIBUTION -->
-    
+    <!-- CASE DETAILS -->
+    <section class="section" id="case-details-section">
+        <h2 class="section-title">Case Details</h2>
+        <p class="section-intro">Click "Details" in the table above to jump to a case.</p>
+
+        <div class="case-details-list">
+            
+            
+            
+            
+            
+            
+                
+            
+            <div class="case-detail-card"
+                 id="case-FTS-HPC-PF-22-3792"
+                 data-year="2022"
+                 data-outcome="procedural"
+                 data-complaint="disclosure">
+                <div class="case-detail-header">
+                    <div class="case-detail-title">
+                        <code class="case-ref">FTS/HPC/PF/22/3792</code>
+                        <span class="case-date">2022-10-17</span>
+                    </div>
+                    <div class="case-detail-badges">
+                        <span class="outcome-pill outcome-procedural">Rejected - Procedural</span>
+                        
+                        
+                    </div>
+                </div>
+
+                
+                <p class="case-summary">The Tribunal rejected the homeowner's application because the homeowner failed to provide the necessary information and documentation as required by the rules and the 2011 Act.</p>
+                
+
+                
+                <div class="case-categories">
+                    
+                    <span class="category-tag tag-disclosure">Disclosure</span>
+                    
+                </div>
+                
+
+                
+                <blockquote class="case-quote">"The Legal Member therefore determines that the application cannot be accepted."</blockquote>
+                
+
+                <div class="case-detail-footer">
+                    <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions?field_case_reference_number=FTS/HPC/PF/22/3792" target="_blank" rel="noopener" class="hpc-link">View full decision on HPC →</a>
+                </div>
+            </div>
+            
+        </div>
+    </section>
 
     <!-- METHODOLOGY -->
     <section class="section" id="methodology">
         <details class="methodology-toggle">
             <summary>
-                <h2 class="section-title inline-title">Context &amp; Methodology</h2>
+                <h2 class="section-title inline-title">How We Calculate Ratings</h2>
             </summary>
             <div class="methodology-content">
-                <h3 id="data-freshness">Data freshness &amp; update schedule</h3>
-                <p>This analysis covers tribunal decisions published between 2017 and 2025. We update our database <strong>quarterly</strong> as new decisions are published by the Housing and Property Chamber.</p>
+                <p>Ratings are based on a factor's <strong>adjusted adverse case rate</strong> per 10,000 properties over the past 5 years. Cases involving Property Factor Enforcement Orders (PFEOs) are weighted more heavily.</p>
+
+                <h3>Rating Bands</h3>
+                <div class="rating-bands">
+                    <div class="rating-band">
+                        <span class="band-badge band-clean">CLEAN</span>
+                        <span class="band-desc">Zero adverse cases in the past 5 years</span>
+                    </div>
+                    <div class="rating-band">
+                        <span class="band-badge band-green">GREEN</span>
+                        <span class="band-desc">Adjusted rate of 10 or fewer per 10,000 properties</span>
+                    </div>
+                    <div class="rating-band">
+                        <span class="band-badge band-orange">ORANGE</span>
+                        <span class="band-desc">Rate between 11–30 per 10,000, OR 2+ PFEO breaches</span>
+                    </div>
+                    <div class="rating-band">
+                        <span class="band-badge band-red">RED</span>
+                        <span class="band-desc">Rate above 30 per 10,000 properties</span>
+                    </div>
+                    <div class="rating-band">
+                        <span class="band-badge band-limited">LIMITED</span>
+                        <span class="band-desc">Fewer than 50 properties (insufficient data)</span>
+                    </div>
+                </div>
+
+                <h3>Special Rules</h3>
                 <ul>
-                    <li><strong>Last updated:</strong> Q1 2026</li>
-                    <li><strong>Next scheduled update:</strong> April 2026</li>
+                    <li>Factors with only 1–2 adverse cases (no PFEO breaches) are capped at GREEN</li>
+                    <li>2+ PFEO breaches = minimum ORANGE rating regardless of case rate</li>
                 </ul>
-                <p>For decisions published after our last update, <a href="https://www.housingandpropertychamber.scot/search-decisions" target="_blank" rel="noopener">search the Housing &amp; Property Chamber directly →</a></p>
-                
-                <h3>What is the Housing and Property Chamber?</h3>
-                <p>The Housing and Property Chamber is part of the First-tier Tribunal for Scotland. It handles complaints against property factors under the Property Factors (Scotland) Act 2011.</p>
-                
-                <h3>How is the case rate calculated?</h3>
-                <p>Case rate = (number of tribunal cases ÷ properties managed) × 10,000. This normalizes for factor size, allowing fair comparison between factors managing 100 properties and 10,000 properties.</p>
-                
-                <h3>What do the risk bands mean?</h3>
+
+                <p><a href="/methodology/" class="methodology-link">Read our full methodology →</a></p>
+
+                <h3>Data Updates</h3>
                 <ul>
-                    <li><strong>CLEAN:</strong> 0 cases per 10,000 properties</li>
-                    <li><strong>GREEN:</strong> &lt;10 cases per 10,000 — minimal tribunal exposure</li>
-                    <li><strong>AMBER:</strong> 10-50 cases per 10,000 — moderate tribunal exposure</li>
-                    <li><strong>ORANGE:</strong> 50-100 cases per 10,000 — elevated tribunal exposure</li>
-                    <li><strong>RED:</strong> &gt;100 cases per 10,000 — significant tribunal exposure</li>
+                    <li><strong>Last updated:</strong> 2026-01-18</li>
+                    <li><strong>Next update:</strong> </li>
                 </ul>
-                
-                <h3>How is severity score calculated?</h3>
-                <p>Each case receives a severity score (0-10) based on objective factors AI-extracted from the tribunal decision:</p>
-                <ul>
-                    <li><strong>Outcome weight:</strong> Upheld complaints score higher than dismissed</li>
-                    <li><strong>Enforcement:</strong> PFEO issued adds 2-3 points</li>
-                    <li><strong>Compensation:</strong> Awards over £500 add 1-2 points</li>
-                    <li><strong>Code breaches:</strong> Multiple sections breached increases score</li>
-                    <li><strong>Factor conduct:</strong> Non-attendance or non-cooperation adds 1-2 points</li>
-                </ul>
-                <p>Average severity across all cases provides a quality signal beyond simple case counts.</p>
-                
-                <h3>How does peer comparison work?</h3>
-                <p>We group factors into size bands by properties managed (0-500, 500-2,000, 2,000-5,000, 5,000-10,000, 10,000+) and calculate average case rates and upheld rates within each band. This accounts for the reality that larger factors face more opportunities for complaints simply due to scale.</p>
-                
-                <h3>Important notes</h3>
-                <ul>
-                    <li>A dismissed case doesn't necessarily mean the homeowner was wrong—it may reflect procedural issues or burden of proof.</li>
-                    <li>Larger factors naturally accumulate more cases over time. Always consider the rate, not just the count.</li>
-                    <li>Year-over-year spikes may reflect tribunal processing backlogs rather than sudden service deterioration.</li>
-                    <li>Recent decisions (within the last quarter) may not yet be reflected in our analysis.</li>
-                </ul>
-                
-                <p><a href="https://www.housingandpropertychamber.scot/" target="_blank" rel="noopener">Visit the Housing &amp; Property Chamber website →</a></p>
+                <p>We update quarterly. For the latest decisions, <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions" target="_blank" rel="noopener">search the HPC directly →</a></p>
             </div>
         </details>
     </section>
 
     <!-- CTA -->
     <section class="section cta-section">
-        <h2>Concerned about this record?</h2>
-        <p>Get free, no-obligation quotes from factors serving your area.</p>
-        <a href="/get-quotes/?exclude=PF000979" class="btn-primary btn-large">Get Quotes from Alternative Factors</a>
-        <p class="cta-back"><a href="/factors/pf000979/">← Back to MXM Property Solutions Limited Profile</a></p>
+        <h2>Looking for alternatives?</h2>
+        <p>Compare quotes from factors with better tribunal records.</p>
+        <a href="/get-quotes/?exclude=PF000979" class="btn-primary">Get Free Quotes</a>
+        <p class="cta-back"><a href="/factors/pf000979/">← Back to MXM Property Solutions Limited profile</a></p>
     </section>
 
 </article>
@@ -2054,8 +2550,6 @@
                     <h4>Explore</h4>
                     <a href="/factors/">All Factors</a>
                     <a href="/areas/">By Area</a>
-                    <a href="/rankings/">Rankings</a>
-                    <a href="/tribunal/">Tribunal Cases</a>
                 </div>
                 <div class="footer-col">
                     <h4>Guides</h4>
@@ -2084,41 +2578,111 @@
 
     
 <script>
-// Simple filtering for case table
 document.addEventListener('DOMContentLoaded', function() {
-    const table = document.getElementById('case-table');
+    const yearFilter = document.getElementById('filter-year');
     const outcomeFilter = document.getElementById('filter-outcome');
-    const pfeoFilter = document.getElementById('filter-pfeo');
-    const showAllBtn = document.getElementById('show-all-cases');
-    
-    function filterTable() {
-        const outcome = outcomeFilter.value;
-        const pfeo = pfeoFilter.value;
-        const rows = table.querySelectorAll('tbody tr');
-        
+    const complaintFilter = document.getElementById('filter-complaint');
+    const clearFiltersBtn = document.getElementById('clear-filters');
+    const noResultsMsg = document.getElementById('no-results');
+    const resultsCount = document.getElementById('results-count');
+    const rows = document.querySelectorAll('.case-row');
+    const detailCards = document.querySelectorAll('.case-detail-card');
+
+    function applyFilters() {
+        const yearVal = yearFilter ? yearFilter.value : '';
+        const outcomeVal = outcomeFilter ? outcomeFilter.value : '';
+        const complaintVal = complaintFilter ? complaintFilter.value : '';
+        let visibleCount = 0;
+
+        // Filter table rows
         rows.forEach(row => {
-            const matchOutcome = !outcome || row.dataset.outcome === outcome;
-            const matchPfeo = !pfeo || row.dataset.pfeo === pfeo;
-            row.style.display = (matchOutcome && matchPfeo) ? '' : 'none';
+            const rowYear = row.dataset.year || '';
+            const rowOutcome = row.dataset.outcome || '';
+            const rowComplaint = row.dataset.complaint || '';
+            const yearMatch = !yearVal || rowYear === yearVal;
+            const outcomeMatch = !outcomeVal || rowOutcome === outcomeVal;
+            const complaintMatch = !complaintVal || rowComplaint.split(',').includes(complaintVal);
+            const visible = yearMatch && outcomeMatch && complaintMatch;
+            row.style.display = visible ? '' : 'none';
+            if (visible) visibleCount++;
+        });
+
+        // Filter case detail cards to match
+        detailCards.forEach(card => {
+            const cardYear = card.dataset.year || '';
+            const cardOutcome = card.dataset.outcome || '';
+            const cardComplaint = card.dataset.complaint || '';
+            const yearMatch = !yearVal || cardYear === yearVal;
+            const outcomeMatch = !outcomeVal || cardOutcome === outcomeVal;
+            const complaintMatch = !complaintVal || cardComplaint.split(',').includes(complaintVal);
+            card.style.display = (yearMatch && outcomeMatch && complaintMatch) ? '' : 'none';
+        });
+
+        // Show/hide no results message
+        if (noResultsMsg) {
+            noResultsMsg.style.display = visibleCount === 0 ? '' : 'none';
+        }
+
+        // Update results count
+        if (resultsCount) {
+            const totalCount = rows.length;
+            if (yearVal || outcomeVal || complaintVal) {
+                resultsCount.textContent = `Showing ${visibleCount} of ${totalCount} cases`;
+            } else {
+                resultsCount.textContent = '';
+            }
+        }
+
+        // Show/hide clear filters button
+        if (clearFiltersBtn) {
+            clearFiltersBtn.style.display = (yearVal || outcomeVal || complaintVal) ? '' : 'none';
+        }
+    }
+
+    // Attach filter listeners
+    if (yearFilter) {
+        yearFilter.addEventListener('change', applyFilters);
+    }
+    if (outcomeFilter) {
+        outcomeFilter.addEventListener('change', applyFilters);
+    }
+    if (complaintFilter) {
+        complaintFilter.addEventListener('change', applyFilters);
+    }
+
+    // Clear filters
+    if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener('click', function() {
+            if (yearFilter) yearFilter.value = '';
+            if (outcomeFilter) outcomeFilter.value = '';
+            if (complaintFilter) complaintFilter.value = '';
+            applyFilters();
         });
     }
-    
-    if (outcomeFilter) outcomeFilter.addEventListener('change', filterTable);
-    if (pfeoFilter) pfeoFilter.addEventListener('change', filterTable);
-    
-    // Show all cases
-    if (showAllBtn) {
-        const rows = table.querySelectorAll('tbody tr');
-        // Initially hide rows beyond 20
-        rows.forEach((row, i) => {
-            if (i >= 20) row.classList.add('hidden-row');
+
+    // Apply initial filter (year defaults to current year)
+    applyFilters();
+
+    // Handle "View details" clicks - scroll and highlight
+    document.querySelectorAll('.view-details-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href').substring(1);
+            const targetCard = document.getElementById(targetId);
+            if (targetCard) {
+                // Make sure the card is visible (clear filters if needed)
+                if (targetCard.style.display === 'none') {
+                    if (outcomeFilter) outcomeFilter.value = '';
+                    if (complaintFilter) complaintFilter.value = '';
+                    applyFilters();
+                }
+                // Scroll to card
+                targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // Add highlight effect
+                targetCard.classList.add('highlight');
+                setTimeout(() => targetCard.classList.remove('highlight'), 1500);
+            }
         });
-        
-        showAllBtn.addEventListener('click', function() {
-            rows.forEach(row => row.classList.remove('hidden-row'));
-            this.style.display = 'none';
-        });
-    }
+    });
 });
 </script>
 

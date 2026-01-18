@@ -24,10 +24,11 @@ https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-
 
 {% macro case_card(case) %}
 {% set case_ref = case.case_reference or case.reference %}
+{% set display_ref = case.all_case_references or case_ref %}
 <div class="case-card {% if case.pfeo_issued %}has-pfeo{% endif %}">
     <div class="case-header">
         <div>
-            <a href="{{ hpc_case_url(case_ref) }}" class="case-ref" target="_blank" rel="noopener">{{ case_ref }}</a>
+            <a href="{{ hpc_case_url(case_ref) }}" class="case-ref" target="_blank" rel="noopener">{{ display_ref }}</a>
             <span class="case-date">{{ case.decision_date[:10] if case.decision_date else '' }}</span>
         </div>
         <div class="case-badges">
@@ -92,10 +93,11 @@ https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-
 {% macro case_card_list(cases, max_visible=3) %}
 {% for case in cases %}
 {% set case_ref = case.case_reference or case.reference %}
+{% set display_ref = case.all_case_references or case_ref %}
 <div class="case-card {% if case.pfeo_issued %}has-pfeo{% endif %}{% if loop.index > max_visible %} hidden{% endif %}">
     <div class="case-header">
         <div>
-            <a href="{{ hpc_case_url(case_ref) }}" class="case-ref" target="_blank" rel="noopener">{{ case_ref }}</a>
+            <a href="{{ hpc_case_url(case_ref) }}" class="case-ref" target="_blank" rel="noopener">{{ display_ref }}</a>
             <span class="case-date">{{ case.decision_date[:10] if case.decision_date else '' }}</span>
         </div>
         <div class="case-badges">

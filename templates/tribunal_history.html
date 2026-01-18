@@ -343,7 +343,7 @@ Changes:
                         data-complaint="{{ case.complaint_categories|join(',') if case.complaint_categories else '' }}"
                         data-case-id="{{ case.case_ref | replace('/', '-') }}">
                         <td>{{ case.hearing_date[:10] if case.hearing_date else '—' }}</td>
-                        <td><code>{{ case.case_ref }}</code></td>
+                        <td><code>{{ case.display_ref or case.case_ref }}</code></td>
                         <td><span class="outcome-pill outcome-{{ outcome_cat }}">{{ outcome_display }}</span></td>
                         <td>{% if case.pfeo_issued %}<span class="pfeo-badge">PFEO</span>{% else %}—{% endif %}</td>
                         <td>{% if case.compensation_awarded and case.compensation_awarded > 0 %}£{{ '{:,.0f}'.format(case.compensation_awarded) }}{% else %}—{% endif %}</td>
@@ -401,7 +401,7 @@ Changes:
                  data-complaint="{{ case.complaint_categories|join(',') if case.complaint_categories else '' }}">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
-                        <code class="case-ref">{{ case.case_ref }}</code>
+                        <code class="case-ref">{{ case.display_ref or case.case_ref }}</code>
                         <span class="case-date">{{ case.hearing_date[:10] if case.hearing_date else '' }}</span>
                     </div>
                     <div class="case-detail-badges">

@@ -584,7 +584,8 @@ class CaseEnrichment:
     """Case enrichment data."""
 
     # Identifiers
-    case_reference: str = ""
+    case_reference: str = ""  # Primary reference (first in combined cases)
+    all_case_references: str = ""  # All references for combined cases (pipe-separated)
     matched_registration_number: str = ""
 
     # AI-extracted factor ID
@@ -646,6 +647,7 @@ def init_database(db_path: Path) -> sqlite3.Connection:
         CREATE TABLE IF NOT EXISTS cases (
             -- Identifiers
             case_reference TEXT PRIMARY KEY,
+            all_case_references TEXT,  -- Full pipe-separated string for combined cases
             matched_registration_number TEXT,
 
             -- AI-extracted factor ID
@@ -696,7 +698,13 @@ def init_database(db_path: Path) -> sqlite3.Connection:
             full_text TEXT
         )
     """)
-    
+
+    # Add all_case_references column if it doesn't exist (for existing databases)
+    try:
+        conn.execute("ALTER TABLE cases ADD COLUMN all_case_references TEXT")
+    except sqlite3.OperationalError:
+        pass  # Column already exists
+
     conn.commit()
     return conn
 
@@ -713,7 +721,7 @@ def save_case(conn: sqlite3.Connection, enrichment: CaseEnrichment, full_text: s
     """Save enrichment to database."""
     conn.execute("""
         INSERT OR REPLACE INTO cases (
-            case_reference, matched_registration_number,
+            case_reference, all_case_references, matched_registration_number,
             extracted_factor_name, extracted_registration_number, extraction_confidence,
             outcome, outcome_reasoning,
             outcome_original, outcome_detailed, outcome_category, is_substantive,
@@ -725,9 +733,10 @@ def save_case(conn: sqlite3.Connection, enrichment: CaseEnrichment, full_text: s
             decision_date, pdf_url,
             extraction_success, extraction_error, validation_errors,
             pdf_hash, extracted_at, full_text
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, [
         enrichment.case_reference,
+        enrichment.all_case_references,
         enrichment.matched_registration_number,
         enrichment.extracted_factor_name,
         enrichment.extracted_registration_number,
@@ -899,14 +908,19 @@ def process_case(
     cache_dir: Path,
     conn: sqlite3.Connection
 ) -> CaseEnrichment:
-    """Process a single case."""
-    
-    case_ref = case.get('case_references', '').split(' | ')[0]
+    """Process a single case (may have multiple case references)."""
+
+    # Get all case references - store the full string for searchability
+    all_case_refs_str = case.get('case_references', '')
+    # Split on | to get individual refs for processing
+    all_case_refs = [r.strip() for r in all_case_refs_str.split(' | ') if r.strip()]
+    case_ref = all_case_refs[0] if all_case_refs else ''
     reg_num = case.get('matched_registration_number', '')
     all_pdf_urls = case.get('pdf_urls', '').split(' | ')
-    
+
     enrichment = CaseEnrichment(
         case_reference=case_ref,
+        all_case_references=all_case_refs_str,  # Store full string for searching
         matched_registration_number=reg_num,
         decision_date=case.get('hearing_date', ''),
         pdf_url=all_pdf_urls[0] if all_pdf_urls else '',
@@ -1004,10 +1018,10 @@ def process_case(
         enrichment.extraction_error = f"JSON parse error: {e}"
     except Exception as e:
         enrichment.extraction_error = f"AI extraction failed: {e}"
-    
-    # Save to database
+
+    # Save to database (combined cases kept as single entry)
     save_case(conn, enrichment, pdf_text if enrichment.extraction_success else "")
-    
+
     return enrichment
 
 

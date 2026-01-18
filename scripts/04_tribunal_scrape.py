@@ -144,12 +144,13 @@ class Decision:
 # ============================================================================
 
 class PropertyFactorsScraper:
-    
-    def __init__(self, factors_csv: Path, output_dir: Path, mappings_csv: Path = None, min_year: int = None):
+
+    def __init__(self, factors_csv: Path, output_dir: Path, mappings_csv: Path = None, min_year: int = None, search_term: str = None):
         self.output_dir = output_dir
         self.factors_csv = factors_csv
         self.mappings_csv = mappings_csv or MANUAL_MAPPINGS_CSV
         self.min_year = min_year  # None = no filter, otherwise skip cases before this year
+        self.search_term = search_term  # Optional: filter results to a specific factor/text
         self.session = requests.Session()
         self.session.headers.update({
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
@@ -352,7 +353,10 @@ class PropertyFactorsScraper:
     
     def get_total_pages(self) -> int:
         """Get the total number of pages from pagination."""
-        response = self.session.get(DECISIONS_URL)
+        from urllib.parse import quote
+        search_param = quote(self.search_term) if self.search_term else ""
+        url = f"{DECISIONS_URL}?search_api_fulltext={search_param}"
+        response = self.session.get(url)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
         
@@ -367,11 +371,13 @@ class PropertyFactorsScraper:
     def scrape_page(self, page_num: int, skip_existing: bool = True) -> tuple:
         """
         Scrape a single page of decisions.
-        
+
         Returns:
             (decisions, new_count, skipped_count, skipped_old_count)
         """
-        url = f"{DECISIONS_URL}?search_api_fulltext=&page={page_num}"
+        from urllib.parse import quote
+        search_param = quote(self.search_term) if self.search_term else ""
+        url = f"{DECISIONS_URL}?search_api_fulltext={search_param}&page={page_num}"
         print(f"  Scraping page {page_num + 1}...")
         
         response = self.session.get(url)
@@ -1252,7 +1258,9 @@ Examples:
                         help=f"Only include cases from this year onwards (default: {MIN_YEAR})")
     parser.add_argument("--all-years", action="store_true",
                         help="Include all years (override --min-year filter)")
-    
+    parser.add_argument("--search", "-s", type=str, default=None,
+                        help="Search term to filter results (e.g. 'James Gibb' or 'PF000103')")
+
     args = parser.parse_args()
     
     # Determine year filter
@@ -1266,13 +1274,16 @@ Examples:
     print(f"Output: {args.output}")
     print(f"Mode: {'Full rescrape' if args.force else 'Incremental (new cases only)'}")
     print(f"Years: {'All years' if min_year is None else f'{min_year}+'}")
+    if args.search:
+        print(f"Search filter: '{args.search}'")
     print()
-    
+
     try:
         scraper = PropertyFactorsScraper(
             factors_csv=args.factors,
             output_dir=args.output,
-            min_year=min_year
+            min_year=min_year,
+            search_term=args.search
         )
     except FileNotFoundError:
         return

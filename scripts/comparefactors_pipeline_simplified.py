@@ -316,6 +316,7 @@ CREATE TABLE IF NOT EXISTS factors (
 
 CREATE TABLE IF NOT EXISTS tribunal_cases (
     case_reference TEXT PRIMARY KEY,
+    all_case_references TEXT,  -- Full pipe-separated string for combined cases
     factor_registration_number TEXT,
     decision_date TEXT,
     outcome TEXT,
@@ -581,14 +582,15 @@ def step_3_import_tribunal():
 
             conn.execute("""
                 INSERT INTO tribunal_cases (
-                    case_reference, factor_registration_number, decision_date, outcome,
+                    case_reference, all_case_references, factor_registration_number, decision_date, outcome,
                     application_dismissed, application_withdrawn, breach_found,
                     pfeo_proposed, pfeo_issued, pfeo_complied, pfeo_breached,
                     outcome_detailed, outcome_category, is_substantive,
                     compensation_awarded, refund_ordered, pdf_url, summary, key_quote,
                     outcome_reasoning, complaint_categories, validation_errors
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(case_reference) DO UPDATE SET
+                    all_case_references = COALESCE(excluded.all_case_references, all_case_references),
                     outcome = excluded.outcome,
                     outcome_detailed = COALESCE(excluded.outcome_detailed, outcome_detailed),
                     outcome_category = COALESCE(excluded.outcome_category, outcome_category),
@@ -598,6 +600,7 @@ def step_3_import_tribunal():
                     complaint_categories = COALESCE(excluded.complaint_categories, complaint_categories)
             """, [
                 row_dict.get('case_reference'),
+                row_dict.get('all_case_references'),
                 pf,
                 row_dict.get('decision_date'),
                 row_dict.get('outcome'),
@@ -1244,8 +1247,16 @@ def step_9_generate_site():
                     SUM(COALESCE(total_review_count, 0)) as reviews
                 FROM factors
             """).fetchone()
-            tribunal_count = conn.execute("SELECT COUNT(*) FROM tribunal_cases").fetchone()[0]
-            
+            # Only count 2021+ cases (year is embedded in case_reference as /YY/)
+            tribunal_count = conn.execute("""
+                SELECT COUNT(*) FROM tribunal_cases
+                WHERE case_reference LIKE '%/21/%'
+                   OR case_reference LIKE '%/22/%'
+                   OR case_reference LIKE '%/23/%'
+                   OR case_reference LIKE '%/24/%'
+                   OR case_reference LIKE '%/25/%'
+            """).fetchone()[0]
+
             # Get tribunal hotspots (using 5-year filtered count for consistency with profiles)
             hotspots = [dict(r) for r in conn.execute("""
                 SELECT * FROM factors 
@@ -1282,8 +1293,16 @@ def step_9_generate_site():
             template = env.get_template("factors_listing.html")
             
             factors = [dict(r) for r in conn.execute("SELECT * FROM factors ORDER BY name").fetchall()]
-            tribunal_count = conn.execute("SELECT COUNT(*) FROM tribunal_cases").fetchone()[0]
-            
+            # Only count 2021+ cases
+            tribunal_count = conn.execute("""
+                SELECT COUNT(*) FROM tribunal_cases
+                WHERE case_reference LIKE '%/21/%'
+                   OR case_reference LIKE '%/22/%'
+                   OR case_reference LIKE '%/23/%'
+                   OR case_reference LIKE '%/24/%'
+                   OR case_reference LIKE '%/25/%'
+            """).fetchone()[0]
+
             # Calculate stats
             active = [f for f in factors if f['status'] == 'registered' and f.get('factor_type') not in ('Registered Social Landlord', 'Local Authority')]
             expired = sum(1 for f in factors if f['status'] != 'registered')
@@ -1475,6 +1494,8 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
             case['hearing_date'] = case.get('decision_date')
             # Add case_ref alias (template uses case_ref, DB has case_reference)
             case['case_ref'] = case.get('case_reference')
+            # Add display_ref for combined cases (shows all refs, falls back to case_ref)
+            case['display_ref'] = case.get('all_case_references') or case['case_ref']
             # Parse complaint categories from DB (JSON string) or extract from summary as fallback
             stored_cats = case.get('complaint_categories')
             if stored_cats:

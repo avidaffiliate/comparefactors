@@ -4041,7 +4041,15 @@ def generate_homepage(conn, site_dir: Path) -> bool:
     """).fetchone()[0]
     
     total_factors = conn.execute("SELECT COUNT(*) FROM factors WHERE status='registered'").fetchone()[0]
-    tribunal_cases = conn.execute("SELECT COUNT(*) FROM tribunal_cases").fetchone()[0]
+    # Only count 2021+ cases (year is embedded in case_reference as /YY/)
+    tribunal_cases = conn.execute("""
+        SELECT COUNT(*) FROM tribunal_cases
+        WHERE case_reference LIKE '%/21/%'
+           OR case_reference LIKE '%/22/%'
+           OR case_reference LIKE '%/23/%'
+           OR case_reference LIKE '%/24/%'
+           OR case_reference LIKE '%/25/%'
+    """).fetchone()[0]
     total_reviews = conn.execute("SELECT COUNT(*) FROM reviews").fetchone()[0]
     
     # Get top tribunal factors for hotspots
