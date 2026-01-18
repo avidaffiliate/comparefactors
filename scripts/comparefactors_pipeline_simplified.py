@@ -1574,7 +1574,7 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
         pfeo_count = sum(1 for c in cases if c.get('pfeo_issued'))
         compensation = sum(c.get('compensation_awarded') or 0 for c in cases)
         prop_count = profile.get('property_count') or 2000
-        rate_per_10k = (case_count / prop_count) * 10000 if prop_count > 0 else 0
+        rate_per_10k = (cases_upheld / prop_count) * 10000 if prop_count > 0 else 0
         
         context = {
             'profile': profile,
