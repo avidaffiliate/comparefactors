@@ -222,6 +222,133 @@ VALID_OUTCOMES = [
     "PFEO Breached",
 ]
 
+# =============================================================================
+# DETAILED OUTCOME CLASSIFICATION (for Dismissed/Rejected cases)
+# =============================================================================
+
+# Patterns indicating procedural dismissal (excluded from success rate)
+PROCEDURAL_PATTERNS = [
+    r'failed to provide.*(?:information|evidence|documentation)',
+    r'did not provide.*(?:information|evidence|documentation|necessary)',
+    r'failed to (?:appear|attend)',
+    r'did not (?:appear|attend)',
+    r'failed.*(?:comply|response)',
+    r'no.*(?:participation|engagement|response)',
+    r'lack of.*(?:participation|engagement|response)',
+    r'applicant.*(?:failed to|did not|unable to).*(?:pursue|prosecute)',
+    r'no jurisdiction',
+    r'outwith.*jurisdiction',
+    r'lacks jurisdiction',
+    r'no basis for the application',
+    r'no longer.*registered',
+    r'not.*registered',
+    r'no prima facie case',
+    r'without further engagement',
+    r'without further participation',
+    r'non[-\s]?compliance by.*(?:applicant|homeowner)',
+    r'not (?:competent|within)',
+    r'incompetent',
+    r'res judicata',
+    r'time[-\s]?bar',
+]
+
+# Patterns indicating factor successfully defended (homeowner lost on merits)
+FACTOR_COMPLIED_PATTERNS = [
+    r'factor (?:had|has) (?:complied|not breached|not failed)',
+    r'no breach.*(?:found|established)',
+    r'no failure.*(?:found|established|to comply)',
+    r'tribunal.*(?:found|determined).*no breach',
+    r'factor.*(?:fulfilled|met|satisfied).*obligations',
+    r'satisfied.*(?:on merits|on the merits)',
+    r'not.*breach.*code',
+    r'complaint.*(?:not|un)substantiated',
+    r'allegations.*not.*(?:established|proven|made out)',
+    r'evidence.*(?:does not|did not).*support',
+    r'no evidence.*(?:of breach|to support|that)',
+    r'no.*failure',
+    r'not.*failed.*(?:duties|obligations)',
+    r'no valid basis',
+]
+
+# Patterns indicating settlement/withdrawal (excluded from success rate)
+SETTLEMENT_PATTERNS = [
+    r'parties reached a settlement',
+    r'parties.*agreed',
+    r'settled',
+    r'matter.*resolved',
+    r'satisfactorily resolved',
+    r'issue.*resolved',
+    r'resolution.*reached',
+    r'withdrawn',
+]
+
+
+def classify_outcome_detailed(
+    outcome: str,
+    summary: str,
+    breach_found: bool = False
+) -> tuple:
+    """
+    Classify Dismissed/Rejected cases into detailed categories.
+
+    Returns:
+        tuple: (outcome_detailed, outcome_category, is_substantive)
+
+    outcome_detailed values:
+        - "Factor Complied": Factor won on merits (homeowner lost)
+        - "Rejected - Procedural": Dismissed for homeowner's non-participation
+        - "Withdrawn - Settled": Parties reached settlement
+        - "Breach - No Order": Misclassified - actually found breach
+        - "Ambiguous": Couldn't determine from text
+
+    outcome_category values:
+        - "breach": Breach was found
+        - "factor_complied": Factor won on merits
+        - "procedural": Dismissed due to homeowner's failure
+        - "withdrawn": Settlement or withdrawal
+        - "ambiguous": Couldn't classify
+
+    is_substantive: 1 if counts toward success rate, 0 if excluded
+    """
+    if not outcome:
+        return (None, None, None)
+
+    outcome_lower = outcome.lower()
+
+    # Only classify Dismissed/Rejected cases
+    if 'dismissed' not in outcome_lower and 'rejected' not in outcome_lower:
+        # For non-dismissed cases, derive category from outcome
+        if 'breach' in outcome_lower or 'pfeo' in outcome_lower:
+            return (outcome, 'breach', 1)
+        elif 'withdrawn' in outcome_lower:
+            return (outcome, 'withdrawn', 0)
+        else:
+            return (outcome, None, None)
+
+    # If breach_found flag is set, this is misclassified
+    if breach_found:
+        return ('Breach - No Order', 'breach', 1)
+
+    text = (summary or '').lower()
+
+    # Check for settlement first (takes priority)
+    for pattern in SETTLEMENT_PATTERNS:
+        if re.search(pattern, text, re.IGNORECASE):
+            return ('Withdrawn - Settled', 'withdrawn', 0)
+
+    # Check for factor complied (homeowner lost on merits)
+    for pattern in FACTOR_COMPLIED_PATTERNS:
+        if re.search(pattern, text, re.IGNORECASE):
+            return ('Factor Complied', 'factor_complied', 1)
+
+    # Check for procedural dismissal
+    for pattern in PROCEDURAL_PATTERNS:
+        if re.search(pattern, text, re.IGNORECASE):
+            return ('Rejected - Procedural', 'procedural', 0)
+
+    # Ambiguous - couldn't determine
+    return ('Ambiguous', 'ambiguous', None)
+
 
 # =============================================================================
 # OUTCOME DETERMINATION
@@ -455,20 +582,29 @@ def calculate_risk_tier(summary: dict, properties_managed: int) -> str:
 @dataclass
 class CaseEnrichment:
     """Case enrichment data."""
-    
+
     # Identifiers
     case_reference: str = ""
     matched_registration_number: str = ""
-    
+
     # AI-extracted factor ID
     extracted_factor_name: str = ""
     extracted_registration_number: str = ""
     extraction_confidence: str = ""
-    
-    # Outcome
+
+    # Outcome (original AI-determined)
     outcome: str = ""
     outcome_reasoning: str = ""
-    
+
+    # Detailed outcome classification (post-processing)
+    outcome_original: str = ""
+    outcome_detailed: str = ""
+    outcome_category: str = ""
+    is_substantive: int = None  # 1 or 0 or None
+    classification_confidence: str = ""
+    classification_method: str = ""
+    classification_timestamp: str = ""
+
     # Raw booleans (audit trail)
     application_dismissed: bool = False
     application_withdrawn: bool = False
@@ -477,15 +613,15 @@ class CaseEnrichment:
     pfeo_issued: bool = False
     pfeo_complied: bool = False
     pfeo_breached: bool = False
-    
+
     # Financial
     compensation_awarded: float = 0.0
     refund_ordered: float = 0.0
-    
+
     # Key findings
     key_quote: str = ""
     summary: str = ""
-    
+
     # Metadata
     decision_date: str = ""
     pdf_url: str = ""
@@ -511,16 +647,25 @@ def init_database(db_path: Path) -> sqlite3.Connection:
             -- Identifiers
             case_reference TEXT PRIMARY KEY,
             matched_registration_number TEXT,
-            
+
             -- AI-extracted factor ID
             extracted_factor_name TEXT,
             extracted_registration_number TEXT,
             extraction_confidence TEXT,
-            
-            -- Outcome
+
+            -- Outcome (original AI-determined)
             outcome TEXT,
             outcome_reasoning TEXT,
-            
+
+            -- Detailed outcome classification (post-processing)
+            outcome_original TEXT,          -- Backup of outcome before reclassification
+            outcome_detailed TEXT,          -- e.g., "Factor Complied", "Rejected - Procedural"
+            outcome_category TEXT,          -- breach/factor_complied/procedural/withdrawn/ambiguous
+            is_substantive INTEGER,         -- 1 if counts toward success rate, 0 if excluded
+            classification_confidence TEXT, -- high/medium/low
+            classification_method TEXT,     -- pattern_match/breach_flag/default
+            classification_timestamp TEXT,
+
             -- Raw booleans (audit trail)
             application_dismissed INTEGER DEFAULT 0,
             application_withdrawn INTEGER DEFAULT 0,
@@ -529,15 +674,15 @@ def init_database(db_path: Path) -> sqlite3.Connection:
             pfeo_issued INTEGER DEFAULT 0,
             pfeo_complied INTEGER DEFAULT 0,
             pfeo_breached INTEGER DEFAULT 0,
-            
+
             -- Financial
             compensation_awarded REAL DEFAULT 0,
             refund_ordered REAL DEFAULT 0,
-            
+
             -- Key findings
             key_quote TEXT,
             summary TEXT,
-            
+
             -- Metadata
             decision_date TEXT,
             pdf_url TEXT,
@@ -546,7 +691,7 @@ def init_database(db_path: Path) -> sqlite3.Connection:
             validation_errors TEXT,
             pdf_hash TEXT,
             extracted_at TEXT,
-            
+
             -- Full text for search
             full_text TEXT
         )
@@ -571,6 +716,8 @@ def save_case(conn: sqlite3.Connection, enrichment: CaseEnrichment, full_text: s
             case_reference, matched_registration_number,
             extracted_factor_name, extracted_registration_number, extraction_confidence,
             outcome, outcome_reasoning,
+            outcome_original, outcome_detailed, outcome_category, is_substantive,
+            classification_confidence, classification_method, classification_timestamp,
             application_dismissed, application_withdrawn, breach_found,
             pfeo_proposed, pfeo_issued, pfeo_complied, pfeo_breached,
             compensation_awarded, refund_ordered,
@@ -578,7 +725,7 @@ def save_case(conn: sqlite3.Connection, enrichment: CaseEnrichment, full_text: s
             decision_date, pdf_url,
             extraction_success, extraction_error, validation_errors,
             pdf_hash, extracted_at, full_text
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, [
         enrichment.case_reference,
         enrichment.matched_registration_number,
@@ -587,6 +734,13 @@ def save_case(conn: sqlite3.Connection, enrichment: CaseEnrichment, full_text: s
         enrichment.extraction_confidence,
         enrichment.outcome,
         enrichment.outcome_reasoning,
+        enrichment.outcome_original,
+        enrichment.outcome_detailed,
+        enrichment.outcome_category,
+        enrichment.is_substantive,
+        enrichment.classification_confidence,
+        enrichment.classification_method,
+        enrichment.classification_timestamp,
         1 if enrichment.application_dismissed else 0,
         1 if enrichment.application_withdrawn else 0,
         1 if enrichment.breach_found else 0,
@@ -830,7 +984,20 @@ def process_case(
         
         # Determine outcome deterministically
         enrichment.outcome = determine_outcome(ai_result)
-        
+
+        # Apply detailed classification for Dismissed/Rejected cases
+        enrichment.outcome_original = enrichment.outcome
+        detailed, category, is_subst = classify_outcome_detailed(
+            enrichment.outcome,
+            enrichment.summary,
+            enrichment.breach_found
+        )
+        enrichment.outcome_detailed = detailed or enrichment.outcome
+        enrichment.outcome_category = category or ''
+        enrichment.is_substantive = is_subst
+        enrichment.classification_method = 'pattern_match' if detailed else 'default'
+        enrichment.classification_timestamp = datetime.now().isoformat()
+
         enrichment.extraction_success = True
         
     except json.JSONDecodeError as e:

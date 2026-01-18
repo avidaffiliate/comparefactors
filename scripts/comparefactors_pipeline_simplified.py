@@ -319,7 +319,7 @@ CREATE TABLE IF NOT EXISTS tribunal_cases (
     factor_registration_number TEXT,
     decision_date TEXT,
     outcome TEXT,
-    
+
     -- v2 boolean outcome fields
     application_dismissed INTEGER DEFAULT 0,
     application_withdrawn INTEGER DEFAULT 0,
@@ -328,11 +328,16 @@ CREATE TABLE IF NOT EXISTS tribunal_cases (
     pfeo_issued INTEGER DEFAULT 0,
     pfeo_complied INTEGER DEFAULT 0,
     pfeo_breached INTEGER DEFAULT 0,
-    
+
+    -- v3 detailed outcome classification (reclassifies Dismissed/Rejected)
+    outcome_detailed TEXT,          -- e.g., "Factor Complied", "Rejected - Procedural"
+    outcome_category TEXT,          -- breach/factor_complied/procedural/withdrawn/ambiguous
+    is_substantive INTEGER,         -- 1 if counts toward success rate, 0 if excluded
+
     -- Financial
     compensation_awarded REAL DEFAULT 0,
     refund_ordered REAL DEFAULT 0,
-    
+
     -- Content
     pdf_url TEXT,
     summary TEXT,
@@ -579,11 +584,15 @@ def step_3_import_tribunal():
                     case_reference, factor_registration_number, decision_date, outcome,
                     application_dismissed, application_withdrawn, breach_found,
                     pfeo_proposed, pfeo_issued, pfeo_complied, pfeo_breached,
+                    outcome_detailed, outcome_category, is_substantive,
                     compensation_awarded, refund_ordered, pdf_url, summary, key_quote,
                     outcome_reasoning, complaint_categories, validation_errors
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(case_reference) DO UPDATE SET
                     outcome = excluded.outcome,
+                    outcome_detailed = COALESCE(excluded.outcome_detailed, outcome_detailed),
+                    outcome_category = COALESCE(excluded.outcome_category, outcome_category),
+                    is_substantive = COALESCE(excluded.is_substantive, is_substantive),
                     summary = COALESCE(excluded.summary, summary),
                     compensation_awarded = excluded.compensation_awarded,
                     complaint_categories = COALESCE(excluded.complaint_categories, complaint_categories)
@@ -599,6 +608,9 @@ def step_3_import_tribunal():
                 row_dict.get('pfeo_issued', 0),
                 row_dict.get('pfeo_complied', 0),
                 row_dict.get('pfeo_breached', 0),
+                row_dict.get('outcome_detailed'),
+                row_dict.get('outcome_category'),
+                row_dict.get('is_substantive'),
                 row_dict.get('compensation_awarded', 0),
                 row_dict.get('refund_ordered', 0),
                 row_dict.get('pdf_url'),
@@ -1395,6 +1407,20 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
     rates = [r[0] for r in rate_data]
     sector_avg_rate = sum(rates) / len(rates) if rates else 8.0  # Mean across all factors
 
+    # Calculate sector average upheld rate (only factors WITH cases)
+    # Upheld rate = breach cases / substantive cases
+    upheld_data = conn.execute("""
+        SELECT
+            factor_registration_number,
+            SUM(CASE WHEN outcome_category = 'breach' THEN 1 ELSE 0 END) as breaches,
+            SUM(CASE WHEN is_substantive = 1 THEN 1 ELSE 0 END) as substantive
+        FROM tribunal_cases
+        GROUP BY factor_registration_number
+        HAVING substantive > 0
+    """).fetchall()
+    upheld_rates = [r[1] / r[2] * 100 for r in upheld_data if r[2] > 0]
+    sector_avg_upheld = round(sum(upheld_rates) / len(upheld_rates), 1) if upheld_rates else 68.0
+
     # Load manual overrides from CSV (full text replacement for at-a-glance)
     overrides = {}
     overrides_path = CONFIG.csv_dir / "factor_overrides.csv"
@@ -1443,7 +1469,8 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
             if case.get('pfeo_issued') is None:
                 case['pfeo_issued'] = 0
             # Add normalized outcome for display
-            case['outcome_display'] = normalize_outcome_display(case.get('outcome', ''))
+            # Use outcome_detailed if available (reclassified), fallback to outcome_display
+            case['outcome_display'] = case.get('outcome_detailed') or normalize_outcome_display(case.get('outcome', ''))
             # Add hearing_date alias (template uses hearing_date, DB has decision_date)
             case['hearing_date'] = case.get('decision_date')
             # Add case_ref alias (template uses case_ref, DB has case_reference)
@@ -1573,11 +1600,19 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
         
         # Calculate 5-year stats from filtered cases (cases is already 5-year filtered)
         case_count = len(cases)
-        cases_upheld = sum(1 for c in cases if is_adverse_outcome(c.get('outcome', '')))
+        # Use new classification: breach cases vs substantive cases
+        breach_count = sum(1 for c in cases if c.get('outcome_category') == 'breach')
+        substantive_count = sum(1 for c in cases if c.get('is_substantive') == 1)
+        # Fallback to old method if no classification data
+        if substantive_count == 0 and case_count > 0:
+            breach_count = sum(1 for c in cases if is_adverse_outcome(c.get('outcome', '')))
+            substantive_count = case_count
         pfeo_count = sum(1 for c in cases if c.get('pfeo_issued'))
         compensation = sum(c.get('compensation_awarded') or 0 for c in cases)
         prop_count = profile.get('property_count') or 2000
-        rate_per_10k = (cases_upheld / prop_count) * 10000 if prop_count > 0 else 0
+        rate_per_10k = (breach_count / prop_count) * 10000 if prop_count > 0 else 0
+        # Upheld rate = breach cases / substantive cases (excludes procedural, withdrawn, ambiguous)
+        upheld_rate = (breach_count / substantive_count * 100) if substantive_count > 0 else 0
         
         context = {
             'profile': profile,
@@ -1599,17 +1634,21 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
             # Tribunal stats with safe defaults
             'tribunal_last_5_years': {
                 'case_count': case_count,
+                'upheld_count': breach_count,  # Breach cases (homeowner won)
+                'substantive_count': substantive_count,  # Excludes procedural/withdrawn
                 'pfeo_count': pfeo_count,
                 'compensation': compensation,
                 'rate_per_10k': rate_per_10k,
-                'complaints_upheld_pct': (cases_upheld / case_count * 100) if case_count > 0 else 0,
+                'complaints_upheld_pct': upheld_rate,  # breach / substantive * 100
             },
             'stats': {  # Alias for templates that use 'stats' instead of 'tribunal_last_5_years'
                 'case_count': case_count,
+                'upheld_count': breach_count,
+                'substantive_count': substantive_count,
                 'pfeo_count': pfeo_count,
                 'compensation': compensation,
                 'rate_per_10k': rate_per_10k,
-                'complaints_upheld_pct': (cases_upheld / case_count * 100) if case_count > 0 else 0,
+                'complaints_upheld_pct': upheld_rate,
             },
             'tribunal_full_history': {
                 'case_count': len(all_cases),
@@ -1633,6 +1672,7 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
             'generated_date': datetime.now().strftime('%Y-%m-%d'),
             'current_year': datetime.now().year,
             'sector_avg_rate': sector_avg_rate,
+            'sector_avg_upheld': sector_avg_upheld,  # Avg upheld % for factors with cases
             'at_a_glance_override': overrides.get(pf),  # Full text override from CSV
         }
         
@@ -1686,10 +1726,11 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
                     # Core metrics
                     'total_cases': case_count,
                     'case_count': case_count,  # Alias
-                    'upheld_count': cases_upheld,
-                    'upheld_rate': round((cases_upheld / case_count * 100)) if case_count > 0 else 0,
-                    'complaints_upheld_pct': round((cases_upheld / case_count * 100)) if case_count > 0 else 0,
-                    
+                    'upheld_count': breach_count,  # Breach cases (homeowner won)
+                    'substantive_count': substantive_count,  # Excludes procedural/withdrawn
+                    'upheld_rate': round(upheld_rate) if substantive_count > 0 else 0,
+                    'complaints_upheld_pct': round(upheld_rate) if substantive_count > 0 else 0,
+
                     # PFEO stats
                     'pfeo_count': pfeo_count,
                     'pfeo_rate': round((pfeo_count / case_count * 100)) if case_count > 0 else 0,
@@ -1740,6 +1781,8 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
                     'five_year_cutoff': five_year_cutoff,
                     'risk_band': risk_band,
                     'risk_explainer': risk_explainers.get(risk_band, ''),
+                    'sector_avg_rate': sector_avg_rate,
+                    'sector_avg_upheld': sector_avg_upheld,
                     'generated_date': datetime.now().strftime('%Y-%m-%d'),
                     'current_year': datetime.now().year,
                 }

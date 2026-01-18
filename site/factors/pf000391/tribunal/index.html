@@ -1109,6 +1109,16 @@
     margin-top: 0.25rem;
 }
 
+.stat-benchmark {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+}
+
+.stat-value.stat-worse { color: var(--red-600); }
+.stat-value.stat-better { color: var(--green-600); }
+
 /* Trend Chart */
 .trend-chart {
     display: flex;
@@ -1184,12 +1194,21 @@
     opacity: 0.7;
 }
 
+/* Red: Breach outcomes (homeowner won, factor found at fault) */
 .outcome-upheld { background: var(--red-50); color: var(--red-700); }
 .outcome-partially-upheld { background: var(--amber-50); color: var(--amber-700); }
+.outcome-pfeo-issued, .outcome-pfeo-breached, .outcome-pfeo, .outcome-pfeo-pending { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+.outcome-pfeo-complied, .outcome-pfeo-proposed { background: #fef2f2; color: #991b1b; }
+.outcome-breach---no-order, .outcome-breach { background: #fef2f2; color: #991b1b; }
+
+/* Green: Factor won on merits (homeowner lost) */
+.outcome-factor-complied { background: var(--green-50); color: var(--green-700); }
 .outcome-dismissed, .outcome-rejected, .outcome-dismissed-rejected { background: var(--green-50); color: var(--green-700); }
-.outcome-withdrawn { background: var(--bg-muted); color: var(--text-muted); }
-.outcome-pfeo-issued, .outcome-pfeo-breached, .outcome-pfeo { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
-.outcome-pfeo-complied { background: #fefce8; color: #854d0e; border: 1px solid #fef08a; }
+
+/* Grey: Neutral outcomes (procedural, withdrawn, ambiguous) */
+.outcome-rejected---procedural { background: var(--bg-muted); color: var(--text-muted); }
+.outcome-withdrawn, .outcome-withdrawn---settled { background: var(--bg-muted); color: var(--text-muted); }
+.outcome-ambiguous { background: var(--bg-muted); color: var(--text-muted); }
 
 /* Category Chart */
 .category-chart {
@@ -1453,11 +1472,17 @@
     font-weight: 600;
 }
 
+/* Red: Breach outcomes */
 .outcome-badge.outcome-upheld { background: var(--red-50); color: var(--red-700); }
 .outcome-badge.outcome-partially-upheld { background: var(--amber-50); color: var(--amber-700); }
+.outcome-badge.outcome-pfeo-issued, .outcome-badge.outcome-pfeo-breached, .outcome-badge.outcome-pfeo, .outcome-badge.outcome-pfeo-pending { background: #fef2f2; color: #991b1b; }
+.outcome-badge.outcome-pfeo-complied, .outcome-badge.outcome-pfeo-proposed { background: #fef2f2; color: #991b1b; }
+.outcome-badge.outcome-breach---no-order, .outcome-badge.outcome-breach { background: #fef2f2; color: #991b1b; }
+/* Green: Factor won */
+.outcome-badge.outcome-factor-complied { background: var(--green-50); color: var(--green-700); }
 .outcome-badge.outcome-dismissed, .outcome-badge.outcome-rejected { background: var(--green-50); color: var(--green-700); }
-.outcome-badge.outcome-pfeo-issued, .outcome-badge.outcome-pfeo-breached, .outcome-badge.outcome-pfeo { background: #fef2f2; color: #991b1b; }
-.outcome-badge.outcome-pfeo-complied { background: #fefce8; color: #854d0e; }
+/* Grey: Neutral */
+.outcome-badge.outcome-rejected---procedural, .outcome-badge.outcome-withdrawn, .outcome-badge.outcome-withdrawn---settled, .outcome-badge.outcome-ambiguous { background: var(--bg-muted); color: var(--text-muted); }
 
 /* Case Filters */
 .case-filters {
@@ -1540,11 +1565,16 @@
     white-space: nowrap;
 }
 
+/* Red: Breach outcomes */
 .outcome-pill.outcome-upheld { background: var(--red-50); color: var(--red-700); }
 .outcome-pill.outcome-partial { background: var(--amber-50); color: var(--amber-700); }
+.outcome-pill.outcome-pfeo, .outcome-pill.outcome-breach { background: var(--red-50); color: var(--red-700); }
+/* Green: Factor won */
 .outcome-pill.outcome-dismissed { background: var(--green-50); color: var(--green-700); }
+.outcome-pill.outcome-factor-complied { background: var(--green-50); color: var(--green-700); }
+/* Grey: Neutral */
 .outcome-pill.outcome-withdrawn { background: var(--bg-muted); color: var(--text-muted); }
-.outcome-pill.outcome-other { background: var(--bg-muted); color: var(--text-muted); }
+.outcome-pill.outcome-neutral, .outcome-pill.outcome-other { background: var(--bg-muted); color: var(--text-muted); }
 
 .pfeo-badge {
     display: inline-block;
@@ -2112,8 +2142,14 @@
                         <span class="stat-label">Cases</span>
                     </div>
                     <div class="summary-stat">
-                        <span class="stat-value">0%</span>
+                        <span class="stat-value stat-better">0%</span>
                         <span class="stat-label">Upheld</span>
+                        <span class="stat-benchmark">(avg: 70%)</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-value stat-better">0.0</span>
+                        <span class="stat-label">Rate/10k</span>
+                        <span class="stat-benchmark">(avg: 5.3)</span>
                     </div>
                     <div class="summary-stat">
                         <span class="stat-value">0</span>
@@ -2216,9 +2252,9 @@
         <h2 class="section-title">Outcomes</h2>
         <div class="outcome-grid">
             
-            <div class="outcome-item outcome-dismissed/rejected">
+            <div class="outcome-item outcome-rejected---procedural">
                 <span class="outcome-count">1</span>
-                <span class="outcome-label">Dismissed/Rejected</span>
+                <span class="outcome-label">Rejected - Procedural</span>
                 <span class="outcome-pct">100%</span>
             </div>
             
@@ -2339,7 +2375,7 @@
                         data-case-id="FTS-HPC-PF-25-3851">
                         <td>2025-11-28</td>
                         <td><code>FTS/HPC/PF/25/3851</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-dismissed">Rejected - Procedural</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -2385,7 +2421,7 @@
                         <span class="case-date">2025-11-28</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-dismissed">Rejected - Procedural</span>
                         
                         
                     </div>

@@ -1,15 +1,15 @@
 {#
-Case Card Partial - v2.2
+Case Card Partial - v3.0
 Shows tribunal case summary with full details
+
+Changes in v3.0:
+- Uses outcome_detailed for reclassified outcomes
+- Color coding: Red (breach), Green (factor won), Grey (procedural/withdrawn)
+- New outcomes: Factor Complied, Rejected - Procedural, Withdrawn - Settled
 
 Changes in v2.2:
 - Links to HPC case search page instead of direct PDF
 - Added hpc_case_url macro for consistent URL generation
-
-Changes in v2.1:
-- Uses outcome_display for normalized outcomes (dismissed/rejected combined)
-- Rejected now shows green (same as dismissed)
-- PFEO and breach outcomes show as adverse (red)
 
 Usage:
 {{ case_card(case) }}
@@ -31,25 +31,23 @@ https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-
             <span class="case-date">{{ case.decision_date[:10] if case.decision_date else '' }}</span>
         </div>
         <div class="case-badges">
-            {# Outcome badge - use outcome_display for normalized value, fallback to outcome #}
+            {# Outcome badge - use outcome_display (which includes outcome_detailed) #}
             {% set outcome = case.outcome_display or case.outcome or 'Unknown' %}
             {% set outcome_lower = outcome|lower %}
-            {% if 'dismiss' in outcome_lower or 'rejected' in outcome_lower %}
-            <span class="case-outcome dismissed">{{ outcome }}</span>
-            {% elif 'pfeo' in outcome_lower or 'breach' in outcome_lower %}
-            <span class="case-outcome pfeo">{{ outcome }}</span>
-            {% elif 'upheld' in outcome_lower and 'partial' not in outcome_lower %}
-            <span class="case-outcome upheld">{{ outcome }}</span>
-            {% elif 'partial' in outcome_lower %}
-            <span class="case-outcome partial">{{ outcome }}</span>
+            {# Red: All breach outcomes (bad for factor, good for homeowner) #}
+            {% if 'pfeo' in outcome_lower or 'breach' in outcome_lower %}
+            <span class="case-outcome breach">{{ outcome }}</span>
+            {# Green: Factor won on merits (homeowner lost) #}
+            {% elif outcome == 'Factor Complied' %}
+            <span class="case-outcome factor-complied">{{ outcome }}</span>
+            {# Grey: Procedural, withdrawn, ambiguous (not decided on merits) #}
+            {% elif 'procedural' in outcome_lower or 'withdrawn' in outcome_lower or 'settled' in outcome_lower or outcome == 'Ambiguous' %}
+            <span class="case-outcome neutral">{{ outcome }}</span>
+            {# Legacy: old dismissed/rejected without reclassification #}
+            {% elif 'dismiss' in outcome_lower or 'rejected' in outcome_lower %}
+            <span class="case-outcome neutral">{{ outcome }}</span>
             {% else %}
             <span class="case-outcome other">{{ outcome }}</span>
-            {% endif %}
-            
-            {# Severity badge #}
-            {% if case.severity_score %}
-            {% set sev = case.severity_score|float %}
-            <span class="severity-badge severity-badge--{% if sev >= 7 %}critical{% elif sev >= 5 %}high{% elif sev >= 3 %}medium{% else %}low{% endif %}" title="Case severity: {{ case.severity_score }}/10">{{ case.severity_score }}/10</span>
             {% endif %}
         </div>
     </div>
@@ -101,24 +99,23 @@ https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-
             <span class="case-date">{{ case.decision_date[:10] if case.decision_date else '' }}</span>
         </div>
         <div class="case-badges">
-            {# Outcome badge - use outcome_display for normalized value, fallback to outcome #}
+            {# Outcome badge - use outcome_display (which includes outcome_detailed) #}
             {% set outcome = case.outcome_display or case.outcome or 'Unknown' %}
             {% set outcome_lower = outcome|lower %}
-            {% if 'dismiss' in outcome_lower or 'rejected' in outcome_lower %}
-            <span class="case-outcome dismissed">{{ outcome }}</span>
-            {% elif 'pfeo' in outcome_lower or 'breach' in outcome_lower %}
-            <span class="case-outcome pfeo">{{ outcome }}</span>
-            {% elif 'upheld' in outcome_lower and 'partial' not in outcome_lower %}
-            <span class="case-outcome upheld">{{ outcome }}</span>
-            {% elif 'partial' in outcome_lower %}
-            <span class="case-outcome partial">{{ outcome }}</span>
+            {# Red: All breach outcomes (bad for factor, good for homeowner) #}
+            {% if 'pfeo' in outcome_lower or 'breach' in outcome_lower %}
+            <span class="case-outcome breach">{{ outcome }}</span>
+            {# Green: Factor won on merits (homeowner lost) #}
+            {% elif outcome == 'Factor Complied' %}
+            <span class="case-outcome factor-complied">{{ outcome }}</span>
+            {# Grey: Procedural, withdrawn, ambiguous (not decided on merits) #}
+            {% elif 'procedural' in outcome_lower or 'withdrawn' in outcome_lower or 'settled' in outcome_lower or outcome == 'Ambiguous' %}
+            <span class="case-outcome neutral">{{ outcome }}</span>
+            {# Legacy: old dismissed/rejected without reclassification #}
+            {% elif 'dismiss' in outcome_lower or 'rejected' in outcome_lower %}
+            <span class="case-outcome neutral">{{ outcome }}</span>
             {% else %}
             <span class="case-outcome other">{{ outcome }}</span>
-            {% endif %}
-            
-            {% if case.severity_score %}
-            {% set sev = case.severity_score|float %}
-            <span class="severity-badge severity-badge--{% if sev >= 7 %}critical{% elif sev >= 5 %}high{% elif sev >= 3 %}medium{% else %}low{% endif %}" title="Case severity: {{ case.severity_score }}/10">{{ case.severity_score }}/10</span>
             {% endif %}
         </div>
     </div>

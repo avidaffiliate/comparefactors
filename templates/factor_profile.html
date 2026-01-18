@@ -476,14 +476,20 @@ Required data context:
                             <div class="data-label">Cases</div>
                         </div>
                         <div class="data-item">
-                            <div class="data-value {% if tribunal_last_5_years.complaints_upheld_pct and tribunal_last_5_years.complaints_upheld_pct > 50 %}red{% endif %}">
-                                {% if tribunal_last_5_years.complaints_upheld_pct %}{{ tribunal_last_5_years.complaints_upheld_pct|int }}%{% else %}—{% endif %}
+                            {% set upheld_pct = tribunal_last_5_years.complaints_upheld_pct|default(0) %}
+                            <div class="data-value {% if upheld_pct > sector_avg_upheld %}red{% elif upheld_pct < sector_avg_upheld and upheld_pct > 0 %}green{% endif %}">
+                                {% if upheld_pct %}{{ upheld_pct|int }}%{% else %}—{% endif %}
                             </div>
                             <div class="data-label">Upheld</div>
+                            {% if upheld_pct %}<div class="data-benchmark">(avg: {{ sector_avg_upheld|int }}%)</div>{% endif %}
                         </div>
                         <div class="data-item">
-                            <div class="data-value">{{ "%.1f"|format(tribunal_last_5_years.rate_per_10k) if tribunal_last_5_years.rate_per_10k else '—' }}</div>
+                            {% set rate_10k = tribunal_last_5_years.rate_per_10k|default(0) %}
+                            <div class="data-value {% if rate_10k > sector_avg_rate %}red{% elif rate_10k < sector_avg_rate and rate_10k > 0 %}green{% endif %}">
+                                {{ "%.1f"|format(rate_10k) if rate_10k else '—' }}
+                            </div>
                             <div class="data-label">Rate/10k</div>
+                            {% if rate_10k %}<div class="data-benchmark">(avg: {{ "%.1f"|format(sector_avg_rate) }})</div>{% endif %}
                         </div>
                         <div class="data-item">
                             <div class="data-value {% if tribunal_last_5_years.pfeo_count and tribunal_last_5_years.pfeo_count > 0 %}red{% endif %}">{{ tribunal_last_5_years.pfeo_count|default(0) }}</div>

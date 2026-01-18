@@ -85,8 +85,14 @@ Changes:
                         <span class="stat-label">Cases</span>
                     </div>
                     <div class="summary-stat">
-                        <span class="stat-value">{{ stats.upheld_rate }}%</span>
+                        <span class="stat-value {% if stats.upheld_rate > sector_avg_upheld %}stat-worse{% elif stats.upheld_rate < sector_avg_upheld %}stat-better{% endif %}">{{ stats.upheld_rate }}%</span>
                         <span class="stat-label">Upheld</span>
+                        <span class="stat-benchmark">(avg: {{ sector_avg_upheld|int }}%)</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-value {% if stats.rate_per_10k > sector_avg_rate %}stat-worse{% elif stats.rate_per_10k < sector_avg_rate %}stat-better{% endif %}">{{ "%.1f"|format(stats.rate_per_10k) }}</span>
+                        <span class="stat-label">Rate/10k</span>
+                        <span class="stat-benchmark">(avg: {{ "%.1f"|format(sector_avg_rate) }})</span>
                     </div>
                     <div class="summary-stat">
                         <span class="stat-value">{{ stats.pfeo_count }}</span>
@@ -628,6 +634,16 @@ Changes:
     margin-top: 0.25rem;
 }
 
+.stat-benchmark {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+}
+
+.stat-value.stat-worse { color: var(--red-600); }
+.stat-value.stat-better { color: var(--green-600); }
+
 /* Trend Chart */
 .trend-chart {
     display: flex;
@@ -703,12 +719,21 @@ Changes:
     opacity: 0.7;
 }
 
+/* Red: Breach outcomes (homeowner won, factor found at fault) */
 .outcome-upheld { background: var(--red-50); color: var(--red-700); }
 .outcome-partially-upheld { background: var(--amber-50); color: var(--amber-700); }
+.outcome-pfeo-issued, .outcome-pfeo-breached, .outcome-pfeo, .outcome-pfeo-pending { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+.outcome-pfeo-complied, .outcome-pfeo-proposed { background: #fef2f2; color: #991b1b; }
+.outcome-breach---no-order, .outcome-breach { background: #fef2f2; color: #991b1b; }
+
+/* Green: Factor won on merits (homeowner lost) */
+.outcome-factor-complied { background: var(--green-50); color: var(--green-700); }
 .outcome-dismissed, .outcome-rejected, .outcome-dismissed-rejected { background: var(--green-50); color: var(--green-700); }
-.outcome-withdrawn { background: var(--bg-muted); color: var(--text-muted); }
-.outcome-pfeo-issued, .outcome-pfeo-breached, .outcome-pfeo { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
-.outcome-pfeo-complied { background: #fefce8; color: #854d0e; border: 1px solid #fef08a; }
+
+/* Grey: Neutral outcomes (procedural, withdrawn, ambiguous) */
+.outcome-rejected---procedural { background: var(--bg-muted); color: var(--text-muted); }
+.outcome-withdrawn, .outcome-withdrawn---settled { background: var(--bg-muted); color: var(--text-muted); }
+.outcome-ambiguous { background: var(--bg-muted); color: var(--text-muted); }
 
 /* Category Chart */
 .category-chart {
@@ -972,11 +997,17 @@ Changes:
     font-weight: 600;
 }
 
+/* Red: Breach outcomes */
 .outcome-badge.outcome-upheld { background: var(--red-50); color: var(--red-700); }
 .outcome-badge.outcome-partially-upheld { background: var(--amber-50); color: var(--amber-700); }
+.outcome-badge.outcome-pfeo-issued, .outcome-badge.outcome-pfeo-breached, .outcome-badge.outcome-pfeo, .outcome-badge.outcome-pfeo-pending { background: #fef2f2; color: #991b1b; }
+.outcome-badge.outcome-pfeo-complied, .outcome-badge.outcome-pfeo-proposed { background: #fef2f2; color: #991b1b; }
+.outcome-badge.outcome-breach---no-order, .outcome-badge.outcome-breach { background: #fef2f2; color: #991b1b; }
+/* Green: Factor won */
+.outcome-badge.outcome-factor-complied { background: var(--green-50); color: var(--green-700); }
 .outcome-badge.outcome-dismissed, .outcome-badge.outcome-rejected { background: var(--green-50); color: var(--green-700); }
-.outcome-badge.outcome-pfeo-issued, .outcome-badge.outcome-pfeo-breached, .outcome-badge.outcome-pfeo { background: #fef2f2; color: #991b1b; }
-.outcome-badge.outcome-pfeo-complied { background: #fefce8; color: #854d0e; }
+/* Grey: Neutral */
+.outcome-badge.outcome-rejected---procedural, .outcome-badge.outcome-withdrawn, .outcome-badge.outcome-withdrawn---settled, .outcome-badge.outcome-ambiguous { background: var(--bg-muted); color: var(--text-muted); }
 
 /* Case Filters */
 .case-filters {
@@ -1059,11 +1090,16 @@ Changes:
     white-space: nowrap;
 }
 
+/* Red: Breach outcomes */
 .outcome-pill.outcome-upheld { background: var(--red-50); color: var(--red-700); }
 .outcome-pill.outcome-partial { background: var(--amber-50); color: var(--amber-700); }
+.outcome-pill.outcome-pfeo, .outcome-pill.outcome-breach { background: var(--red-50); color: var(--red-700); }
+/* Green: Factor won */
 .outcome-pill.outcome-dismissed { background: var(--green-50); color: var(--green-700); }
+.outcome-pill.outcome-factor-complied { background: var(--green-50); color: var(--green-700); }
+/* Grey: Neutral */
 .outcome-pill.outcome-withdrawn { background: var(--bg-muted); color: var(--text-muted); }
-.outcome-pill.outcome-other { background: var(--bg-muted); color: var(--text-muted); }
+.outcome-pill.outcome-neutral, .outcome-pill.outcome-other { background: var(--bg-muted); color: var(--text-muted); }
 
 .pfeo-badge {
     display: inline-block;

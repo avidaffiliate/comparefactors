@@ -12,13 +12,13 @@
     <title>Hacking & Paterson Management Services Limited Tribunal Cases & Complaints | Compare Factors</title>
     
 
-<meta name="description" content="Hacking & Paterson Management Services Limited: 46 tribunal cases (2021–2026), 46% upheld, £4,065 compensation. ORANGE risk rating. Full complaint history and analysis.">
+<meta name="description" content="Hacking & Paterson Management Services Limited: 46 tribunal cases (2021–2026), 55% upheld, £4,065 compensation. ORANGE risk rating. Full complaint history and analysis.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://comparefactors.co.uk/factors/pf000288/tribunal/">
 
 <!-- Open Graph -->
 <meta property="og:title" content="Hacking & Paterson Management Services Limited - Tribunal Record | Compare Factors">
-<meta property="og:description" content="46 tribunal cases, 46% upheld. ORANGE risk rating.">
+<meta property="og:description" content="46 tribunal cases, 55% upheld. ORANGE risk rating.">
 <meta property="og:url" content="https://comparefactors.co.uk/factors/pf000288/tribunal/">
 <meta property="og:type" content="website">
 
@@ -1109,6 +1109,16 @@
     margin-top: 0.25rem;
 }
 
+.stat-benchmark {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+}
+
+.stat-value.stat-worse { color: var(--red-600); }
+.stat-value.stat-better { color: var(--green-600); }
+
 /* Trend Chart */
 .trend-chart {
     display: flex;
@@ -1184,12 +1194,21 @@
     opacity: 0.7;
 }
 
+/* Red: Breach outcomes (homeowner won, factor found at fault) */
 .outcome-upheld { background: var(--red-50); color: var(--red-700); }
 .outcome-partially-upheld { background: var(--amber-50); color: var(--amber-700); }
+.outcome-pfeo-issued, .outcome-pfeo-breached, .outcome-pfeo, .outcome-pfeo-pending { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+.outcome-pfeo-complied, .outcome-pfeo-proposed { background: #fef2f2; color: #991b1b; }
+.outcome-breach---no-order, .outcome-breach { background: #fef2f2; color: #991b1b; }
+
+/* Green: Factor won on merits (homeowner lost) */
+.outcome-factor-complied { background: var(--green-50); color: var(--green-700); }
 .outcome-dismissed, .outcome-rejected, .outcome-dismissed-rejected { background: var(--green-50); color: var(--green-700); }
-.outcome-withdrawn { background: var(--bg-muted); color: var(--text-muted); }
-.outcome-pfeo-issued, .outcome-pfeo-breached, .outcome-pfeo { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
-.outcome-pfeo-complied { background: #fefce8; color: #854d0e; border: 1px solid #fef08a; }
+
+/* Grey: Neutral outcomes (procedural, withdrawn, ambiguous) */
+.outcome-rejected---procedural { background: var(--bg-muted); color: var(--text-muted); }
+.outcome-withdrawn, .outcome-withdrawn---settled { background: var(--bg-muted); color: var(--text-muted); }
+.outcome-ambiguous { background: var(--bg-muted); color: var(--text-muted); }
 
 /* Category Chart */
 .category-chart {
@@ -1453,11 +1472,17 @@
     font-weight: 600;
 }
 
+/* Red: Breach outcomes */
 .outcome-badge.outcome-upheld { background: var(--red-50); color: var(--red-700); }
 .outcome-badge.outcome-partially-upheld { background: var(--amber-50); color: var(--amber-700); }
+.outcome-badge.outcome-pfeo-issued, .outcome-badge.outcome-pfeo-breached, .outcome-badge.outcome-pfeo, .outcome-badge.outcome-pfeo-pending { background: #fef2f2; color: #991b1b; }
+.outcome-badge.outcome-pfeo-complied, .outcome-badge.outcome-pfeo-proposed { background: #fef2f2; color: #991b1b; }
+.outcome-badge.outcome-breach---no-order, .outcome-badge.outcome-breach { background: #fef2f2; color: #991b1b; }
+/* Green: Factor won */
+.outcome-badge.outcome-factor-complied { background: var(--green-50); color: var(--green-700); }
 .outcome-badge.outcome-dismissed, .outcome-badge.outcome-rejected { background: var(--green-50); color: var(--green-700); }
-.outcome-badge.outcome-pfeo-issued, .outcome-badge.outcome-pfeo-breached, .outcome-badge.outcome-pfeo { background: #fef2f2; color: #991b1b; }
-.outcome-badge.outcome-pfeo-complied { background: #fefce8; color: #854d0e; }
+/* Grey: Neutral */
+.outcome-badge.outcome-rejected---procedural, .outcome-badge.outcome-withdrawn, .outcome-badge.outcome-withdrawn---settled, .outcome-badge.outcome-ambiguous { background: var(--bg-muted); color: var(--text-muted); }
 
 /* Case Filters */
 .case-filters {
@@ -1540,11 +1565,16 @@
     white-space: nowrap;
 }
 
+/* Red: Breach outcomes */
 .outcome-pill.outcome-upheld { background: var(--red-50); color: var(--red-700); }
 .outcome-pill.outcome-partial { background: var(--amber-50); color: var(--amber-700); }
+.outcome-pill.outcome-pfeo, .outcome-pill.outcome-breach { background: var(--red-50); color: var(--red-700); }
+/* Green: Factor won */
 .outcome-pill.outcome-dismissed { background: var(--green-50); color: var(--green-700); }
+.outcome-pill.outcome-factor-complied { background: var(--green-50); color: var(--green-700); }
+/* Grey: Neutral */
 .outcome-pill.outcome-withdrawn { background: var(--bg-muted); color: var(--text-muted); }
-.outcome-pill.outcome-other { background: var(--bg-muted); color: var(--text-muted); }
+.outcome-pill.outcome-neutral, .outcome-pill.outcome-other { background: var(--bg-muted); color: var(--text-muted); }
 
 .pfeo-badge {
     display: inline-block;
@@ -2092,7 +2122,7 @@
                 <div class="summary-narrative">
                     <p>
                         <strong>Hacking & Paterson Management Services Limited</strong> has faced <strong>46 tribunal cases</strong> in the last 5 years,
-                        with <strong>21 upheld or partially upheld</strong> (46%).
+                        with <strong>21 upheld or partially upheld</strong> (55%).
                         
                         Most recent: <strong>2025-11-26</strong>.
                         
@@ -2112,8 +2142,14 @@
                         <span class="stat-label">Cases</span>
                     </div>
                     <div class="summary-stat">
-                        <span class="stat-value">46%</span>
+                        <span class="stat-value stat-better">55%</span>
                         <span class="stat-label">Upheld</span>
+                        <span class="stat-benchmark">(avg: 70%)</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-value stat-better">2.7</span>
+                        <span class="stat-label">Rate/10k</span>
+                        <span class="stat-benchmark">(avg: 5.3)</span>
                     </div>
                     <div class="summary-stat">
                         <span class="stat-value">12</span>
@@ -2216,10 +2252,10 @@
         <h2 class="section-title">Outcomes</h2>
         <div class="outcome-grid">
             
-            <div class="outcome-item outcome-dismissed/rejected">
-                <span class="outcome-count">24</span>
-                <span class="outcome-label">Dismissed/Rejected</span>
-                <span class="outcome-pct">52%</span>
+            <div class="outcome-item outcome-factor-complied">
+                <span class="outcome-count">17</span>
+                <span class="outcome-label">Factor Complied</span>
+                <span class="outcome-pct">37%</span>
             </div>
             
             <div class="outcome-item outcome-pfeo-complied">
@@ -2234,6 +2270,12 @@
                 <span class="outcome-pct">15%</span>
             </div>
             
+            <div class="outcome-item outcome-rejected---procedural">
+                <span class="outcome-count">6</span>
+                <span class="outcome-label">Rejected - Procedural</span>
+                <span class="outcome-pct">13%</span>
+            </div>
+            
             <div class="outcome-item outcome-breach---no-order">
                 <span class="outcome-count">2</span>
                 <span class="outcome-label">Breach - No Order</span>
@@ -2244,6 +2286,12 @@
                 <span class="outcome-count">2</span>
                 <span class="outcome-label">PFEO Breached</span>
                 <span class="outcome-pct">4%</span>
+            </div>
+            
+            <div class="outcome-item outcome-withdrawn---settled">
+                <span class="outcome-count">1</span>
+                <span class="outcome-label">Withdrawn - Settled</span>
+                <span class="outcome-pct">2%</span>
             </div>
             
             <div class="outcome-item outcome-withdrawn">
@@ -2587,11 +2635,11 @@
                     
                     <tr class="case-row"
                         data-year="2025"
-                        data-outcome="dismissed"
+                        data-outcome="withdrawn"
                         data-case-id="FTS-HPC-PF-25-0043">
                         <td>2025-11-26</td>
                         <td><code>FTS/HPC/PF/25/0043</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-withdrawn">Withdrawn - Settled</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -2621,11 +2669,11 @@
                     
                     <tr class="case-row"
                         data-year="2025"
-                        data-outcome="dismissed"
+                        data-outcome="other"
                         data-case-id="FTS-HPC-PF-24-5227">
                         <td>2025-08-06</td>
                         <td><code>FTS/HPC/PF/24/5227</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-other">Factor Complied</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -2723,11 +2771,11 @@
                     
                     <tr class="case-row"
                         data-year="2024"
-                        data-outcome="dismissed"
+                        data-outcome="other"
                         data-case-id="FTS-HPC-LM-23-1622+1624">
                         <td>2024-08-14</td>
                         <td><code>FTS/HPC/LM/23/1622+1624</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-other">Factor Complied</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -2791,11 +2839,11 @@
                     
                     <tr class="case-row"
                         data-year="2024"
-                        data-outcome="dismissed"
+                        data-outcome="other"
                         data-case-id="FTS-HPC-PF-23-2549">
                         <td>2024-03-14</td>
                         <td><code>FTS/HPC/PF/23/2549</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-other">Factor Complied</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -2808,11 +2856,11 @@
                     
                     <tr class="case-row"
                         data-year="2024"
-                        data-outcome="dismissed"
+                        data-outcome="other"
                         data-case-id="FTS-HPC-PF-23-1977">
                         <td>2024-02-16</td>
                         <td><code>FTS/HPC/PF/23/1977</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-other">Factor Complied</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -2829,7 +2877,7 @@
                         data-case-id="FTS-HPC-PF-22-4244">
                         <td>2023-10-04</td>
                         <td><code>FTS/HPC/PF/22/4244</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-dismissed">Rejected - Procedural</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -2842,11 +2890,11 @@
                     
                     <tr class="case-row"
                         data-year="2023"
-                        data-outcome="dismissed"
+                        data-outcome="other"
                         data-case-id="FTS-HPC-PF-23-1149">
                         <td>2023-10-02</td>
                         <td><code>FTS/HPC/PF/23/1149</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-other">Factor Complied</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -2859,11 +2907,11 @@
                     
                     <tr class="case-row"
                         data-year="2023"
-                        data-outcome="dismissed"
+                        data-outcome="other"
                         data-case-id="FTS-HPC-PF-23-0742+0743">
                         <td>2023-09-28</td>
                         <td><code>FTS/HPC/PF/23/0742+0743</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-other">Factor Complied</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -2910,11 +2958,11 @@
                     
                     <tr class="case-row"
                         data-year="2023"
-                        data-outcome="dismissed"
+                        data-outcome="other"
                         data-case-id="FTS-HPC-PF-22-2960">
                         <td>2023-08-01</td>
                         <td><code>FTS/HPC/PF/22/2960</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-other">Factor Complied</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -2978,11 +3026,11 @@
                     
                     <tr class="case-row"
                         data-year="2023"
-                        data-outcome="dismissed"
+                        data-outcome="other"
                         data-case-id="FTS-HPC-PF-22-1885, FTS-HPC-PF-22-1887">
                         <td>2023-05-09</td>
                         <td><code>FTS/HPC/PF/22/1885, FTS/HPC/PF/22/1887</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-other">Factor Complied</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -2999,7 +3047,7 @@
                         data-case-id="FTS-HPC-LM-22-4257">
                         <td>2023-04-20</td>
                         <td><code>FTS/HPC/LM/22/4257</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-dismissed">Rejected - Procedural</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -3029,11 +3077,11 @@
                     
                     <tr class="case-row"
                         data-year="2023"
-                        data-outcome="dismissed"
+                        data-outcome="other"
                         data-case-id="FTS-HPC-LM-22-4137">
                         <td>2023-04-17</td>
                         <td><code>FTS/HPC/LM/22/4137</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-other">Factor Complied</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -3063,11 +3111,11 @@
                     
                     <tr class="case-row"
                         data-year="2023"
-                        data-outcome="dismissed"
+                        data-outcome="other"
                         data-case-id="FTS-HPC-LM-22-1797">
                         <td>2023-01-23</td>
                         <td><code>FTS/HPC/LM/22/1797</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-other">Factor Complied</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -3080,11 +3128,11 @@
                     
                     <tr class="case-row"
                         data-year="2022"
-                        data-outcome="dismissed"
+                        data-outcome="other"
                         data-case-id="FTS-HPC-PF-22-2047">
                         <td>2022-11-22</td>
                         <td><code>FTS/HPC/PF/22/2047</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-other">Factor Complied</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -3131,11 +3179,11 @@
                     
                     <tr class="case-row"
                         data-year="2022"
-                        data-outcome="dismissed"
+                        data-outcome="other"
                         data-case-id="FTS-HPC-PF-21-3005">
                         <td>2022-02-15</td>
                         <td><code>FTS/HPC/PF/21/3005</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-other">Factor Complied</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -3186,7 +3234,7 @@
                         data-case-id="FTS-HPC-PF-21-2287">
                         <td>2022-01-05</td>
                         <td><code>FTS/HPC/PF/21/2287</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-dismissed">Rejected - Procedural</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -3203,7 +3251,7 @@
                         data-case-id="FTS-HPC-PF-21-2285">
                         <td>2021-11-11</td>
                         <td><code>FTS/HPC/PF/21/2285</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-dismissed">Rejected - Procedural</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -3220,7 +3268,7 @@
                         data-case-id="FTS-HPC-PF-21-2286">
                         <td>2021-11-11</td>
                         <td><code>FTS/HPC/PF/21/2286</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-dismissed">Rejected - Procedural</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -3233,11 +3281,11 @@
                     
                     <tr class="case-row"
                         data-year="2021"
-                        data-outcome="dismissed"
+                        data-outcome="other"
                         data-case-id="FTS-HPC-PF-20-2250">
                         <td>2021-06-25</td>
                         <td><code>FTS/HPC/PF/20/2250</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-other">Factor Complied</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -3250,11 +3298,11 @@
                     
                     <tr class="case-row"
                         data-year="2021"
-                        data-outcome="dismissed"
+                        data-outcome="other"
                         data-case-id="FTS-HPC-PF-20-2224">
                         <td>2021-05-06</td>
                         <td><code>FTS/HPC/PF/20/2224</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-other">Factor Complied</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -3267,11 +3315,11 @@
                     
                     <tr class="case-row"
                         data-year="2021"
-                        data-outcome="dismissed"
+                        data-outcome="other"
                         data-case-id="FTS-HPC-LM-20-2058">
                         <td>2021-04-21</td>
                         <td><code>FTS/HPC/LM/20/2058</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-other">Factor Complied</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -3301,11 +3349,11 @@
                     
                     <tr class="case-row"
                         data-year="2021"
-                        data-outcome="dismissed"
+                        data-outcome="other"
                         data-case-id="FTS-HPC-PF-21-0052">
                         <td>2021-03-18</td>
                         <td><code>FTS/HPC/PF/21/0052</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-other">Factor Complied</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -3318,11 +3366,11 @@
                     
                     <tr class="case-row"
                         data-year="2021"
-                        data-outcome="dismissed"
+                        data-outcome="other"
                         data-case-id="FTS-HPC-PF-20-2270">
                         <td>2021-02-26</td>
                         <td><code>FTS/HPC/PF/20/2270</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-other">Factor Complied</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -3356,7 +3404,7 @@
                         data-case-id="FTS-HPC-LM-19-4008">
                         <td>2021-01-12</td>
                         <td><code>FTS/HPC/LM/19/4008</code></td>
-                        <td><span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span></td>
+                        <td><span class="outcome-pill outcome-dismissed">Rejected - Procedural</span></td>
                         <td>—</td>
                         <td>—</td>
                         <td>
@@ -3395,14 +3443,14 @@
             <div class="case-detail-card"
                  id="case-FTS-HPC-PF-25-0043"
                  data-year="2025"
-                 data-outcome="dismissed">
+                 data-outcome="withdrawn">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/PF/25/0043</code>
                         <span class="case-date">2025-11-26</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-withdrawn">Withdrawn - Settled</span>
                         
                         
                     </div>
@@ -3469,14 +3517,14 @@
             <div class="case-detail-card"
                  id="case-FTS-HPC-PF-24-5227"
                  data-year="2025"
-                 data-outcome="dismissed">
+                 data-outcome="other">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/PF/24/5227</code>
                         <span class="case-date">2025-08-06</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-other">Factor Complied</span>
                         
                         
                     </div>
@@ -3715,14 +3763,14 @@
             <div class="case-detail-card"
                  id="case-FTS-HPC-LM-23-1622+1624"
                  data-year="2024"
-                 data-outcome="dismissed">
+                 data-outcome="other">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/LM/23/1622+1624</code>
                         <span class="case-date">2024-08-14</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-other">Factor Complied</span>
                         
                         
                     </div>
@@ -3869,14 +3917,14 @@
             <div class="case-detail-card"
                  id="case-FTS-HPC-PF-23-2549"
                  data-year="2024"
-                 data-outcome="dismissed">
+                 data-outcome="other">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/PF/23/2549</code>
                         <span class="case-date">2024-03-14</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-other">Factor Complied</span>
                         
                         
                     </div>
@@ -3909,14 +3957,14 @@
             <div class="case-detail-card"
                  id="case-FTS-HPC-PF-23-1977"
                  data-year="2024"
-                 data-outcome="dismissed">
+                 data-outcome="other">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/PF/23/1977</code>
                         <span class="case-date">2024-02-16</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-other">Factor Complied</span>
                         
                         
                     </div>
@@ -3958,7 +4006,7 @@
                         <span class="case-date">2023-10-04</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-dismissed">Rejected - Procedural</span>
                         
                         
                     </div>
@@ -3985,14 +4033,14 @@
             <div class="case-detail-card"
                  id="case-FTS-HPC-PF-23-1149"
                  data-year="2023"
-                 data-outcome="dismissed">
+                 data-outcome="other">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/PF/23/1149</code>
                         <span class="case-date">2023-10-02</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-other">Factor Complied</span>
                         
                         
                     </div>
@@ -4019,14 +4067,14 @@
             <div class="case-detail-card"
                  id="case-FTS-HPC-PF-23-0742+0743"
                  data-year="2023"
-                 data-outcome="dismissed">
+                 data-outcome="other">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/PF/23/0742+0743</code>
                         <span class="case-date">2023-09-28</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-other">Factor Complied</span>
                         
                         
                     </div>
@@ -4131,14 +4179,14 @@
             <div class="case-detail-card"
                  id="case-FTS-HPC-PF-22-2960"
                  data-year="2023"
-                 data-outcome="dismissed">
+                 data-outcome="other">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/PF/22/2960</code>
                         <span class="case-date">2023-08-01</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-other">Factor Complied</span>
                         
                         
                     </div>
@@ -4283,14 +4331,14 @@
             <div class="case-detail-card"
                  id="case-FTS-HPC-PF-22-1885, FTS-HPC-PF-22-1887"
                  data-year="2023"
-                 data-outcome="dismissed">
+                 data-outcome="other">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/PF/22/1885, FTS/HPC/PF/22/1887</code>
                         <span class="case-date">2023-05-09</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-other">Factor Complied</span>
                         
                         
                     </div>
@@ -4324,7 +4372,7 @@
                         <span class="case-date">2023-04-20</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-dismissed">Rejected - Procedural</span>
                         
                         
                     </div>
@@ -4401,14 +4449,14 @@
             <div class="case-detail-card"
                  id="case-FTS-HPC-LM-22-4137"
                  data-year="2023"
-                 data-outcome="dismissed">
+                 data-outcome="other">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/LM/22/4137</code>
                         <span class="case-date">2023-04-17</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-other">Factor Complied</span>
                         
                         
                     </div>
@@ -4477,14 +4525,14 @@
             <div class="case-detail-card"
                  id="case-FTS-HPC-LM-22-1797"
                  data-year="2023"
-                 data-outcome="dismissed">
+                 data-outcome="other">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/LM/22/1797</code>
                         <span class="case-date">2023-01-23</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-other">Factor Complied</span>
                         
                         
                     </div>
@@ -4517,14 +4565,14 @@
             <div class="case-detail-card"
                  id="case-FTS-HPC-PF-22-2047"
                  data-year="2022"
-                 data-outcome="dismissed">
+                 data-outcome="other">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/PF/22/2047</code>
                         <span class="case-date">2022-11-22</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-other">Factor Complied</span>
                         
                         
                     </div>
@@ -4627,14 +4675,14 @@
             <div class="case-detail-card"
                  id="case-FTS-HPC-PF-21-3005"
                  data-year="2022"
-                 data-outcome="dismissed">
+                 data-outcome="other">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/PF/21/3005</code>
                         <span class="case-date">2022-02-15</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-other">Factor Complied</span>
                         
                         
                     </div>
@@ -4752,7 +4800,7 @@
                         <span class="case-date">2022-01-05</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-dismissed">Rejected - Procedural</span>
                         
                         
                     </div>
@@ -4792,7 +4840,7 @@
                         <span class="case-date">2021-11-11</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-dismissed">Rejected - Procedural</span>
                         
                         
                     </div>
@@ -4832,7 +4880,7 @@
                         <span class="case-date">2021-11-11</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-dismissed">Rejected - Procedural</span>
                         
                         
                     </div>
@@ -4865,14 +4913,14 @@
             <div class="case-detail-card"
                  id="case-FTS-HPC-PF-20-2250"
                  data-year="2021"
-                 data-outcome="dismissed">
+                 data-outcome="other">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/PF/20/2250</code>
                         <span class="case-date">2021-06-25</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-other">Factor Complied</span>
                         
                         
                     </div>
@@ -4899,14 +4947,14 @@
             <div class="case-detail-card"
                  id="case-FTS-HPC-PF-20-2224"
                  data-year="2021"
-                 data-outcome="dismissed">
+                 data-outcome="other">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/PF/20/2224</code>
                         <span class="case-date">2021-05-06</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-other">Factor Complied</span>
                         
                         
                     </div>
@@ -4933,14 +4981,14 @@
             <div class="case-detail-card"
                  id="case-FTS-HPC-LM-20-2058"
                  data-year="2021"
-                 data-outcome="dismissed">
+                 data-outcome="other">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/LM/20/2058</code>
                         <span class="case-date">2021-04-21</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-other">Factor Complied</span>
                         
                         
                     </div>
@@ -5013,14 +5061,14 @@
             <div class="case-detail-card"
                  id="case-FTS-HPC-PF-21-0052"
                  data-year="2021"
-                 data-outcome="dismissed">
+                 data-outcome="other">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/PF/21/0052</code>
                         <span class="case-date">2021-03-18</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-other">Factor Complied</span>
                         
                         
                     </div>
@@ -5055,14 +5103,14 @@
             <div class="case-detail-card"
                  id="case-FTS-HPC-PF-20-2270"
                  data-year="2021"
-                 data-outcome="dismissed">
+                 data-outcome="other">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/PF/20/2270</code>
                         <span class="case-date">2021-02-26</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-other">Factor Complied</span>
                         
                         
                     </div>
@@ -5140,7 +5188,7 @@
                         <span class="case-date">2021-01-12</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-dismissed">Dismissed/Rejected</span>
+                        <span class="outcome-pill outcome-dismissed">Rejected - Procedural</span>
                         
                         
                     </div>

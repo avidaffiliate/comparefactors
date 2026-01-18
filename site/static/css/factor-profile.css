@@ -1189,10 +1189,19 @@
     font-weight: 600;
 }
 
+/* Outcome badge colors - v3.0 detailed outcomes */
+/* Red: Breach outcomes (homeowner won, factor found at fault) */
+.case-outcome.breach { background: var(--red-100); color: var(--red-700); }
 .case-outcome.upheld { background: var(--red-100); color: var(--red-700); }
 .case-outcome.partial { background: var(--amber-100); color: var(--amber-700); }
+.case-outcome.pfeo, .case-outcome.pfeo-complied, .case-outcome.pfeo-proposed, .case-outcome.pfeo-pending, .case-outcome.pfeo-breached, .case-outcome.breach---no-order { background: var(--red-100); color: var(--red-700); }
+
+/* Green: Factor won on merits (homeowner lost) */
+.case-outcome.factor-complied { background: var(--green-100); color: var(--green-700); }
 .case-outcome.dismissed, .case-outcome.rejected, .case-outcome.dismissed-rejected { background: var(--green-100); color: var(--green-700); }
-.case-outcome.pfeo, .case-outcome.pfeo-complied, .case-outcome.pfeo-proposed, .case-outcome.pfeo-pending, .case-outcome.pfeo-breached, .case-outcome.breach, .case-outcome.breach---no-order { background: var(--red-100); color: var(--red-700); }
+
+/* Grey: Neutral outcomes (procedural, withdrawn, ambiguous) */
+.case-outcome.neutral { background: var(--slate-100); color: var(--slate-600); }
 .case-outcome.other, .case-outcome.withdrawn, .case-outcome.unknown { background: var(--slate-100); color: var(--slate-600); }
 
 .severity-badge {
