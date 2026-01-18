@@ -1085,27 +1085,30 @@ def step_7_calculate_scores():
             breach_count = sum(1 for c in cases if 'Breached' in (c['outcome'] or ''))
             complied_count = sum(1 for c in cases if 'Complied' in (c['outcome'] or ''))
             
-            # Calculate effective rate with weighting
+            # Calculate rates
+            # Raw rate: simple adverse count per 10k (for display)
+            raw_rate = (adverse_count / prop_count) * 10000 if prop_count > 0 else 0
+            # Weighted rate: for risk band calculation only (breaches count more)
             regular = adverse_count - complied_count - breach_count
             effective = regular + (complied_count * 1.5) + (breach_count * 3)
-            rate = (effective / prop_count) * 10000 if prop_count > 0 else 0
+            weighted_rate = (effective / prop_count) * 10000 if prop_count > 0 else 0
             
-            # Determine risk band
+            # Determine risk band (using weighted_rate for severity)
             if prop_count < MIN_PROPERTIES:
                 tier = 'LIMITED'  # Limited data (< 50 properties)
             elif adverse_count == 0:
                 tier = 'CLEAN'
             elif breach_count >= 2:
                 # 2+ breaches = minimum ORANGE
-                tier = 'RED' if rate > ORANGE_MAX else 'ORANGE'
+                tier = 'RED' if weighted_rate > ORANGE_MAX else 'ORANGE'
             elif adverse_count <= 2 and breach_count == 0:
                 # 1-2 cases, no breach = capped GREEN
                 tier = 'GREEN'
             else:
-                # 3+ cases OR 1 breach: use rate
-                if rate <= GREEN_MAX:
+                # 3+ cases OR 1 breach: use weighted rate
+                if weighted_rate <= GREEN_MAX:
                     tier = 'GREEN'
-                elif rate <= ORANGE_MAX:
+                elif weighted_rate <= ORANGE_MAX:
                     tier = 'ORANGE'
                 else:
                     tier = 'RED'
@@ -1141,7 +1144,7 @@ def step_7_calculate_scores():
                     has_active_pfeo = ?
                 WHERE registration_number = ?
             """, [
-                total_case_count, len(cases), total_upheld, pfeo_count, compensation, round(rate, 2),
+                total_case_count, len(cases), total_upheld, pfeo_count, compensation, round(raw_rate, 2),
                 len(recent_cases), tier, 1 if has_unresolved else 0, pf
             ])
         

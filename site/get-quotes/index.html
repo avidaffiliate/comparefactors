@@ -9,8 +9,8 @@
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
     <link rel="manifest" href="/site.webmanifest">
-    <title>Get Quotes from Property Factors | Compare Factors Scotland</title>
-    <meta name="description" content="Get free, no-obligation quotes from registered property factors serving your area in Scotland.">
+    <title>Get Quotes — Coming Soon | Compare Factors Scotland</title>
+    <meta name="description" content="Thinking about switching factors? We're exploring whether Compare Factors can help homeowners request competitive quotes.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
@@ -49,48 +49,28 @@
         .page-title { font-family: var(--font-display); font-size: 2.25rem; font-weight: 700; color: var(--navy-950); margin: 0 0 12px 0; }
         .page-desc { font-size: 1.1rem; color: var(--slate-600); margin: 0; max-width: 600px; margin-left: auto; margin-right: auto; }
         
-        .content-grid { display: grid; grid-template-columns: 1fr 380px; gap: 48px; align-items: start; }
-        
-        /* Benefits section */
-        .benefits { background: white; border: 1px solid var(--slate-200); border-radius: 12px; padding: 32px; }
-        .benefits-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: var(--navy-950); margin: 0 0 20px 0; }
-        .benefit-item { display: flex; gap: 12px; margin-bottom: 20px; }
-        .benefit-item:last-child { margin-bottom: 0; }
-        .benefit-icon { width: 24px; height: 24px; background: var(--green-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; color: var(--green-600); font-size: 0.8rem; }
-        .benefit-text { font-size: 0.95rem; }
-        .benefit-text strong { color: var(--navy-950); }
-        
-        .how-it-works { margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--slate-100); }
-        .how-title { font-weight: 600; color: var(--navy-950); margin-bottom: 16px; font-size: 0.95rem; }
-        .step { display: flex; gap: 12px; margin-bottom: 16px; }
-        .step:last-child { margin-bottom: 0; }
-        .step-num { width: 24px; height: 24px; background: var(--slate-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 0.75rem; font-weight: 600; color: var(--slate-600); }
-        .step-text { font-size: 0.9rem; color: var(--slate-600); }
-        
-        /* Form section */
-        .form-card { background: white; border: 1px solid var(--slate-200); border-radius: 12px; padding: 28px; position: sticky; top: 88px; }
-        .form-title { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; color: var(--navy-950); margin: 0 0 20px 0; }
-        
+        .content-card { background: white; border: 1px solid var(--slate-200); border-radius: 12px; padding: 32px; max-width: 640px; margin: 0 auto; }
+        .intro-text { font-size: 1.05rem; color: var(--slate-600); margin: 0 0 32px 0; line-height: 1.7; }
+
+        .question-section { margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--slate-100); }
+        .question-section:last-of-type { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+        .question-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: var(--navy-950); margin: 0 0 8px 0; }
+        .question-desc { font-size: 0.95rem; color: var(--slate-600); margin: 0; line-height: 1.6; }
+
+        .form-section { margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--slate-100); }
+        .form-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: var(--navy-950); margin: 0 0 20px 0; }
+
         .form-group { margin-bottom: 16px; }
         .form-label { display: block; font-size: 0.9rem; font-weight: 500; color: var(--slate-700); margin-bottom: 6px; }
-        .form-input, .form-select, .form-textarea { width: 100%; padding: 10px 14px; font-size: 1rem; font-family: inherit; border: 1px solid var(--slate-200); border-radius: 8px; background: white; color: var(--slate-700); transition: border-color 0.2s, box-shadow 0.2s; }
-        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--navy-800); box-shadow: 0 0 0 3px rgba(26, 58, 92, 0.1); }
-        .form-input::placeholder { color: var(--slate-500); }
-        .form-textarea { resize: vertical; min-height: 80px; }
-        .form-select { cursor: pointer; }
-        
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        
-        .form-checkbox { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 16px; }
-        .form-checkbox input { width: 18px; height: 18px; margin-top: 2px; cursor: pointer; }
-        .form-checkbox label { font-size: 0.85rem; color: var(--slate-600); cursor: pointer; }
-        .form-checkbox a { color: var(--navy-900); }
+        .form-label .optional { font-weight: 400; color: var(--slate-500); }
+        .form-input, .form-textarea { width: 100%; padding: 10px 14px; font-size: 1rem; font-family: inherit; border: 1px solid var(--slate-200); border-radius: 8px; background: white; color: var(--slate-700); transition: border-color 0.2s, box-shadow 0.2s; }
+        .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--navy-800); box-shadow: 0 0 0 3px rgba(26, 58, 92, 0.1); }
+        .form-input::placeholder, .form-textarea::placeholder { color: var(--slate-500); }
+        .form-textarea { resize: vertical; min-height: 100px; }
         
         .submit-btn { width: 100%; padding: 14px 24px; background: var(--navy-950); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.2s; }
         .submit-btn:hover { background: var(--navy-800); }
-        
-        .form-note { font-size: 0.8rem; color: var(--slate-500); text-align: center; margin-top: 12px; }
-        
+
         .back-link { display: inline-block; margin-top: 32px; color: var(--navy-900); font-weight: 500; }
         .site-footer { background: var(--navy-950); color: rgba(255,255,255,0.7); padding: 48px 0 24px; margin-top: 64px; }
         .footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
@@ -103,14 +83,12 @@
         .footer-links a { color: rgba(255,255,255,0.7); font-size: 0.9rem; }
         .footer-links a:hover { color: white; }
         .footer-bottom { padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; font-size: 0.8rem; }
-        @media (max-width: 768px) { 
-            .nav { display: none; } 
-            .burger { display: flex; } 
-            .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; } 
+        @media (max-width: 768px) {
+            .nav { display: none; }
+            .burger { display: flex; }
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
             .footer-bottom { flex-direction: column; gap: 8px; }
-            .content-grid { grid-template-columns: 1fr; }
-            .form-card { position: static; order: -1; }
-            .form-row { grid-template-columns: 1fr; }
+            .content-card { padding: 24px; }
         }
     </style>
 <style>
@@ -169,124 +147,49 @@
     
     <main class="main">
         <div class="page-header">
-            <h1 class="page-title">Get Quotes from Property Factors</h1>
-            <p class="page-desc">Tell us about your property and we'll connect you with registered factors serving your area. Free, no-obligation quotes.</p>
+            <h1 class="page-title">Get Quotes — Coming Soon</h1>
+            <p class="page-desc">Thinking about switching factors? I'm exploring whether Compare Factors can help homeowners request competitive quotes from vetted property factors.</p>
         </div>
-        
-        <div class="content-grid">
-            <div class="benefits">
-                <h2 class="benefits-title">Why use our service?</h2>
-                
-                <div class="benefit-item">
-                    <div class="benefit-icon">✓</div>
-                    <div class="benefit-text"><strong>Only registered factors.</strong> Every factor we work with is on the Scottish Property Factor Register—it's a legal requirement.</div>
-                </div>
-                
-                <div class="benefit-item">
-                    <div class="benefit-icon">✓</div>
-                    <div class="benefit-text"><strong>We've done the research.</strong> We check tribunal records, reviews, and company data so you can compare factors with confidence.</div>
-                </div>
-                
-                <div class="benefit-item">
-                    <div class="benefit-icon">✓</div>
-                    <div class="benefit-text"><strong>No pressure, no obligation.</strong> Factors quote based on your requirements. You're under no obligation to proceed with any of them.</div>
-                </div>
-                
-                <div class="benefit-item">
-                    <div class="benefit-icon">✓</div>
-                    <div class="benefit-text"><strong>Completely free.</strong> Our service costs you nothing. Factors pay us a small fee when they receive your details.</div>
-                </div>
-                
-                <div class="how-it-works">
-                    <div class="how-title">How it works</div>
-                    <div class="step">
-                        <div class="step-num">1</div>
-                        <div class="step-text">Tell us about your property and what you're looking for</div>
-                    </div>
-                    <div class="step">
-                        <div class="step-num">2</div>
-                        <div class="step-text">We match you with up to 5 factors covering your area</div>
-                    </div>
-                    <div class="step">
-                        <div class="step-num">3</div>
-                        <div class="step-text">Factors contact you directly with their quotes</div>
-                    </div>
-                    <div class="step">
-                        <div class="step-num">4</div>
-                        <div class="step-text">Compare and choose the best fit for your development</div>
-                    </div>
-                </div>
+
+        <div class="content-card">
+            <div class="question-section">
+                <h2 class="question-title">Would you use this?</h2>
+                <p class="question-desc">If you're considering switching and would want help getting quotes, let me know — I'll prioritise building it.</p>
             </div>
-            
-            <div class="form-card">
-                <h2 class="form-title">Request quotes</h2>
-                <form id="quoteForm" name="quote" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-                    <input type="hidden" name="form-name" value="quote">
+
+            <div class="question-section">
+                <h2 class="question-title">Know a good factor?</h2>
+                <p class="question-desc">If you've had a genuinely positive experience with a property factor and think they'd welcome referrals from homeowners actively looking to switch, I'd love to hear about them.</p>
+            </div>
+
+            <div class="form-section">
+                <h2 class="form-title">Get in touch</h2>
+                <form id="quoteForm" name="quote-interest" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+                    <input type="hidden" name="form-name" value="quote-interest">
                     <p class="hidden" style="display:none;">
                         <label>Don't fill this out if you're human: <input name="bot-field"></label>
                     </p>
+
                     <div class="form-group">
-                        <label class="form-label" for="postcode">Property postcode</label>
-                        <input type="text" id="postcode" name="postcode" class="form-input" placeholder="e.g. EH1 1AA" required>
+                        <label class="form-label" for="name">Name <span class="optional">(optional)</span></label>
+                        <input type="text" id="name" name="name" class="form-input">
                     </div>
-                    
+
                     <div class="form-group">
-                        <label class="form-label" for="units">Number of units in development</label>
-                        <select id="units" name="units" class="form-select" required>
-                            <option value="">Select...</option>
-                            <option value="2-10">2–10 units</option>
-                            <option value="11-25">11–25 units</option>
-                            <option value="26-50">26–50 units</option>
-                            <option value="51-100">51–100 units</option>
-                            <option value="100+">More than 100 units</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="situation">Your situation</label>
-                        <select id="situation" name="situation" class="form-select" required>
-                            <option value="">Select...</option>
-                            <option value="switching">Looking to switch factors</option>
-                            <option value="new-build">New build development</option>
-                            <option value="first-time">First time appointing a factor</option>
-                            <option value="self-managed">Currently self-managed</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="details">Anything else we should know? (optional)</label>
-                        <textarea id="details" name="details" class="form-textarea" placeholder="e.g. specific services needed, issues with current factor, timing..."></textarea>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="name">Your name</label>
-                            <input type="text" id="name" name="name" class="form-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="phone">Phone number</label>
-                            <input type="tel" id="phone" name="phone" class="form-input" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="email">Email address</label>
+                        <label class="form-label" for="email">Email</label>
                         <input type="email" id="email" name="email" class="form-input" required>
                     </div>
-                    
-                    <div class="form-checkbox">
-                        <input type="checkbox" id="consent" name="consent" required>
-                        <label for="consent">I agree to my details being shared with up to 5 property factors and accept the <a href="/privacy/">privacy policy</a></label>
+
+                    <div class="form-group">
+                        <label class="form-label" for="message">Message</label>
+                        <textarea id="message" name="message" class="form-textarea" placeholder="Tell me if you'd use this service, or recommend a good factor..." required></textarea>
                     </div>
-                    
-                    <button type="submit" class="submit-btn">Get free quotes</button>
-                    
-                    <p class="form-note">We typically match you within 1 working day</p>
+
+                    <button type="submit" class="submit-btn">Send message</button>
                 </form>
             </div>
         </div>
-        
+
         <a href="/" class="back-link">← Back to homepage</a>
     </main>
     

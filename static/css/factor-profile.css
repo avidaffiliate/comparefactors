@@ -1248,6 +1248,24 @@
 .case-link { font-size: var(--text-sm); color: var(--blue-600); text-decoration: none; }
 .case-link:hover { text-decoration: underline; }
 
+.case-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-md);
+}
+
+.category-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--slate-600);
+    background: var(--slate-100);
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
 .show-more-btn {
     display: block;
     width: 100%;
