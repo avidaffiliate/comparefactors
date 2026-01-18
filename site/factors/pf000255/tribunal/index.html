@@ -1565,16 +1565,17 @@
     white-space: nowrap;
 }
 
-/* Red: Breach outcomes */
+/* Red: Breach outcomes (homeowner won) */
+.outcome-pill.outcome-breach { background: var(--red-50); color: var(--red-700); }
 .outcome-pill.outcome-upheld { background: var(--red-50); color: var(--red-700); }
 .outcome-pill.outcome-partial { background: var(--amber-50); color: var(--amber-700); }
-.outcome-pill.outcome-pfeo, .outcome-pill.outcome-breach { background: var(--red-50); color: var(--red-700); }
-/* Green: Factor won */
+/* Green: Factor won on merits */
+.outcome-pill.outcome-factor-won { background: var(--green-50); color: var(--green-700); }
 .outcome-pill.outcome-dismissed { background: var(--green-50); color: var(--green-700); }
-.outcome-pill.outcome-factor-complied { background: var(--green-50); color: var(--green-700); }
-/* Grey: Neutral */
+/* Grey: Procedural/Withdrawn/Other */
+.outcome-pill.outcome-procedural { background: var(--bg-muted); color: var(--text-muted); }
 .outcome-pill.outcome-withdrawn { background: var(--bg-muted); color: var(--text-muted); }
-.outcome-pill.outcome-neutral, .outcome-pill.outcome-other { background: var(--bg-muted); color: var(--text-muted); }
+.outcome-pill.outcome-other { background: var(--bg-muted); color: var(--text-muted); }
 
 .pfeo-badge {
     display: inline-block;
@@ -2111,7 +2112,7 @@
         <div class="header-main">
             <a href="/factors/pf000255/" class="back-link">← Aberdeen City Council</a>
             <h1>Tribunal Record</h1>
-            <p class="last-updated">2021–2026 · Updated 2026-01-17</p>
+            <p class="last-updated">2021–2026 · Updated 2026-01-18</p>
         </div>
     </header>
 
@@ -2360,12 +2361,13 @@
                 <span>Outcome:</span>
                 <select id="filter-outcome">
                     <option value="">All Outcomes</option>
-                    <option value="upheld">Upheld</option>
-                    <option value="partial">Partially Upheld</option>
-                    <option value="dismissed">Dismissed/Rejected</option>
-                    <option value="withdrawn">Withdrawn</option>
+                    <option value="breach">Breach Found</option>
+                    <option value="factor-won">Factor Won</option>
+                    <option value="procedural">Procedural</option>
+                    <option value="withdrawn">Withdrawn/Settled</option>
                 </select>
             </label>
+            
             <button type="button" id="clear-filters" class="clear-filters-btn" style="display: none;">Clear filters</button>
         </div>
 
@@ -2387,13 +2389,18 @@
                     
                     
                     
+                    
+                    
+                        
+                    
                     <tr class="case-row"
                         data-year="2022"
-                        data-outcome="other"
+                        data-outcome="breach"
+                        data-complaint=""
                         data-case-id="FTS-HPC-PF-21-2375">
                         <td>2022-07-06</td>
                         <td><code>FTS/HPC/PF/21/2375</code></td>
-                        <td><span class="outcome-pill outcome-other">PFEO Pending</span></td>
+                        <td><span class="outcome-pill outcome-breach">PFEO Pending</span></td>
                         <td><span class="pfeo-badge">PFEO</span></td>
                         <td>—</td>
                         <td>
@@ -2429,17 +2436,22 @@
             
             
             
+            
+            
+                
+            
             <div class="case-detail-card"
                  id="case-FTS-HPC-PF-21-2375"
                  data-year="2022"
-                 data-outcome="other">
+                 data-outcome="breach"
+                 data-complaint="">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/PF/21/2375</code>
                         <span class="case-date">2022-07-06</span>
                     </div>
                     <div class="case-detail-badges">
-                        <span class="outcome-pill outcome-other">PFEO Pending</span>
+                        <span class="outcome-pill outcome-breach">PFEO Pending</span>
                         
                         <span class="pfeo-badge">PFEO Issued</span>
                         
@@ -2508,7 +2520,7 @@
 
                 <h3>Data Updates</h3>
                 <ul>
-                    <li><strong>Last updated:</strong> 2026-01-17</li>
+                    <li><strong>Last updated:</strong> 2026-01-18</li>
                     <li><strong>Next update:</strong> </li>
                 </ul>
                 <p>We update quarterly. For the latest decisions, <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions" target="_blank" rel="noopener">search the HPC directly →</a></p>
@@ -2573,6 +2585,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const yearFilter = document.getElementById('filter-year');
     const outcomeFilter = document.getElementById('filter-outcome');
+    const complaintFilter = document.getElementById('filter-complaint');
     const clearFiltersBtn = document.getElementById('clear-filters');
     const noResultsMsg = document.getElementById('no-results');
     const resultsCount = document.getElementById('results-count');
@@ -2582,15 +2595,18 @@ document.addEventListener('DOMContentLoaded', function() {
     function applyFilters() {
         const yearVal = yearFilter ? yearFilter.value : '';
         const outcomeVal = outcomeFilter ? outcomeFilter.value : '';
+        const complaintVal = complaintFilter ? complaintFilter.value : '';
         let visibleCount = 0;
 
         // Filter table rows
         rows.forEach(row => {
             const rowYear = row.dataset.year || '';
             const rowOutcome = row.dataset.outcome || '';
+            const rowComplaint = row.dataset.complaint || '';
             const yearMatch = !yearVal || rowYear === yearVal;
             const outcomeMatch = !outcomeVal || rowOutcome === outcomeVal;
-            const visible = yearMatch && outcomeMatch;
+            const complaintMatch = !complaintVal || rowComplaint.split(',').includes(complaintVal);
+            const visible = yearMatch && outcomeMatch && complaintMatch;
             row.style.display = visible ? '' : 'none';
             if (visible) visibleCount++;
         });
@@ -2599,9 +2615,11 @@ document.addEventListener('DOMContentLoaded', function() {
         detailCards.forEach(card => {
             const cardYear = card.dataset.year || '';
             const cardOutcome = card.dataset.outcome || '';
+            const cardComplaint = card.dataset.complaint || '';
             const yearMatch = !yearVal || cardYear === yearVal;
             const outcomeMatch = !outcomeVal || cardOutcome === outcomeVal;
-            card.style.display = (yearMatch && outcomeMatch) ? '' : 'none';
+            const complaintMatch = !complaintVal || cardComplaint.split(',').includes(complaintVal);
+            card.style.display = (yearMatch && outcomeMatch && complaintMatch) ? '' : 'none';
         });
 
         // Show/hide no results message
@@ -2612,7 +2630,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update results count
         if (resultsCount) {
             const totalCount = rows.length;
-            if (yearVal || outcomeVal) {
+            if (yearVal || outcomeVal || complaintVal) {
                 resultsCount.textContent = `Showing ${visibleCount} of ${totalCount} cases`;
             } else {
                 resultsCount.textContent = '';
@@ -2621,7 +2639,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Show/hide clear filters button
         if (clearFiltersBtn) {
-            clearFiltersBtn.style.display = (yearVal || outcomeVal) ? '' : 'none';
+            clearFiltersBtn.style.display = (yearVal || outcomeVal || complaintVal) ? '' : 'none';
         }
     }
 
@@ -2632,12 +2650,16 @@ document.addEventListener('DOMContentLoaded', function() {
     if (outcomeFilter) {
         outcomeFilter.addEventListener('change', applyFilters);
     }
+    if (complaintFilter) {
+        complaintFilter.addEventListener('change', applyFilters);
+    }
 
     // Clear filters
     if (clearFiltersBtn) {
         clearFiltersBtn.addEventListener('click', function() {
             if (yearFilter) yearFilter.value = '';
             if (outcomeFilter) outcomeFilter.value = '';
+            if (complaintFilter) complaintFilter.value = '';
             applyFilters();
         });
     }
@@ -2651,9 +2673,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const targetId = this.getAttribute('href').substring(1);
             const targetCard = document.getElementById(targetId);
             if (targetCard) {
-                // Make sure the card is visible (clear outcome filter if needed)
+                // Make sure the card is visible (clear filters if needed)
                 if (targetCard.style.display === 'none') {
                     if (outcomeFilter) outcomeFilter.value = '';
+                    if (complaintFilter) complaintFilter.value = '';
                     applyFilters();
                 }
                 // Scroll to card
