@@ -1422,7 +1422,8 @@ def _generate_comparison_page(conn, site_dir: Path, area_list, generated_date: s
     """Generate the /compare/ page for side-by-side factor comparison."""
     import json
 
-    # Get all active commercial factors with postcode data, including WSS
+    # Get all active factors with postcode data, including WSS
+    # RSL/LA factors are included but will only show when user searches by name
     cursor = conn.execute('''
         SELECT f.registration_number, f.name, f.status, f.factor_type, f.risk_band,
                f.tribunal_case_count, f.tribunal_case_count_5yr, f.tribunal_cases_upheld,
@@ -1443,7 +1444,6 @@ def _generate_comparison_page(conn, site_dir: Path, area_list, generated_date: s
         LEFT JOIN companies c ON f.registration_number = c.registration_number
         LEFT JOIN wss w ON f.registration_number = w.registration_number
         WHERE f.status = 'registered'
-        AND (f.factor_type IS NULL OR f.factor_type NOT IN ('Registered Social Landlord', 'Local Authority'))
         AND f.postcode_areas IS NOT NULL AND f.postcode_areas != ''
         ORDER BY f.name
     ''')
@@ -1455,6 +1455,7 @@ def _generate_comparison_page(conn, site_dir: Path, area_list, generated_date: s
 
     for f in factors:
         postcodes = set(p.strip() for p in (f['postcode_areas'] or '').split(','))
+        is_rsl_la = f['factor_type'] in ('Registered Social Landlord', 'Local Authority')
 
         # Determine which areas this factor serves
         factor_areas = []
@@ -1462,7 +1463,10 @@ def _generate_comparison_page(conn, site_dir: Path, area_list, generated_date: s
             area_postcodes = set(AREA_DEFINITIONS[area['slug']]['postcodes'])
             if postcodes & area_postcodes:
                 factor_areas.append(area['slug'])
-                area_factors[area['slug']].append(f['registration_number'])
+                # Only add commercial factors to area_factors (for "Popular in area" suggestions)
+                # RSL/LA factors are searchable but won't appear in area suggestions
+                if not is_rsl_la:
+                    area_factors[area['slug']].append(f['registration_number'])
 
         # Summarize coverage for display
         areas = set()
@@ -1533,6 +1537,7 @@ def _generate_comparison_page(conn, site_dir: Path, area_list, generated_date: s
         factor_data[f['registration_number']] = {
             'name': f['name'] or 'Unknown',
             'registration_number': f['registration_number'],
+            'factor_type': f['factor_type'],  # RSL, Local Authority, or None (commercial)
             'risk_band': f['risk_band'] or 'CLEAN',
             'tribunal_cases': f['tribunal_case_count'] or 0,
             'cases_5yr': cases_5yr,
@@ -1908,7 +1913,7 @@ function addFactor(id){{if(selectedFactors.length>=4||selectedFactors.includes(i
 function removeFactor(id){{selectedFactors=selectedFactors.filter(f=>f!==id);updateUrl();renderSelectedFactors();renderComparison()}}
 function renderSelectedFactors(){{const container=document.getElementById('selectedFactors');let html='';selectedFactors.forEach(id=>{{const f=factorData[id];if(f)html+=`<span class="selected-factor">${{f.name}} <button class="remove-btn" onclick="removeFactor('${{id}}')">&times;</button></span>`}});if(selectedFactors.length<4)html+=`<span class="add-factor-slot" onclick="document.getElementById('factorSearch').focus()">+ Add factor</span>`;if(selectedFactors.length>0)html+=`<span class="slot-limit">${{selectedFactors.length}}/4 selected</span>`;container.innerHTML=html}}
 const searchInput=document.getElementById('factorSearch');const autocompleteList=document.getElementById('autocompleteList');const areaFilter=document.getElementById('areaFilter');let autocompleteIndex=-1;
-function getFilteredFactors(query){{const area=areaFilter.value;if(!area)return[];let ids=areaFactors[area]||[];ids=ids.filter(id=>!selectedFactors.includes(id));if(query){{const q=query.toLowerCase();ids=ids.filter(id=>factorData[id]?.name.toLowerCase().includes(q));return ids.slice(0,10).map(id=>factorData[id]).filter(f=>f)}}else{{const factors=ids.map(id=>factorData[id]).filter(f=>f);factors.sort((a,b)=>(b.properties||0)-(a.properties||0));return factors.slice(0,6).map(f=>{{f._suggested=true;return f}})}}}}
+function getFilteredFactors(query){{const area=areaFilter.value;if(!area)return[];if(query){{const q=query.toLowerCase();const allIds=Object.keys(factorData).filter(id=>!selectedFactors.includes(id)&&factorData[id]?.name.toLowerCase().includes(q));allIds.sort((a,b)=>{{const aInArea=(areaFactors[area]||[]).includes(a)?0:1;const bInArea=(areaFactors[area]||[]).includes(b)?0:1;if(aInArea!==bInArea)return aInArea-bInArea;return(factorData[b]?.properties||0)-(factorData[a]?.properties||0)}});return allIds.slice(0,10).map(id=>factorData[id]).filter(f=>f)}}else{{let ids=areaFactors[area]||[];ids=ids.filter(id=>!selectedFactors.includes(id));const factors=ids.map(id=>factorData[id]).filter(f=>f);factors.sort((a,b)=>(b.properties||0)-(a.properties||0));return factors.slice(0,6).map(f=>{{f._suggested=true;return f}})}}}}
 function getSuggestionLabel(f){{return f._suggested?`<span class="suggestion-badge">Popular</span>`:'';}}
 function renderAutocomplete(factors){{if(factors.length===0){{autocompleteList.classList.remove('active');return}}const isSuggested=factors[0]?._suggested;let html=isSuggested?'<div class="autocomplete-header">Popular in this area</div>':'';factors.forEach((f,i)=>{{html+=`<div class="autocomplete-item${{i===autocompleteIndex?' selected':''}}" data-id="${{f.registration_number}}"><span class="factor-name">${{f.name}}</span><span class="factor-meta">${{f.city}} · ${{f.properties?f.properties.toLocaleString():0}} props</span></div>`}});autocompleteList.innerHTML=html;autocompleteList.classList.add('active');autocompleteList.querySelectorAll('.autocomplete-item').forEach(el=>{{el.addEventListener('click',()=>{{addFactor(el.dataset.id);searchInput.value='';autocompleteList.classList.remove('active')}})}})}}
 searchInput.addEventListener('input',e=>{{autocompleteIndex=-1;renderAutocomplete(getFilteredFactors(e.target.value))}});
