@@ -70,10 +70,10 @@ Uses client-side filtering for fast interaction
     {% set type_class = 'type-other' %}
     {% set type_label = 'Other' %}
 {% endif %}
-<div class="factor-card" 
-     data-name="{{ f.name|lower }}" 
-     data-risk="{{ f.risk_band or 'CLEAN' }}" 
-     data-expired="{{ '1' if is_expired else '0' }}" 
+<div class="factor-card"
+     data-name="{{ f.name|lower }}"
+     data-risk="{{ f.risk_band or 'CLEAN' }}"
+     data-expired="{{ '1' if is_expired else '0' }}"
      data-rsl="{{ '1' if is_rsl else '0' }}"
      data-properties="{{ f.property_count or 0 }}"
      data-postcodes="{{ f.postcode_count or 0 }}"
