@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P9QSNCJEBQ"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-P9QSNCJEBQ');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<title>Contribute Pricing Data | Compare Factors Scotland</title>
+<meta name="description" content="Help us build fee benchmarks for Scottish property factors. Share your Written Statement of Service or invoice data anonymously.">
+<link rel="canonical" href="https://comparefactors.co.uk/contribute/">
+<link rel="preload" href="/static/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/static/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Fraunces';font-style:normal;font-weight:400 700;font-display:swap;src:url('/static/fonts/fraunces-latin.woff2') format('woff2')}
+@font-face{font-family:'Source Sans 3';font-style:normal;font-weight:400 700;font-display:swap;src:url('/static/fonts/source-sans-3-latin.woff2') format('woff2')}
+:root{--navy-950:#0a0f1a;--navy-900:#0f172a;--navy-800:#1e293b;--slate-600:#475569;--slate-500:#64748b;--slate-400:#94a3b8;--slate-300:#cbd5e1;--slate-200:#e2e8f0;--slate-100:#f1f5f9;--slate-50:#f8fafc;--white:#ffffff;--green-600:#16a34a;--green-100:#dcfce7;--blue-700:#1d4ed8;--blue-600:#2563eb;--blue-100:#dbeafe;--font-display:'Fraunces',Georgia,serif;--font-body:'Source Sans 3',-apple-system,BlinkMacSystemFont,sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);font-size:16px;line-height:1.6;color:var(--navy-800);background:var(--slate-50);-webkit-font-smoothing:antialiased}
+a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
+
+.site-header{background:var(--white);border-bottom:1px solid var(--slate-200);position:sticky;top:0;z-index:100}
+.header-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:68px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:1.25rem;font-weight:600;color:var(--navy-950);text-decoration:none}.logo:hover{text-decoration:none}
+.logo-mark{width:32px;height:32px;background:var(--navy-950);border-radius:6px;display:flex;align-items:center;justify-content:center;color:white;font-size:0.75rem;font-weight:700}
+.nav{display:flex;align-items:center;gap:24px}
+.nav-link{font-size:0.9rem;font-weight:500;color:var(--slate-600);text-decoration:none;transition:color 0.15s}.nav-link:hover{color:var(--navy-950);text-decoration:none}
+.nav-cta{background:var(--navy-950);color:white;padding:8px 16px;border-radius:6px;font-size:0.9rem;font-weight:600;text-decoration:none;transition:background 0.15s}.nav-cta:hover{background:var(--navy-800);text-decoration:none}
+
+.page-container{max-width:720px;margin:0 auto;padding:48px 24px 96px}
+.page-title{font-family:var(--font-display);font-size:2.25rem;font-weight:700;color:var(--navy-950);margin:0 0 16px}
+.page-intro{font-size:1.1rem;color:var(--slate-600);margin:0 0 32px;line-height:1.7}
+
+.info-box{background:var(--blue-100);border-radius:12px;padding:20px 24px;margin-bottom:32px}
+.info-box h3{font-family:var(--font-display);font-size:1rem;font-weight:600;color:var(--navy-950);margin:0 0 8px}
+.info-box p{font-size:0.95rem;color:var(--navy-800);margin:0;line-height:1.6}
+.info-box ul{margin:12px 0 0 20px;font-size:0.95rem;color:var(--navy-800)}
+.info-box li{margin-bottom:6px}
+
+.form-card{background:var(--white);border:1px solid var(--slate-200);border-radius:16px;padding:32px;margin-bottom:32px}
+.form-section{margin-bottom:28px}
+.form-section:last-child{margin-bottom:0}
+.form-section-title{font-family:var(--font-display);font-size:1.1rem;font-weight:600;color:var(--navy-950);margin:0 0 16px;padding-bottom:12px;border-bottom:1px solid var(--slate-100)}
+
+.form-group{margin-bottom:20px}
+.form-group:last-child{margin-bottom:0}
+.form-label{display:block;font-size:0.9rem;font-weight:600;color:var(--navy-800);margin-bottom:6px}
+.form-hint{font-size:0.8rem;color:var(--slate-500);margin-top:4px}
+.form-input,.form-select,.form-textarea{width:100%;padding:12px 14px;border:1px solid var(--slate-200);border-radius:8px;font-size:1rem;font-family:var(--font-body);transition:border-color 0.15s,box-shadow 0.15s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--blue-600);box-shadow:0 0 0 3px var(--blue-100)}
+.form-textarea{min-height:120px;resize:vertical}
+.form-input-short{max-width:200px}
+
+.radio-group{display:flex;gap:16px;flex-wrap:wrap}
+.radio-option{display:flex;align-items:center;gap:8px;cursor:pointer}
+.radio-option input{width:18px;height:18px;cursor:pointer;accent-color:var(--blue-600)}
+.radio-option span{font-size:0.95rem;color:var(--navy-800)}
+
+.checkbox-option{display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+.checkbox-option input{width:18px;height:18px;margin-top:2px;cursor:pointer;accent-color:var(--blue-600)}
+.checkbox-option span{font-size:0.95rem;color:var(--navy-800);line-height:1.5}
+
+.file-upload{border:2px dashed var(--slate-200);border-radius:8px;padding:24px;text-align:center;transition:border-color 0.15s,background 0.15s;cursor:pointer}
+.file-upload:hover{border-color:var(--slate-300);background:var(--slate-50)}
+.file-upload input{display:none}
+.file-upload-text{font-size:0.95rem;color:var(--slate-600)}
+.file-upload-text strong{color:var(--blue-600)}
+.file-name{margin-top:8px;font-size:0.85rem;color:var(--green-600);font-weight:500}
+
+.submit-btn{width:100%;padding:16px 24px;background:var(--navy-950);color:white;border:none;border-radius:8px;font-size:1rem;font-weight:600;font-family:var(--font-body);cursor:pointer;transition:background 0.15s}
+.submit-btn:hover{background:var(--navy-800)}
+.submit-btn:disabled{background:var(--slate-300);cursor:not-allowed}
+
+.privacy-note{font-size:0.85rem;color:var(--slate-500);text-align:center;margin-top:16px;line-height:1.6}
+
+.site-footer{background:var(--navy-950);color:rgba(255,255,255,0.7);padding:48px 24px 24px;margin-top:48px}
+.footer-inner{max-width:1200px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:32px}
+.footer-brand{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:1.25rem;font-weight:600;color:white;margin-bottom:12px}.footer-brand .logo-mark{background:white;color:var(--navy-950)}
+.footer-about{font-size:0.9rem;line-height:1.6;color:rgba(255,255,255,0.6)}
+.footer-col h4{font-family:var(--font-body);font-weight:600;color:white;font-size:0.9rem;margin-bottom:16px}
+.footer-col a{display:block;color:rgba(255,255,255,0.7);font-size:0.9rem;margin-bottom:10px;text-decoration:none}.footer-col a:hover{color:white}
+.footer-bottom{padding-top:24px;border-top:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;color:rgba(255,255,255,0.5)}
+
+@media(max-width:768px){
+    .nav{display:none}
+    .page-title{font-size:1.75rem}
+    .form-card{padding:24px}
+    .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
+    .footer-bottom{flex-direction:column;gap:8px;text-align:center}
+}
+@media(max-width:480px){
+    .page-container{padding:32px 16px 64px}
+    .form-card{padding:20px}
+    .radio-group{flex-direction:column;gap:12px}
+    .footer-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <a href="/" class="logo"><div class="logo-mark">CF</div>Compare Factors</a>
+        <nav class="nav">
+            <a href="/factors/" class="nav-link">All Factors</a>
+            <a href="/areas/" class="nav-link">By Area</a>
+            <a href="/methodology/" class="nav-link">How We Score</a>
+            <a href="/guides/" class="nav-link">Guides</a>
+            <a href="/get-quotes/" class="nav-link nav-cta">Get Quotes</a>
+        </nav>
+    </div>
+</header>
+
+<main class="page-container">
+    <h1 class="page-title">Help Us Map Hidden Fees</h1>
+    <p class="page-intro">
+        The ownership data shows consolidation at the top. The next question is whether that's affecting what you pay.
+        We're collecting Written Statements of Service and anonymised invoice data to build fee benchmarks across Scotland.
+    </p>
+
+    <div class="info-box">
+        <h3>What's in it for you?</h3>
+        <p>If you contribute, we'll send you a summary showing how your factor's fees compare to similar buildings (same size, age, and amenities).</p>
+        <ul>
+            <li>See if you're overpaying vs comparable developments</li>
+            <li>Understand what line items are normal vs unusual</li>
+            <li>Get data to support negotiations or switching decisions</li>
+        </ul>
+    </div>
+
+    <form name="pricing-data" method="POST" data-netlify="true" netlify-honeypot="bot-field" enctype="multipart/form-data" class="form-card">
+        <input type="hidden" name="form-name" value="pricing-data">
+        <p hidden><label>Don't fill this out: <input name="bot-field"></label></p>
+
+        <div class="form-section">
+            <h2 class="form-section-title">About Your Building</h2>
+
+            <div class="form-group">
+                <label class="form-label" for="postcode">Postcode</label>
+                <input type="text" id="postcode" name="postcode" class="form-input form-input-short" placeholder="e.g. EH6 5AA" required>
+                <p class="form-hint">We only need the outward code (e.g. EH6) for analysis, but full postcode helps with accuracy.</p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="units">Approximate number of units</label>
+                <input type="number" id="units" name="units" class="form-input form-input-short" placeholder="e.g. 24" min="1" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="building-age">Building age</label>
+                <select id="building-age" name="building-age" class="form-select form-input-short" required>
+                    <option value="">Select...</option>
+                    <option value="pre-1919">Pre-1919 (Victorian/Edwardian)</option>
+                    <option value="1919-1945">1919-1945 (Interwar)</option>
+                    <option value="1946-1979">1946-1979 (Post-war)</option>
+                    <option value="1980-1999">1980-1999</option>
+                    <option value="2000-2015">2000-2015</option>
+                    <option value="2016-present">2016-present</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Does your building have a lift?</label>
+                <div class="radio-group">
+                    <label class="radio-option"><input type="radio" name="lift" value="yes" required><span>Yes</span></label>
+                    <label class="radio-option"><input type="radio" name="lift" value="no"><span>No</span></label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Communal heating or shared plant?</label>
+                <div class="radio-group">
+                    <label class="radio-option"><input type="radio" name="communal-heating" value="yes" required><span>Yes</span></label>
+                    <label class="radio-option"><input type="radio" name="communal-heating" value="no"><span>No</span></label>
+                </div>
+                <p class="form-hint">District heating, shared boiler, communal hot water, etc.</p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Is buildings insurance bundled with your factor?</label>
+                <div class="radio-group">
+                    <label class="radio-option"><input type="radio" name="insurance-bundled" value="yes" required><span>Yes</span></label>
+                    <label class="radio-option"><input type="radio" name="insurance-bundled" value="no"><span>No</span></label>
+                    <label class="radio-option"><input type="radio" name="insurance-bundled" value="unsure"><span>Not sure</span></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 class="form-section-title">Your Factor</h2>
+
+            <div class="form-group">
+                <label class="form-label" for="factor-name">Factor name (optional)</label>
+                <input type="text" id="factor-name" name="factor-name" class="form-input" placeholder="e.g. James Gibb">
+                <p class="form-hint">Helps us cross-reference with our database. Leave blank if you prefer.</p>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 class="form-section-title">Upload Documents</h2>
+            <p style="font-size:0.95rem;color:var(--slate-600);margin-bottom:16px;">
+                Upload your Written Statement of Service, a recent invoice, or both. Feel free to redact names and flat numbers — we only need line items and totals.
+            </p>
+
+            <div class="form-group">
+                <label class="file-upload" for="file-upload">
+                    <input type="file" id="file-upload" name="documents" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" multiple>
+                    <div class="file-upload-text"><strong>Click to upload</strong> or drag and drop<br>PDF, JPG, PNG, DOC (max 10MB each)</div>
+                    <div class="file-name" id="file-name"></div>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="fee-notes">Or paste/describe key fee details</label>
+                <textarea id="fee-notes" name="fee-notes" class="form-textarea" placeholder="e.g. Management fee: £180/year, Insurance: £95/year, Common repairs fund: £50/year..."></textarea>
+                <p class="form-hint">If you can't upload, just list the main charges and amounts.</p>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 class="form-section-title">Get Your Comparison (Optional)</h2>
+
+            <div class="form-group">
+                <label class="form-label" for="email">Email address</label>
+                <input type="email" id="email" name="email" class="form-input" placeholder="you@example.com">
+                <p class="form-hint">We'll send you a personalised comparison when benchmarks are ready. No spam, ever.</p>
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-option">
+                    <input type="checkbox" name="notify-benchmarks" value="yes">
+                    <span>Notify me when the fee benchmarks are published</span>
+                </label>
+            </div>
+        </div>
+
+        <button type="submit" class="submit-btn">Submit Anonymously</button>
+
+        <p class="privacy-note">
+            Your data is processed securely and stored only for analysis purposes.<br>
+            We publish only aggregated statistics — never individual submissions.
+        </p>
+    </form>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand"><div class="logo-mark">CF</div>Compare Factors</div>
+                <p class="footer-about">Helping Scottish homeowners make informed decisions with transparent, independent data.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Resources</h4>
+                <a href="/factors/">All Factors</a>
+                <a href="/areas/">By Area</a>
+                <a href="/compare/">Compare Factors</a>
+                <a href="/guides/">Guides</a>
+            </div>
+            <div class="footer-col">
+                <h4>About</h4>
+                <a href="/methodology/">Methodology</a>
+                <a href="/contribute/">Contribute Data</a>
+                <a href="/contact/">Contact</a>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <a href="/privacy/">Privacy Policy</a>
+                <a href="/terms/">Terms of Use</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2025 Compare Factors Scotland</span>
+            <span>Data from public sources. Not affiliated with any factor.</span>
+        </div>
+    </div>
+</footer>
+
+<script>
+document.getElementById('file-upload').addEventListener('change', function(e) {
+    const fileNames = Array.from(e.target.files).map(f => f.name).join(', ');
+    document.getElementById('file-name').textContent = fileNames || '';
+});
+</script>
+
+</body>
+</html>
