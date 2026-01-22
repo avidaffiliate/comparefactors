@@ -2470,7 +2470,18 @@ def generate_factor_profiles(conn, env, output_dir: Path) -> int:
     
     cursor = conn.execute("SELECT * FROM v_factor_profiles ORDER BY name")
     factors = [dict(row) for row in cursor]
-    
+
+    # Calculate sector average upheld rate and case rate for comparison
+    sector_stats = conn.execute("""
+        SELECT
+            AVG(CAST(tribunal_cases_upheld AS FLOAT) / NULLIF(tribunal_case_count, 0) * 100) AS avg_upheld_rate,
+            AVG(tribunal_rate_per_10k) AS avg_case_rate
+        FROM factors
+        WHERE tribunal_case_count > 0
+    """).fetchone()
+    sector_avg_upheld = round(sector_stats['avg_upheld_rate'] or 45, 0)
+    sector_avg_rate = round(sector_stats['avg_case_rate'] or 2.0, 1)
+
     generated = 0
     for i, profile in enumerate(factors):
         LOG.progress(i + 1, len(factors), profile['name'][:20])
@@ -2807,6 +2818,8 @@ def generate_factor_profiles(conn, env, output_dir: Path) -> int:
                 generated_date=datetime.now().strftime('%Y-%m-%d'),
                 reviews_updated=datetime.now().strftime('%Y-%m-%d'),
                 tribunal_updated=datetime.now().strftime('%Y-%m-%d'),
+                sector_avg_upheld=sector_avg_upheld,
+                sector_avg_rate=sector_avg_rate,
             )
             
             factor_dir = output_dir / pf.lower()
@@ -2891,6 +2904,7 @@ def generate_factor_tribunal_pages(conn, env, factors_dir: Path) -> int:
         WHERE tribunal_case_count > 0
     """).fetchone()
     industry_avg_upheld_rate = round(industry_stats['avg_upheld_rate'] or 45, 0)
+    industry_avg_case_rate = round(industry_stats['avg_case_rate'] or 2.0, 1)
     
     # Get peer comparison by size bands
     size_bands = {}
@@ -3157,9 +3171,11 @@ def generate_factor_tribunal_pages(conn, env, factors_dir: Path) -> int:
                 'total_compensation': total_compensation,
                 'attendance_rate': int(attendance_rate),
                 'case_rate': round(case_rate, 1),
+                'rate_per_10k': round(case_rate, 1),
                 'risk_band': risk_band,
                 'most_recent_case_date': most_recent_case_date,
                 'analysis_end_year': period_dates['analysis_end_year'],
+                'five_year_cutoff': period_dates['analysis_end_year'] - 4,
                 'last_updated': period_dates['last_updated'],
                 'next_update': period_dates['next_update'],
                 'outcomes': outcomes,
@@ -3185,6 +3201,8 @@ def generate_factor_tribunal_pages(conn, env, factors_dir: Path) -> int:
                 stats=stats,
                 notable_cases=notable_cases,
                 current_year=datetime.now().year,
+                sector_avg_upheld=industry_avg_upheld_rate,
+                sector_avg_rate=industry_avg_case_rate,
             )
             
             with open(output_dir / "index.html", 'w', encoding='utf-8') as f:
@@ -3833,15 +3851,20 @@ def generate_comparison_page(conn, site_dir: Path) -> bool:
     
     # Get all active commercial factors with postcode data
     cursor = conn.execute('''
-        SELECT registration_number, name, status, factor_type, risk_band,
-               tribunal_case_count, tribunal_pfeo_count, property_count,
-               google_rating, google_review_count, trustpilot_rating,
-               trustpilot_review_count, tpi_member, postcode_areas, city
-        FROM factors 
-        WHERE status = 'registered'
-        AND (factor_type IS NULL OR factor_type NOT IN ('Housing Association', 'Local Authority'))
-        AND postcode_areas IS NOT NULL AND postcode_areas != ''
-        ORDER BY name
+        SELECT f.registration_number, f.name, f.status, f.factor_type, f.risk_band,
+               f.tribunal_case_count, f.tribunal_pfeo_count, f.property_count,
+               f.google_rating, f.google_review_count, f.trustpilot_rating,
+               f.trustpilot_review_count, f.tpi_member, f.postcode_areas, f.city,
+               f.tribunal_rate_per_10k, f.tribunal_total_compensation,
+               f.tribunal_avg_severity, f.tribunal_cases_last_3_years,
+               f.combined_rating, f.total_review_count,
+               c.company_status AS ch_status, c.incorporated_date AS ch_incorporated
+        FROM factors f
+        LEFT JOIN companies c ON f.registration_number = c.registration_number
+        WHERE f.status = 'registered'
+        AND (f.factor_type IS NULL OR f.factor_type NOT IN ('Housing Association', 'Local Authority'))
+        AND f.postcode_areas IS NOT NULL AND f.postcode_areas != ''
+        ORDER BY f.name
     ''')
     factors = [dict(row) for row in cursor]
     
@@ -3881,6 +3904,11 @@ def generate_comparison_page(conn, site_dir: Path) -> bool:
         if not coverage:
             coverage = 'Scotland'
         
+        # Extract year from incorporation date (format: YYYY-MM-DD)
+        ch_year = None
+        if f['ch_incorporated']:
+            ch_year = f['ch_incorporated'][:4] if len(f['ch_incorporated']) >= 4 else None
+
         factor_data[f['registration_number']] = {
             'name': f['name'] or 'Unknown',
             'registration_number': f['registration_number'],
@@ -3895,7 +3923,16 @@ def generate_comparison_page(conn, site_dir: Path) -> bool:
             'tpi_member': bool(f['tpi_member']),
             'city': f['city'] or 'Scotland',
             'coverage': coverage,
-            'areas': factor_areas
+            'areas': factor_areas,
+            # New fields for enhanced comparison
+            'rate_per_10k': round(f['tribunal_rate_per_10k'], 2) if f['tribunal_rate_per_10k'] else None,
+            'compensation': int(f['tribunal_total_compensation'] or 0),
+            'avg_severity': round(f['tribunal_avg_severity'], 1) if f['tribunal_avg_severity'] else None,
+            'recent_cases': f['tribunal_cases_last_3_years'] or 0,
+            'combined_rating': round(f['combined_rating'], 2) if f['combined_rating'] else None,
+            'total_reviews': (f['google_review_count'] or 0) + (f['trustpilot_review_count'] or 0),
+            'ch_status': f['ch_status'] or None,
+            'ch_year': ch_year
         }
     
     # Build area options sorted by factor count
@@ -3930,39 +3967,89 @@ def generate_comparison_page(conn, site_dir: Path) -> bool:
 <style>
 {SHARED_CSS}
 .main{{max-width:1200px;margin:0 auto;padding:0 24px 96px}}
-.page-header{{text-align:center;margin-bottom:40px}}
+.page-header{{text-align:center;margin-bottom:32px}}
 .page-title{{font-family:var(--font-display);font-size:2.25rem;font-weight:700;color:var(--navy-950);margin:0 0 12px 0}}
 .page-desc{{font-size:1.1rem;color:var(--slate-600);margin:0;max-width:600px;margin-left:auto;margin-right:auto}}
-.selector-section{{background:var(--white);border:1px solid var(--slate-200);border-radius:12px;padding:24px;margin-bottom:32px}}
-.selector-title{{font-weight:600;color:var(--navy-950);margin-bottom:16px;font-size:1rem}}
-.selector-grid{{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}}
-.selector-label{{font-size:0.85rem;color:var(--slate-500);margin-bottom:6px}}
-.selector-dropdown{{width:100%;padding:10px 14px;font-size:1rem;font-family:inherit;border:1px solid var(--slate-200);border-radius:8px;background:white;color:var(--slate-700);cursor:pointer}}
-.selector-dropdown:focus{{outline:none;border-color:var(--blue-600);box-shadow:0 0 0 3px rgba(37,99,235,0.1)}}
-.selector-dropdown:disabled{{background:var(--slate-50);color:var(--slate-400);cursor:not-allowed}}
-.area-selector{{margin-bottom:20px}}
-.area-selector .selector-label{{font-size:0.9rem;font-weight:500;color:var(--navy-950)}}
-.area-dropdown{{max-width:320px}}
-.area-hint{{font-size:0.85rem;color:var(--slate-500);margin-top:8px}}
-.factor-selectors{{border-top:1px solid var(--slate-100);padding-top:20px}}
-.factor-selectors.disabled{{opacity:0.5;pointer-events:none}}
-.comparison-wrapper{{overflow-x:auto}}
-.comparison-table{{width:100%;border-collapse:collapse;background:var(--white);border-radius:12px;overflow:hidden;border:1px solid var(--slate-200);min-width:700px}}
-.comparison-table th,.comparison-table td{{padding:16px 20px;text-align:left;border-bottom:1px solid var(--slate-100)}}
-.comparison-table th{{background:var(--slate-50);font-weight:600;color:var(--navy-950)}}
-.comparison-table th:first-child{{width:180px}}
+/* Factor Selection Section */
+.selector-section{{background:var(--white);border:1px solid var(--slate-200);border-radius:12px;padding:24px;margin-bottom:24px}}
+.selector-title{{font-weight:600;color:var(--navy-950);margin-bottom:16px;font-size:1rem;display:flex;align-items:center;justify-content:space-between}}
+.search-row{{display:flex;gap:12px;margin-bottom:16px}}
+.search-wrapper{{flex:1;position:relative}}
+.search-input{{width:100%;padding:10px 14px;font-size:1rem;font-family:inherit;border:1px solid var(--slate-200);border-radius:8px;background:white}}
+.search-input:focus{{outline:none;border-color:var(--blue-600);box-shadow:0 0 0 3px rgba(37,99,235,0.1)}}
+.autocomplete-list{{position:absolute;top:100%;left:0;right:0;background:var(--white);border:1px solid var(--slate-200);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.1);max-height:300px;overflow-y:auto;z-index:50;display:none}}
+.autocomplete-list.active{{display:block}}
+.autocomplete-item{{padding:10px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--slate-100)}}
+.autocomplete-item:last-child{{border-bottom:none}}
+.autocomplete-item:hover,.autocomplete-item.selected{{background:var(--slate-50)}}
+.autocomplete-item .factor-name{{font-weight:500;color:var(--navy-950)}}
+.autocomplete-item .factor-meta{{font-size:0.8rem;color:var(--slate-500)}}
+.area-filter{{min-width:200px}}
+.area-filter select{{width:100%;padding:10px 14px;font-size:1rem;font-family:inherit;border:1px solid var(--slate-200);border-radius:8px;background:white;cursor:pointer}}
+.area-filter select:focus{{outline:none;border-color:var(--blue-600)}}
+/* Selected Factors */
+.selected-factors{{display:flex;flex-wrap:wrap;gap:8px;min-height:40px;align-items:center}}
+.selected-factor{{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--blue-100);color:var(--blue-700);border-radius:6px;font-size:0.9rem;font-weight:500}}
+.selected-factor .remove-btn{{background:none;border:none;color:var(--blue-600);cursor:pointer;padding:0;font-size:1.1rem;line-height:1;opacity:0.7}}.selected-factor .remove-btn:hover{{opacity:1}}
+.add-factor-slot{{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border:2px dashed var(--slate-300);border-radius:6px;color:var(--slate-500);font-size:0.9rem;cursor:pointer}}.add-factor-slot:hover{{border-color:var(--slate-400);color:var(--slate-600)}}
+.slot-limit{{font-size:0.85rem;color:var(--slate-400)}}
+/* Metric Picker */
+.metrics-section{{background:var(--white);border:1px solid var(--slate-200);border-radius:12px;padding:16px 24px;margin-bottom:24px}}
+.metrics-header{{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}}
+.metrics-title{{font-weight:600;color:var(--navy-950);font-size:0.95rem}}
+.metrics-presets{{display:flex;gap:8px}}
+.preset-btn{{padding:6px 12px;border:1px solid var(--slate-200);border-radius:6px;background:var(--white);color:var(--slate-600);font-size:0.85rem;cursor:pointer;font-family:inherit}}.preset-btn:hover{{border-color:var(--slate-300);background:var(--slate-50)}}.preset-btn.active{{background:var(--navy-950);color:white;border-color:var(--navy-950)}}
+.metrics-categories{{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}}
+.metric-category{{position:relative}}
+.category-btn{{display:flex;align-items:center;gap:4px;padding:8px 12px;border:1px solid var(--slate-200);border-radius:6px;background:var(--white);color:var(--slate-600);font-size:0.85rem;cursor:pointer;font-family:inherit}}.category-btn:hover{{border-color:var(--slate-300)}}.category-btn.has-selected{{background:var(--blue-50);border-color:var(--blue-200);color:var(--blue-700)}}
+.category-count{{background:var(--slate-100);padding:1px 6px;border-radius:4px;font-size:0.75rem}}.category-btn.has-selected .category-count{{background:var(--blue-100)}}
+.category-dropdown{{position:absolute;top:100%;left:0;margin-top:4px;background:var(--white);border:1px solid var(--slate-200);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.1);min-width:200px;z-index:40;display:none;padding:8px 0}}
+.category-dropdown.active{{display:block}}
+.metric-option{{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer}}.metric-option:hover{{background:var(--slate-50)}}
+.metric-option input{{width:16px;height:16px;accent-color:var(--blue-600)}}
+.metric-option label{{cursor:pointer;font-size:0.9rem;color:var(--slate-700)}}
+/* Action Bar */
+.action-bar{{display:flex;justify-content:flex-end;gap:12px;margin-bottom:24px}}
+.share-btn{{display:flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--slate-200);border-radius:6px;background:var(--white);color:var(--slate-600);font-size:0.9rem;cursor:pointer;font-family:inherit}}.share-btn:hover{{border-color:var(--slate-300);background:var(--slate-50)}}
+.share-btn.copied{{background:var(--green-100);border-color:var(--green-200);color:var(--green-700)}}
+/* Comparison Table */
+.comparison-wrapper{{overflow-x:auto;-webkit-overflow-scrolling:touch}}
+.comparison-table{{width:100%;border-collapse:collapse;background:var(--white);border-radius:12px;overflow:hidden;border:1px solid var(--slate-200);min-width:600px}}
+.comparison-table th,.comparison-table td{{padding:14px 16px;text-align:left;border-bottom:1px solid var(--slate-100)}}
+.comparison-table th{{background:var(--slate-50);font-weight:600;color:var(--navy-950);position:relative}}
+.comparison-table th:first-child{{width:160px;position:sticky;left:0;z-index:10;background:var(--slate-50)}}
+.comparison-table td:first-child{{position:sticky;left:0;z-index:5;background:var(--white)}}
 .comparison-table tr:last-child td{{border-bottom:none}}
-.comparison-table .row-label{{font-weight:500;color:var(--slate-600);background:var(--slate-50)}}
-.comparison-table .factor-name{{font-family:var(--font-display);font-weight:600;font-size:1.1rem;color:var(--navy-950)}}
-.comparison-table .factor-link{{display:block;font-size:0.85rem;color:var(--blue-600);margin-top:4px}}
+.comparison-table .row-label{{font-weight:500;color:var(--slate-600);background:var(--slate-50);font-size:0.9rem}}
+.comparison-table .category-header{{background:var(--slate-100);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.03em;color:var(--slate-500);padding:8px 16px}}
+.comparison-table .category-header td{{background:var(--slate-100);color:var(--slate-500);font-weight:600}}
+.comparison-table .factor-name{{font-family:var(--font-display);font-weight:600;font-size:1rem;color:var(--navy-950)}}
+.comparison-table .factor-link{{display:block;font-size:0.8rem;color:var(--blue-600);margin-top:4px}}
+.comparison-table .remove-col{{font-size:0.8rem;color:var(--red-600);cursor:pointer;margin-top:6px}}.comparison-table .remove-col:hover{{text-decoration:underline}}
 .score-badge{{display:inline-block;padding:4px 10px;border-radius:4px;font-size:0.8rem;font-weight:600;text-transform:uppercase}}
-.score-clean{{background:var(--green-100);color:var(--green-600)}}.score-green{{background:var(--green-100);color:var(--green-700)}}.score-amber{{background:var(--amber-100);color:var(--amber-600)}}.score-orange{{background:var(--orange-100);color:var(--orange-600)}}.score-red{{background:var(--red-100);color:var(--red-700)}}
+.score-clean{{background:var(--green-100);color:var(--green-600)}}.score-green{{background:var(--green-100);color:var(--green-700)}}.score-limited{{background:#f3f4f6;color:#6b7280}}.score-orange{{background:var(--orange-100);color:var(--orange-600)}}.score-red{{background:var(--red-100);color:var(--red-700)}}
 .rating-stars{{color:#f59e0b;letter-spacing:-1px}}.rating-value{{font-weight:600;color:var(--slate-700);margin-left:4px}}.rating-count{{font-size:0.85rem;color:var(--slate-500);margin-left:4px}}.no-rating{{color:var(--slate-400);font-style:italic}}
 .check-yes{{color:var(--green-600);font-weight:500}}.check-no{{color:var(--slate-400)}}
-.empty-state{{text-align:center;padding:80px 40px;background:var(--white);border:2px dashed var(--slate-200);border-radius:12px}}
+.metric-value{{font-weight:500;color:var(--navy-950)}}
+.empty-state{{text-align:center;padding:60px 40px;background:var(--white);border:2px dashed var(--slate-200);border-radius:12px}}
 .empty-icon{{font-size:3rem;margin-bottom:16px}}.empty-title{{font-family:var(--font-display);font-size:1.25rem;font-weight:600;color:var(--navy-950);margin-bottom:8px}}.empty-desc{{color:var(--slate-500);margin:0}}
 .back-link{{display:inline-block;margin-top:32px;color:var(--blue-600);font-weight:500}}
-@media(max-width:768px){{.selector-grid{{grid-template-columns:1fr}}.page-title{{font-size:1.75rem}}}}
+@media(max-width:768px){{
+.search-row{{flex-direction:column}}.area-filter{{min-width:100%}}
+.metrics-header{{flex-direction:column;align-items:flex-start}}
+.metrics-categories{{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}}
+.metric-category{{flex-shrink:0}}
+.category-btn{{padding:10px 14px}}
+.metric-option{{padding:12px 14px}}
+.metric-option input{{width:20px;height:20px}}
+.page-title{{font-size:1.75rem}}
+.page-desc{{font-size:1rem}}
+.selector-section,.metrics-section{{padding:16px}}
+.selected-factor{{font-size:0.85rem;padding:8px 12px}}
+.comparison-table th:first-child,.comparison-table td:first-child{{min-width:130px}}
+.comparison-table th,.comparison-table td{{padding:12px 10px;font-size:0.9rem}}
+.autocomplete-item{{padding:14px}}
+}}
 </style>
 </head>
 <body>
@@ -3971,51 +4058,335 @@ def generate_comparison_page(conn, site_dir: Path) -> bool:
 <main class="main">
 <div class="page-header">
 <h1 class="page-title">Compare Factors Side by Side</h1>
-<p class="page-desc">Select your area, then choose factors to compare their tribunal records, ratings, and coverage.</p>
+<p class="page-desc">Search or select factors to compare their tribunal records, ratings, and coverage.</p>
 </div>
+
 <div class="selector-section">
-<div class="area-selector">
-<div class="selector-label">Step 1: Select your area</div>
-<select class="selector-dropdown area-dropdown" id="areaSelect">
+<div class="selector-title">Select Factors (2-4)</div>
+<div class="search-row">
+<div class="search-wrapper">
+<input type="text" class="search-input" id="factorSearch" placeholder="Search for a factor by name..." autocomplete="off">
+<div class="autocomplete-list" id="autocompleteList"></div>
+</div>
+<div class="area-filter">
+<select id="areaFilter">
+<option value="">All areas</option>
 {area_options_html}
 </select>
-<p class="area-hint" id="areaHint">Choose an area to see factors serving that location</p>
-</div>
-<div class="factor-selectors disabled" id="factorSelectors">
-<div class="selector-title">Step 2: Choose factors to compare</div>
-<div class="selector-grid">
-<div class="selector-item"><div class="selector-label">Factor 1</div><select class="selector-dropdown" id="factor1" disabled><option value="">Select area first...</option></select></div>
-<div class="selector-item"><div class="selector-label">Factor 2</div><select class="selector-dropdown" id="factor2" disabled><option value="">Select area first...</option></select></div>
-<div class="selector-item"><div class="selector-label">Factor 3 (optional)</div><select class="selector-dropdown" id="factor3" disabled><option value="">Select area first...</option></select></div>
 </div>
 </div>
+<div class="selected-factors" id="selectedFactors">
+<span class="add-factor-slot" id="addSlot">+ Add factor</span>
+<span class="slot-limit" id="slotLimit"></span>
 </div>
+</div>
+
+<div class="metrics-section">
+<div class="metrics-header">
+<span class="metrics-title">Metrics to Compare</span>
+<div class="metrics-presets">
+<button class="preset-btn active" data-preset="essential">Essential</button>
+<button class="preset-btn" data-preset="all">All Metrics</button>
+</div>
+</div>
+<div class="metrics-categories" id="metricsCategories">
+<div class="metric-category" data-category="essential">
+<button class="category-btn has-selected"><span>Essential</span> <span class="category-count">4</span></button>
+<div class="category-dropdown">
+<div class="metric-option"><input type="checkbox" id="m-risk" data-metric="risk" checked><label for="m-risk">Tribunal Risk</label></div>
+<div class="metric-option"><input type="checkbox" id="m-cases" data-metric="cases" checked><label for="m-cases">Cases (5yr)</label></div>
+<div class="metric-option"><input type="checkbox" id="m-pfeo" data-metric="pfeo" checked><label for="m-pfeo">PFEOs</label></div>
+<div class="metric-option"><input type="checkbox" id="m-properties" data-metric="properties" checked><label for="m-properties">Properties</label></div>
+</div>
+</div>
+<div class="metric-category" data-category="reviews">
+<button class="category-btn"><span>Reviews</span> <span class="category-count">0</span></button>
+<div class="category-dropdown">
+<div class="metric-option"><input type="checkbox" id="m-google" data-metric="google"><label for="m-google">Google Rating</label></div>
+<div class="metric-option"><input type="checkbox" id="m-trustpilot" data-metric="trustpilot"><label for="m-trustpilot">Trustpilot Rating</label></div>
+<div class="metric-option"><input type="checkbox" id="m-combined" data-metric="combined"><label for="m-combined">Combined Rating</label></div>
+</div>
+</div>
+<div class="metric-category" data-category="tribunal">
+<button class="category-btn"><span>Tribunal Detail</span> <span class="category-count">0</span></button>
+<div class="category-dropdown">
+<div class="metric-option"><input type="checkbox" id="m-rate" data-metric="rate"><label for="m-rate">Rate per 10k</label></div>
+<div class="metric-option"><input type="checkbox" id="m-compensation" data-metric="compensation"><label for="m-compensation">Total Compensation</label></div>
+<div class="metric-option"><input type="checkbox" id="m-severity" data-metric="severity"><label for="m-severity">Avg Severity</label></div>
+<div class="metric-option"><input type="checkbox" id="m-recent" data-metric="recent"><label for="m-recent">Recent (3yr)</label></div>
+</div>
+</div>
+<div class="metric-category" data-category="company">
+<button class="category-btn"><span>Company</span> <span class="category-count">0</span></button>
+<div class="category-dropdown">
+<div class="metric-option"><input type="checkbox" id="m-city" data-metric="city"><label for="m-city">Headquarters</label></div>
+<div class="metric-option"><input type="checkbox" id="m-coverage" data-metric="coverage"><label for="m-coverage">Coverage</label></div>
+<div class="metric-option"><input type="checkbox" id="m-tpi" data-metric="tpi"><label for="m-tpi">TPI Member</label></div>
+<div class="metric-option"><input type="checkbox" id="m-status" data-metric="status"><label for="m-status">Company Status</label></div>
+<div class="metric-option"><input type="checkbox" id="m-founded" data-metric="founded"><label for="m-founded">Year Founded</label></div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="action-bar">
+<button class="share-btn" id="shareBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Share</button>
+</div>
+
 <div id="emptyState" class="empty-state">
-<div class="empty-icon">📍</div>
-<div class="empty-title">Start by selecting your area</div>
-<p class="empty-desc">Choose your area above to see a filtered list of factors serving that location.</p>
+<div class="empty-icon">⚖️</div>
+<div class="empty-title">Select factors to compare</div>
+<p class="empty-desc">Search above or use URL parameters like ?factors=PF000001,PF000002</p>
 </div>
-<div id="comparisonTable" class="comparison-wrapper" style="display:none;">
-<table class="comparison-table">
-<thead><tr><th></th><th id="header1">Factor 1</th><th id="header2">Factor 2</th><th id="header3" style="display:none;">Factor 3</th></tr></thead>
-<tbody id="comparisonBody"></tbody>
+
+<div id="comparisonWrapper" class="comparison-wrapper" style="display:none;">
+<table class="comparison-table" id="comparisonTable">
+<thead id="tableHead"></thead>
+<tbody id="tableBody"></tbody>
 </table>
 </div>
+
 <a href="/factors/" class="back-link">← Browse all factors</a>
 </main>
 {get_shared_footer(generated_date)}
 <script>
 const factorData={factor_json};
 const areaFactors={area_factors_json};
+let selectedFactors=[];
+let selectedMetrics=['risk','cases','pfeo','properties'];
+const defaultMetrics=['risk','cases','pfeo','properties'];
+const allMetrics=['risk','cases','pfeo','properties','google','trustpilot','combined','rate','compensation','severity','recent','city','coverage','tpi','status','founded'];
+
+const metricDefs={{
+risk:{{label:'Tribunal Risk',category:'essential',render:f=>`<span class="score-badge ${{getRiskClass(f.risk_band)}}">${{f.risk_band}}</span>`}},
+cases:{{label:'Cases (5yr)',category:'essential',render:f=>`<span class="metric-value">${{f.tribunal_cases}}</span>`}},
+pfeo:{{label:'PFEOs',category:'essential',render:f=>f.pfeo_count>0?`<span class="check-no">${{f.pfeo_count}}</span>`:'<span class="check-yes">None</span>'}},
+properties:{{label:'Properties',category:'essential',render:f=>`<span class="metric-value">${{f.properties?f.properties.toLocaleString():'—'}}</span>`}},
+google:{{label:'Google Rating',category:'reviews',render:f=>formatRating(f.google_rating,f.google_count,'Google')}},
+trustpilot:{{label:'Trustpilot Rating',category:'reviews',render:f=>formatRating(f.trustpilot_rating,f.trustpilot_count,'Trustpilot')}},
+combined:{{label:'Combined Rating',category:'reviews',render:f=>f.combined_rating?`<span class="metric-value">${{f.combined_rating.toFixed(1)}}</span> <span class="rating-count">(${{f.total_reviews}} reviews)</span>`:'<span class="no-rating">No reviews</span>'}},
+rate:{{label:'Rate per 10k',category:'tribunal',render:f=>f.rate_per_10k!=null?`<span class="metric-value">${{f.rate_per_10k.toFixed(1)}}</span>`:'<span class="no-rating">N/A</span>'}},
+compensation:{{label:'Total Compensation',category:'tribunal',render:f=>f.compensation>0?`<span class="metric-value">£${{f.compensation.toLocaleString()}}</span>`:'<span class="check-yes">£0</span>'}},
+severity:{{label:'Avg Severity',category:'tribunal',render:f=>f.avg_severity!=null?`<span class="metric-value">${{f.avg_severity.toFixed(1)}}/10</span>`:'<span class="no-rating">N/A</span>'}},
+recent:{{label:'Recent (3yr)',category:'tribunal',render:f=>`<span class="metric-value">${{f.recent_cases}}</span>`}},
+city:{{label:'Headquarters',category:'company',render:f=>`<span class="metric-value">${{f.city||'—'}}</span>`}},
+coverage:{{label:'Coverage',category:'company',render:f=>`<span class="metric-value">${{f.coverage||'—'}}</span>`}},
+tpi:{{label:'TPI Member',category:'company',render:f=>f.tpi_member?'<span class="check-yes">Yes</span>':'<span class="check-no">No</span>'}},
+status:{{label:'Company Status',category:'company',render:f=>f.ch_status?`<span class="metric-value">${{capitalize(f.ch_status)}}</span>`:'<span class="no-rating">Unknown</span>'}},
+founded:{{label:'Year Founded',category:'company',render:f=>f.ch_year?`<span class="metric-value">${{f.ch_year}}</span>`:'<span class="no-rating">Unknown</span>'}}
+}};
+
+function capitalize(s){{return s?s.charAt(0).toUpperCase()+s.slice(1).toLowerCase():''}}
+function getRiskClass(r){{return{{'CLEAN':'score-clean','GREEN':'score-green','LIMITED':'score-limited','ORANGE':'score-orange','RED':'score-red'}}[r]||'score-clean'}}
 function getStars(r){{if(!r)return'';const f=Math.floor(r),h=r-f>=0.5?1:0;return'★'.repeat(f)+(h?'½':'')+'☆'.repeat(5-f-h)}}
-function getRiskBadgeClass(r){{return{{'CLEAN':'score-clean','GREEN':'score-green','AMBER':'score-amber','ORANGE':'score-orange','RED':'score-red'}}[r]||'score-clean'}}
-function formatRating(r,c){{if(!r)return'<span class="no-rating">No reviews</span>';return`<span class="rating-stars">${{getStars(r)}}</span><span class="rating-value">${{r.toFixed(1)}}</span><span class="rating-count">(${{c.toLocaleString()}})</span>`}}
-function updateFactorDropdowns(area){{const ids=areaFactors[area]||[],factors=ids.map(id=>factorData[id]).filter(f=>f).sort((a,b)=>a.name.localeCompare(b.name));let opts='<option value="">Select a factor...</option>';for(const f of factors)opts+=`<option value="${{f.registration_number}}">${{f.name}}</option>`;['factor1','factor2','factor3'].forEach(id=>{{const s=document.getElementById(id);s.innerHTML=opts;s.disabled=false}});document.getElementById('factorSelectors').classList.remove('disabled');document.getElementById('areaHint').textContent=`${{factors.length}} factors serve this area`;document.getElementById('emptyState').innerHTML=`<div class="empty-icon">⚖️</div><div class="empty-title">Select factors to compare</div><p class="empty-desc">Choose at least two factors from the ${{factors.length}} available in this area.</p>`}}
-function updateComparison(){{const f1=document.getElementById('factor1').value,f2=document.getElementById('factor2').value,f3=document.getElementById('factor3').value,selected=[f1,f2,f3].filter(f=>f&&factorData[f]);if(selected.length<2){{document.getElementById('emptyState').style.display='block';document.getElementById('comparisonTable').style.display='none';return}}document.getElementById('emptyState').style.display='none';document.getElementById('comparisonTable').style.display='block';const factors=selected.map(id=>factorData[id]);document.getElementById('header1').innerHTML=factors[0]?`<div class="factor-name">${{factors[0].name}}</div><a href="/factors/${{factors[0].registration_number.toLowerCase()}}/" class="factor-link">View full profile →</a>`:'';document.getElementById('header2').innerHTML=factors[1]?`<div class="factor-name">${{factors[1].name}}</div><a href="/factors/${{factors[1].registration_number.toLowerCase()}}/" class="factor-link">View full profile →</a>`:'';const h3=document.getElementById('header3');if(factors[2]){{h3.style.display='';h3.innerHTML=`<div class="factor-name">${{factors[2].name}}</div><a href="/factors/${{factors[2].registration_number.toLowerCase()}}/" class="factor-link">View full profile →</a>`}}else{{h3.style.display='none'}}const rows=[['Tribunal risk score',f=>`<span class="score-badge ${{getRiskBadgeClass(f.risk_band)}}">${{f.risk_band}}</span>`],['Tribunal cases',f=>`${{f.tribunal_cases}} case${{f.tribunal_cases!==1?'s':''}}`],['Enforcement orders',f=>f.pfeo_count>0?`<span class="check-no">${{f.pfeo_count}} PFEO${{f.pfeo_count!==1?'s':''}}</span>`:'<span class="check-yes">None</span>'],['Properties managed',f=>f.properties?f.properties.toLocaleString():'—'],['Google rating',f=>formatRating(f.google_rating,f.google_count)],['Trustpilot rating',f=>formatRating(f.trustpilot_rating,f.trustpilot_count)],['TPI Scotland member',f=>f.tpi_member?'<span class="check-yes">✓ Yes</span>':'<span class="check-no">✗ No</span>'],['Headquarters',f=>f.city||'—'],['Coverage',f=>f.coverage||'—']];let tbody='';for(const[label,formatter]of rows){{tbody+=`<tr><td class="row-label">${{label}}</td>`;for(let i=0;i<factors.length;i++){{const style=i===2&&!factors[2]?' style="display:none;"':'';tbody+=`<td${{style}}>${{formatter(factors[i])}}</td>`}}if(factors.length<3)tbody+='<td style="display:none;"></td>';tbody+='</tr>'}}document.getElementById('comparisonBody').innerHTML=tbody}}
-document.getElementById('areaSelect').addEventListener('change',function(){{if(this.value){{updateFactorDropdowns(this.value);['factor1','factor2','factor3'].forEach(id=>{{document.getElementById(id).value=''}});updateComparison()}}else{{document.getElementById('factorSelectors').classList.add('disabled');['factor1','factor2','factor3'].forEach(id=>{{const s=document.getElementById(id);s.innerHTML='<option value="">Select area first...</option>';s.disabled=true}});document.getElementById('areaHint').textContent='Choose an area to see factors serving that location';document.getElementById('emptyState').innerHTML=`<div class="empty-icon">📍</div><div class="empty-title">Start by selecting your area</div><p class="empty-desc">Choose your area above to see a filtered list of factors serving that location.</p>`;document.getElementById('emptyState').style.display='block';document.getElementById('comparisonTable').style.display='none'}}}});
-document.getElementById('factor1').addEventListener('change',updateComparison);
-document.getElementById('factor2').addEventListener('change',updateComparison);
-document.getElementById('factor3').addEventListener('change',updateComparison);
+function formatRating(r,c,src){{if(!r)return'<span class="no-rating">No reviews</span>';return`<span class="rating-stars">${{getStars(r)}}</span><span class="rating-value">${{r.toFixed(1)}}</span><span class="rating-count">(${{c||0}})</span>`}}
+
+// URL State Management
+function parseUrlParams(){{
+const params=new URLSearchParams(window.location.search);
+const factorIds=(params.get('factors')||'').split(',').filter(id=>id&&factorData[id.toUpperCase()]).map(id=>id.toUpperCase());
+const metricIds=(params.get('metrics')||'').split(',').filter(m=>allMetrics.includes(m));
+if(factorIds.length>0)selectedFactors=factorIds.slice(0,4);
+if(metricIds.length>0)selectedMetrics=metricIds;
+}}
+
+function updateUrl(){{
+const params=new URLSearchParams();
+if(selectedFactors.length>0)params.set('factors',selectedFactors.join(','));
+if(selectedMetrics.length>0&&JSON.stringify(selectedMetrics.sort())!==JSON.stringify(defaultMetrics.sort()))params.set('metrics',selectedMetrics.join(','));
+const newUrl=params.toString()?`${{window.location.pathname}}?${{params}}`:window.location.pathname;
+history.replaceState(null,'',newUrl);
+}}
+
+// Factor Selection
+function addFactor(id){{
+if(selectedFactors.length>=4||selectedFactors.includes(id))return;
+selectedFactors.push(id);
+updateUrl();
+renderSelectedFactors();
+renderComparison();
+}}
+
+function removeFactor(id){{
+selectedFactors=selectedFactors.filter(f=>f!==id);
+updateUrl();
+renderSelectedFactors();
+renderComparison();
+}}
+
+function renderSelectedFactors(){{
+const container=document.getElementById('selectedFactors');
+let html='';
+selectedFactors.forEach(id=>{{
+const f=factorData[id];
+if(f)html+=`<span class="selected-factor">${{f.name}} <button class="remove-btn" onclick="removeFactor('${{id}}')">&times;</button></span>`;
+}});
+if(selectedFactors.length<4)html+=`<span class="add-factor-slot" onclick="document.getElementById('factorSearch').focus()">+ Add factor</span>`;
+if(selectedFactors.length>0)html+=`<span class="slot-limit">${{selectedFactors.length}}/4 selected</span>`;
+container.innerHTML=html;
+}}
+
+// Autocomplete
+const searchInput=document.getElementById('factorSearch');
+const autocompleteList=document.getElementById('autocompleteList');
+const areaFilter=document.getElementById('areaFilter');
+let autocompleteIndex=-1;
+
+function getFilteredFactors(query){{
+const area=areaFilter.value;
+let ids=area?areaFactors[area]||[]:Object.keys(factorData);
+ids=ids.filter(id=>!selectedFactors.includes(id));
+if(query){{
+const q=query.toLowerCase();
+ids=ids.filter(id=>factorData[id]?.name.toLowerCase().includes(q));
+}}
+return ids.slice(0,10).map(id=>factorData[id]).filter(f=>f);
+}}
+
+function renderAutocomplete(factors){{
+if(factors.length===0){{autocompleteList.classList.remove('active');return}}
+let html='';
+factors.forEach((f,i)=>{{
+html+=`<div class="autocomplete-item${{i===autocompleteIndex?' selected':''}}" data-id="${{f.registration_number}}">
+<span class="factor-name">${{f.name}}</span>
+<span class="factor-meta">${{f.city}} · ${{f.properties?f.properties.toLocaleString():0}} props</span>
+</div>`;
+}});
+autocompleteList.innerHTML=html;
+autocompleteList.classList.add('active');
+autocompleteList.querySelectorAll('.autocomplete-item').forEach(el=>{{
+el.addEventListener('click',()=>{{addFactor(el.dataset.id);searchInput.value='';autocompleteList.classList.remove('active')}});
+}});
+}}
+
+searchInput.addEventListener('input',e=>{{
+autocompleteIndex=-1;
+renderAutocomplete(getFilteredFactors(e.target.value));
+}});
+searchInput.addEventListener('focus',()=>renderAutocomplete(getFilteredFactors(searchInput.value)));
+searchInput.addEventListener('keydown',e=>{{
+const items=autocompleteList.querySelectorAll('.autocomplete-item');
+if(e.key==='ArrowDown'){{autocompleteIndex=Math.min(autocompleteIndex+1,items.length-1);renderAutocomplete(getFilteredFactors(searchInput.value))}}
+else if(e.key==='ArrowUp'){{autocompleteIndex=Math.max(autocompleteIndex-1,-1);renderAutocomplete(getFilteredFactors(searchInput.value))}}
+else if(e.key==='Enter'&&autocompleteIndex>=0){{items[autocompleteIndex]?.click();e.preventDefault()}}
+else if(e.key==='Escape'){{autocompleteList.classList.remove('active')}}
+}});
+document.addEventListener('click',e=>{{if(!searchInput.contains(e.target)&&!autocompleteList.contains(e.target))autocompleteList.classList.remove('active')}});
+areaFilter.addEventListener('change',()=>renderAutocomplete(getFilteredFactors(searchInput.value)));
+
+// Metrics
+function updateMetricCounts(){{
+document.querySelectorAll('.metric-category').forEach(cat=>{{
+const checkboxes=cat.querySelectorAll('input[type="checkbox"]');
+const checked=Array.from(checkboxes).filter(c=>c.checked).length;
+cat.querySelector('.category-count').textContent=checked;
+cat.querySelector('.category-btn').classList.toggle('has-selected',checked>0);
+}});
+}}
+
+document.querySelectorAll('.metric-option input').forEach(cb=>{{
+cb.addEventListener('change',()=>{{
+selectedMetrics=Array.from(document.querySelectorAll('.metric-option input:checked')).map(c=>c.dataset.metric);
+updateMetricCounts();
+updateUrl();
+renderComparison();
+}});
+}});
+
+document.querySelectorAll('.category-btn').forEach(btn=>{{
+btn.addEventListener('click',e=>{{
+e.stopPropagation();
+const dropdown=btn.nextElementSibling;
+document.querySelectorAll('.category-dropdown.active').forEach(d=>{{if(d!==dropdown)d.classList.remove('active')}});
+dropdown.classList.toggle('active');
+}});
+}});
+document.addEventListener('click',()=>document.querySelectorAll('.category-dropdown.active').forEach(d=>d.classList.remove('active')));
+
+document.querySelectorAll('.preset-btn').forEach(btn=>{{
+btn.addEventListener('click',()=>{{
+document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+if(btn.dataset.preset==='essential')selectedMetrics=[...defaultMetrics];
+else if(btn.dataset.preset==='all')selectedMetrics=[...allMetrics];
+document.querySelectorAll('.metric-option input').forEach(c=>c.checked=selectedMetrics.includes(c.dataset.metric));
+updateMetricCounts();
+updateUrl();
+renderComparison();
+}});
+}});
+
+// Comparison Table
+function renderComparison(){{
+if(selectedFactors.length<2){{
+document.getElementById('emptyState').style.display='block';
+document.getElementById('comparisonWrapper').style.display='none';
+return;
+}}
+document.getElementById('emptyState').style.display='none';
+document.getElementById('comparisonWrapper').style.display='block';
+
+const factors=selectedFactors.map(id=>factorData[id]).filter(f=>f);
+let thead=`<tr><th></th>`;
+factors.forEach(f=>{{
+thead+=`<th><div class="factor-name">${{f.name}}</div><a href="/factors/${{f.registration_number.toLowerCase()}}/" class="factor-link">View profile →</a><div class="remove-col" onclick="removeFactor('${{f.registration_number}}')">Remove</div></th>`;
+}});
+thead+=`</tr>`;
+document.getElementById('tableHead').innerHTML=thead;
+
+let tbody='';
+const categories={{}};
+selectedMetrics.forEach(m=>{{
+const def=metricDefs[m];
+if(!def)return;
+if(!categories[def.category])categories[def.category]=[];
+categories[def.category].push(m);
+}});
+
+for(const[cat,metrics]of Object.entries(categories)){{
+metrics.forEach(m=>{{
+const def=metricDefs[m];
+tbody+=`<tr><td class="row-label">${{def.label}}</td>`;
+factors.forEach(f=>tbody+=`<td>${{def.render(f)}}</td>`);
+tbody+=`</tr>`;
+}});
+}}
+document.getElementById('tableBody').innerHTML=tbody;
+}}
+
+// Share Button
+document.getElementById('shareBtn').addEventListener('click',function(){{
+navigator.clipboard.writeText(window.location.href).then(()=>{{
+this.classList.add('copied');
+this.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Copied!';
+setTimeout(()=>{{
+this.classList.remove('copied');
+this.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg> Share';
+}},2000);
+}});
+}});
+
+// Load from localStorage compare selections
+function loadFromStorage(){{
+try{{
+const stored=localStorage.getItem('compareFactors');
+if(stored){{
+const ids=JSON.parse(stored).filter(id=>factorData[id]);
+if(ids.length>0&&selectedFactors.length===0){{
+selectedFactors=ids.slice(0,4);
+localStorage.removeItem('compareFactors');
+}}
+}}
+}}catch(e){{}}
+}}
+
+// Initialize
+parseUrlParams();
+loadFromStorage();
+document.querySelectorAll('.metric-option input').forEach(c=>c.checked=selectedMetrics.includes(c.dataset.metric));
+updateMetricCounts();
+renderSelectedFactors();
+renderComparison();
 </script>
 {SHARED_SCRIPTS}
 </body>
@@ -4450,14 +4821,28 @@ def generate_listing_pages(conn, env) -> int:
     # All factors listing
     cursor = conn.execute("SELECT * FROM v_factor_profiles ORDER BY name")
     factors = [dict(row) for row in cursor]
-    
+
+    # Calculate stats for listing page
+    active_factors = [f for f in factors if f.get('status') == 'registered' and f.get('factor_type') not in ('Housing Association', 'Local Authority')]
+    expired_factors = [f for f in factors if f.get('status') != 'registered']
+    rsl_council_factors = [f for f in factors if f.get('factor_type') in ('Housing Association', 'Local Authority')]
+    stats = {
+        'total': len(factors),
+        'active': len(active_factors),
+        'total_properties': sum(f.get('property_count') or 0 for f in active_factors),
+        'with_reviews': len([f for f in active_factors if (f.get('google_review_count') or 0) + (f.get('trustpilot_review_count') or 0) > 0]),
+        'expired': len(expired_factors),
+        'rsl_council': len(rsl_council_factors),
+    }
+
     factors_dir = CONFIG.site_dir / "factors"
     factors_dir.mkdir(parents=True, exist_ok=True)
-    
+
     try:
         html = template.render(
             title="All Property Factors",
             factors=factors,
+            stats=stats,
             generated_date=datetime.now().strftime('%Y-%m-%d'),
         )
         
