@@ -65,6 +65,9 @@ body{font-family:var(--font-body);background:var(--slate-50);color:var(--navy-80
 .hero-stat{text-align:left}
 .hero-stat-value{font-family:var(--font-display);font-size:2rem;font-weight:700;color:var(--white)}
 .hero-stat-label{font-size:0.9rem;color:rgba(255,255,255,0.6);margin-top:4px}
+.find-factor-link{display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:10px 16px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:rgba(255,255,255,0.9);font-size:0.9rem;text-decoration:none;transition:all 0.2s}
+.find-factor-link:hover{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);text-decoration:none}
+.find-factor-link svg{flex-shrink:0;opacity:0.7}
 @media(max-width:768px){.hero{padding:60px 24px 80px}.hero-stats{flex-wrap:wrap;gap:24px}.hero-stat{flex:1;min-width:120px}.search-box{flex-direction:column}.search-btn{justify-content:center}}
 
 .tribunal{background:var(--white);padding:80px 24px}
@@ -170,6 +173,11 @@ body{font-family:var(--font-body);background:var(--slate-50);color:var(--navy-80
                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </button>
         </div>
+        <a href="https://www.propertyfactorregister.gov.scot/search" target="_blank" rel="noopener" class="find-factor-link">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/></svg>
+            Don't know your factor? Look up your property on the official register
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+        </a>
         <div class="hero-stats">
             <div class="hero-stat"><div class="hero-stat-value">263</div><div class="hero-stat-label">Factors tracked</div></div>
             <div class="hero-stat"><div class="hero-stat-value">522</div><div class="hero-stat-label">Tribunal decisions</div></div>
