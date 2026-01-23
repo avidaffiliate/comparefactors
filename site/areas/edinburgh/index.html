@@ -68,6 +68,16 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 @media(max-width:768px){.nav{display:none}.burger{display:flex}.footer-grid{grid-template-columns:1fr 1fr;gap:32px}.footer-bottom{flex-direction:column;gap:8px;text-align:center}.stats-bar{gap:24px}.filters-bar{flex-direction:column;align-items:stretch}.filter-divider{display:none}.page-title{font-size:1.75rem}}
 @media(max-width:480px){.header-inner{padding:0 16px}.main-content{padding:0 16px var(--space-xl)}.footer-grid{grid-template-columns:1fr;gap:24px}.factor-grid{grid-template-columns:1fr}.area-grid{grid-template-columns:1fr}}
 
+.area-intro{max-width:1200px;margin:0 auto;padding:0 24px 24px;font-size:1rem;line-height:1.7;color:var(--slate-600)}
+.area-intro p{margin-bottom:12px}
+.area-intro p:last-child{margin-bottom:0}
+.area-map-preview{display:block;max-width:400px;margin:0 auto 24px}
+@media(min-width:768px){.area-map-preview{float:right;margin:0 0 16px 24px}.area-intro{overflow:hidden}}
+.area-map-preview img{display:block;width:100%;height:auto;border-radius:10px 10px 0 0;border:1px solid var(--slate-200);border-bottom:none}
+.map-preview-label{display:block;padding:10px 14px;background:var(--slate-50);font-size:0.85rem;font-weight:500;color:var(--blue-600);border:1px solid var(--slate-200);border-radius:0 0 10px 10px;text-align:center}
+.area-map-preview:hover{text-decoration:none}
+.area-map-preview:hover .map-preview-label{background:var(--blue-100)}
+
 </style>
 </head>
 <body>
@@ -93,6 +103,15 @@ a{color:var(--blue-600);text-decoration:none}a:hover{text-decoration:underline}
 </header>
 <div class="breadcrumb"><a href="/">Home</a><span class="breadcrumb-sep">›</span><a href="/areas/">Areas</a><span class="breadcrumb-sep">›</span><span>Edinburgh</span></div>
 <div class="page-header"><h1 class="page-title">Property Factors in Edinburgh</h1><p class="page-subtitle">Compare factors serving the Edinburgh area</p></div>
+
+<div class="area-intro">
+  <p>Edinburgh is served by 43 registered property factors, collectively managing around 113,000 residential properties. The capital's mix of Georgian tenements and modern developments creates diverse factoring needs. Since 2017, these factors have been involved in 273 Housing and Property Chamber cases — a rate of 24.2 per 10,000 properties, notably higher than the Scottish average of 12.8.</p>
+  <p>Communication failures and repair delays are the most common complaints brought to tribunal in Edinburgh.</p>
+  <p>Around 84% of factors serving Edinburgh have no tribunal cases on record — but the remaining 16% account for a disproportionate share of complaints.</p>
+  <p>The largest factors operating in Edinburgh are James Gibb, Trinity Factoring Services, and Scottish Woodlands — together responsible for over 77,000 properties.</p>
+  <p>Use Compare Factors to check tribunal records, enforcement orders, and verified reviews before choosing — or switching — your building's factor.</p>
+</div>
+
 <div class="main-content">
 <div class="stats-bar"><div class="stat-item"><div class="stat-value" id="statFactors">54</div><div class="stat-label">Active Factors</div></div><div class="stat-item"><div class="stat-value" id="statProperties">398K</div><div class="stat-label">Properties Managed</div></div><div class="stat-item"><div class="stat-value" id="statReviews">49</div><div class="stat-label">With Reviews</div></div></div>
 <div class="filters-bar"><input type="text" class="search-input" id="searchInput" placeholder="Search by name..."><div class="filter-group"><label class="filter-label" for="riskFilter">Tribunal Risk:</label><select class="filter-select" id="riskFilter"><option value="">All</option><option value="CLEAN">Clean Record</option><option value="GREEN">Low Risk</option><option value="AMBER">Some Concerns</option><option value="ORANGE">Significant Issues</option><option value="RED">Serious Record</option></select></div><div class="filter-group"><label class="filter-label" for="sortFilter">Sort by:</label><select class="filter-select" id="sortFilter"><option value="name">Name (A-Z)</option><option value="properties">Properties (most)</option><option value="rating">Rating (highest)</option><option value="tribunal">Tribunal Cases (fewest)</option></select></div><div class="filter-divider"></div><label class="filter-checkbox"><input type="checkbox" id="includeExpired">Include expired (5)</label><label class="filter-checkbox"><input type="checkbox" id="includeRsl">Include RSL / Council (6)</label></div>
