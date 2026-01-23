@@ -1,0 +1,23 @@
+# Netlify configuration
+
+[build]
+  publish = "site"
+
+# Force HTTPS redirects
+[[redirects]]
+  from = "http://comparefactors.co.uk/*"
+  to = "https://comparefactors.co.uk/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.comparefactors.co.uk/*"
+  to = "https://comparefactors.co.uk/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.comparefactors.co.uk/*"
+  to = "https://comparefactors.co.uk/:splat"
+  status = 301
+  force = true
