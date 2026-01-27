@@ -17,26 +17,32 @@
     /* Teal for charts */
     --teal-500: #14b8a6;
     --teal-600: #0d9488;
-    
+
     /* Indigo for special states */
     --indigo-600: #4f46e5;
     --indigo-100: #e0e7ff;
     --indigo-50: #eef2ff;
-    
+
     /* Grey for expired/inactive */
     --gray-600: #4b5563;
     --gray-500: #6b7280;
     --gray-100: #f3f4f6;
-    
+
     /* Blue additions */
     --blue-50: #eff6ff;
     --blue-200: #bfdbfe;
     --blue-800: #1e40af;
-    
+
     /* Amber additions */
     --amber-50: #fffbeb;
     --amber-200: #fde68a;
     --amber-800: #92400e;
+
+    /* Orange additions */
+    --orange-50: #fff7ed;
+    --orange-200: #fed7aa;
+    --orange-400: #fb923c;
+    --orange-500: #f97316;
 }
 
 /* =============================================================================
@@ -2001,4 +2007,91 @@ body {
     font-size: var(--text-xs);
     color: var(--slate-500);
     margin-top: var(--space-xs);
+}
+
+/* =============================================================================
+   DEEP REVIEW LINK
+   ============================================================================= */
+
+.deep-review-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    background: linear-gradient(135deg, var(--orange-50) 0%, var(--amber-50) 100%);
+    border: 2px solid var(--orange-200);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-lg);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.deep-review-link:hover {
+    border-color: var(--orange-400);
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.15);
+    transform: translateY(-1px);
+    text-decoration: none;
+}
+
+.deep-review-link-content {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+}
+
+.deep-review-link-content svg {
+    flex-shrink: 0;
+    color: var(--orange-600);
+    margin-top: 2px;
+}
+
+.deep-review-link-content strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--navy-900);
+    margin-bottom: 2px;
+}
+
+.deep-review-link-content span {
+    display: block;
+    font-size: var(--text-sm);
+    color: var(--slate-600);
+    line-height: 1.4;
+}
+
+.deep-review-link > svg {
+    flex-shrink: 0;
+    color: var(--orange-500);
+    transition: transform 0.2s ease;
+}
+
+.deep-review-link:hover > svg {
+    transform: translateX(4px);
+}
+
+@media (max-width: 640px) {
+    .deep-review-link {
+        padding: var(--space-sm) var(--space-md);
+        margin-bottom: var(--space-md);
+    }
+
+    .deep-review-link-content {
+        gap: var(--space-sm);
+    }
+
+    .deep-review-link-content svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .deep-review-link-content strong {
+        font-size: var(--text-sm);
+    }
+
+    .deep-review-link-content span {
+        font-size: var(--text-xs);
+    }
 }
