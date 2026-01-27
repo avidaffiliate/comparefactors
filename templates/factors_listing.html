@@ -38,13 +38,11 @@ Uses client-side filtering for fast interaction
         <select class="filter-select" id="sortFilter">
             <option value="properties" selected>Properties (most)</option>
             <option value="name">Name (A-Z)</option>
-            <option value="postcodes">Postcodes (most)</option>
             <option value="tribunal">Tribunal Cases 5yr (fewest)</option>
         </select>
     </div>
     <div class="filter-divider"></div>
-    <label class="filter-checkbox"><input type="checkbox" id="includeExpired">Include expired ({{ stats.expired }})</label>
-    <label class="filter-checkbox"><input type="checkbox" id="includeRsl">Include RSL / Local Authority ({{ stats.rsl_council }})</label>
+    <label class="filter-checkbox"><input type="checkbox" id="includeExpired">Include expired / inactive ({{ stats.expired + stats.inactive }})</label>
 </div>
 
 <div class="find-factor-box">
@@ -57,7 +55,9 @@ Uses client-side filtering for fast interaction
 
 <div class="factor-grid" id="factorGrid">
 {% for f in factors %}
-{% set is_expired = f.status != 'registered' %}
+{% set is_expired = f.status == 'expired' %}
+{% set is_inactive = f.status == 'inactive' %}
+{% set is_hidden = is_expired or is_inactive %}
 {% set factor_type_lower = (f.factor_type or '')|lower %}
 {% set is_rsl = factor_type_lower in ['registered social landlord', 'local authority'] %}
 {% set risk = (f.risk_band or 'CLEAN')|lower %}
@@ -79,12 +79,11 @@ Uses client-side filtering for fast interaction
 <div class="factor-card"
      data-name="{{ f.name|lower }}"
      data-risk="{{ f.risk_band or 'CLEAN' }}"
-     data-expired="{{ '1' if is_expired else '0' }}"
-     data-rsl="{{ '1' if is_rsl else '0' }}"
+     data-expired="{{ '1' if is_hidden else '0' }}"
      data-properties="{{ f.property_count or 0 }}"
      data-postcodes="{{ f.postcode_count or 0 }}"
      data-tribunal="{{ f.tribunal_case_count_5yr or 0 }}"
-     {% if is_expired or is_rsl %}style="display:none"{% endif %}>
+     {% if is_hidden %}style="display:none"{% endif %}>
     <div class="factor-card-header">
         <div>
             <h3 class="factor-name"><a href="/factors/{{ f.registration_number|lower }}/">{{ f.name }}</a></h3>
@@ -92,6 +91,8 @@ Uses client-side filtering for fast interaction
         </div>
         <div class="factor-badges">
             {% if is_expired %}<span class="badge badge-expired">Expired</span>{% endif %}
+            {% if is_inactive %}<span class="badge badge-inactive">Inactive</span>{% endif %}
+            {% if is_rsl %}<span class="badge badge-rsl">{{ 'Council' if factor_type_lower == 'local authority' else 'RSL' }}</span>{% endif %}
             <span class="badge badge-{{ risk }}">{{ f.risk_band or 'Clean' }}</span>
         </div>
     </div>
@@ -145,7 +146,6 @@ const searchInput=document.getElementById('searchInput'),
       riskFilter=document.getElementById('riskFilter'),
       sortFilter=document.getElementById('sortFilter'),
       includeExpired=document.getElementById('includeExpired'),
-      includeRsl=document.getElementById('includeRsl'),
       grid=document.getElementById('factorGrid'),
       cards=Array.from(grid.querySelectorAll('.factor-card')),
       resultsCount=document.getElementById('resultsCount');
@@ -160,49 +160,44 @@ function filterAndSort(){
     const search=searchInput.value.toLowerCase(),
           risk=riskFilter.value,
           sort=sortFilter.value,
-          showExpired=includeExpired.checked,
-          showRsl=includeRsl.checked;
-    
+          showExpired=includeExpired.checked;
+
     let visibleCount=0,totalProps=0,withReviews=0;
-    
+
     cards.forEach(card=>{
         const name=card.dataset.name,
               cardRisk=card.dataset.risk,
               isExpired=card.dataset.expired==='1',
-              isRsl=card.dataset.rsl==='1',
               props=parseInt(card.dataset.properties)||0,
               hasReviews=card.querySelector('.reviews-row')!==null;
-        
-        // Filter logic: show if matches search AND risk filter AND (show expired OR not expired) AND (show RSL OR not RSL)
+
+        // Filter logic: show if matches search AND risk filter AND (show expired/inactive OR not expired/inactive)
         const matchesSearch=name.includes(search),
               matchesRisk=!risk||cardRisk===risk,
-              passesExpired=showExpired||!isExpired,
-              passesRsl=showRsl||!isRsl;
-        
-        const visible=matchesSearch&&matchesRisk&&passesExpired&&passesRsl;
-        
+              passesExpired=showExpired||!isExpired;
+
+        const visible=matchesSearch&&matchesRisk&&passesExpired;
+
         card.style.display=visible?'':'none';
-        
+
         if(visible){
             visibleCount++;
             totalProps+=props;
             if(hasReviews)withReviews++;
         }
     });
-    
+
     document.getElementById('statFactors').textContent=visibleCount;
     document.getElementById('statProperties').textContent=formatNumber(totalProps);
     document.getElementById('statReviews').textContent=withReviews;
     resultsCount.innerHTML='Showing <strong>'+visibleCount+'</strong> factors';
-    
+
     // Sort visible cards
     const visibleCards=cards.filter(c=>c.style.display!=='none');
     visibleCards.sort((a,b)=>{
         switch(sort){
             case'properties':
                 return(parseInt(b.dataset.properties)||0)-(parseInt(a.dataset.properties)||0);
-            case'postcodes':
-                return(parseInt(b.dataset.postcodes)||0)-(parseInt(a.dataset.postcodes)||0);
             case'tribunal':
                 return(parseInt(a.dataset.tribunal)||0)-(parseInt(b.dataset.tribunal)||0);
             default:
@@ -224,5 +219,4 @@ searchInput.addEventListener('input',filterAndSort);
 riskFilter.addEventListener('change',filterAndSort);
 sortFilter.addEventListener('change',filterAndSort);
 includeExpired.addEventListener('change',filterAndSort);
-includeRsl.addEventListener('change',filterAndSort);
 {% endblock %}

@@ -31,6 +31,7 @@ import sqlite3
 import csv
 import json
 import os
+import sys
 import argparse
 import re
 from pathlib import Path
@@ -38,6 +39,11 @@ from datetime import datetime
 from typing import Optional, Dict, List, Any
 from dataclasses import dataclass, field
 from contextlib import contextmanager
+
+# Fix Windows console encoding for emoji output
+if sys.platform == 'win32':
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
 
 try:
     from jinja2 import Environment, FileSystemLoader
@@ -489,46 +495,59 @@ def step_2_import_factors():
         conn.commit()
     
     log_success(f"Imported {imported} factors")
-    
-    # Import FOI postcode coverage data
-    foi_path = CONFIG.csv_dir / "factors_postcodes.csv"
-    if foi_path.exists():
-        log_info(f"Reading FOI postcodes: {foi_path}")
-        
-        with open(foi_path, 'r', encoding='utf-8-sig') as f:
+
+    # Import property coverage from scraped property data (replaces FOI data)
+    property_coverage_path = CONFIG.csv_dir / "factors_property_coverage.csv"
+    if property_coverage_path.exists():
+        log_info(f"Reading property coverage: {property_coverage_path}")
+
+        with open(property_coverage_path, 'r', encoding='utf-8-sig') as f:
             rows = list(csv.DictReader(f))
-        
+
         updated = 0
         with get_db() as conn:
             for row in rows:
-                pf = normalize_pf_number(get_csv_value(row, ['registration_number']))
+                pf = normalize_pf_number(row.get('registration_number'))
                 if not pf:
                     continue
-                
-                # Count postcodes from postcode_areas
-                postcode_areas = get_csv_value(row, ['postcode_areas']) or ''
-                postcode_count = len([p.strip() for p in postcode_areas.split(',') if p.strip()]) if postcode_areas else 0
-                
+
                 conn.execute("""
                     UPDATE factors SET
+                        property_count = ?,
                         postcode_areas = ?,
                         postcode_count = ?,
                         geographic_reach = ?,
-                        coverage_areas = COALESCE(coverage_areas, ?),
                         updated_at = CURRENT_TIMESTAMP
                     WHERE registration_number = ?
                 """, [
-                    postcode_areas,
-                    postcode_count,
-                    get_csv_value(row, ['geographic_reach']),
-                    get_csv_value(row, ['cities', 'foi_cities']),
+                    int(row.get('property_count') or 0),
+                    row.get('postcode_districts'),  # Full districts like EH1,EH2,G41
+                    int(row.get('postcode_district_count') or 0),
+                    row.get('geographic_reach'),
                     pf,
                 ])
                 updated += 1
             conn.commit()
-        log_success(f"Updated {updated} factors with FOI postcode coverage")
+        log_success(f"Updated {updated} factors with property coverage")
+
+        # Mark factors without scraped properties as 'inactive'
+        with get_db() as conn:
+            result = conn.execute("""
+                UPDATE factors
+                SET registration_status = 'inactive',
+                    status = 'inactive'
+                WHERE (property_count IS NULL OR property_count = 0)
+                AND (registration_status = 'Registered'
+                     OR registration_status = 'registered'
+                     OR status = 'registered')
+            """)
+            inactive_count = result.rowcount
+            conn.commit()
+
+        if inactive_count > 0:
+            log_info(f"Marked {inactive_count} factors as inactive (no scraped properties)")
     else:
-        log_info(f"FOI postcodes CSV not found at {foi_path}")
+        log_info(f"Property coverage CSV not found - run extract_property_coverage.py first")
 
 
 # =============================================================================
@@ -1292,7 +1311,7 @@ def step_9_generate_site():
         if (CONFIG.template_dir / "factors_listing.html").exists():
             template = env.get_template("factors_listing.html")
             
-            factors = [dict(r) for r in conn.execute("SELECT * FROM factors ORDER BY name").fetchall()]
+            factors = [dict(r) for r in conn.execute("SELECT * FROM factors ORDER BY COALESCE(property_count, 0) DESC, name").fetchall()]
             # Only count 2021+ cases
             tribunal_count = conn.execute("""
                 SELECT COUNT(*) FROM tribunal_cases
@@ -1303,17 +1322,19 @@ def step_9_generate_site():
                    OR case_reference LIKE '%/25/%'
             """).fetchone()[0]
 
-            # Calculate stats
-            active = [f for f in factors if f['status'] == 'registered' and f.get('factor_type') not in ('Registered Social Landlord', 'Local Authority')]
-            expired = sum(1 for f in factors if f['status'] != 'registered')
+            # Calculate stats - active includes all registered factors (commercial + RSL/LA)
+            active = [f for f in factors if f['status'] == 'registered']
+            expired = sum(1 for f in factors if f['status'] == 'expired')
+            inactive = sum(1 for f in factors if f['status'] == 'inactive')
             rsl_council = sum(1 for f in factors if f['status'] == 'registered' and f.get('factor_type') in ('Registered Social Landlord', 'Local Authority'))
-            
+
             html = template.render(
                 factors=factors,
                 stats={
                     'total': len(factors),
                     'active': len(active),
                     'expired': expired,
+                    'inactive': inactive,
                     'rsl_council': rsl_council,
                     'total_properties': sum(f['property_count'] or 0 for f in active),
                     'total_properties_all': sum(f['property_count'] or 0 for f in factors),
@@ -1339,39 +1360,60 @@ def step_9_generate_site():
         
         # Get all factors with postcode data (including RSL/LA for toggle functionality)
         all_factors_for_areas = [dict(r) for r in conn.execute("""
-            SELECT * FROM factors 
+            SELECT * FROM factors
             WHERE postcode_areas IS NOT NULL AND postcode_areas != ''
         """).fetchall()]
-        
+
+        # Load area-specific property counts
+        area_counts_file = CONFIG.csv_dir / 'factors_area_counts.csv'
+        area_property_counts = {}  # {(area_slug, reg_number): count}
+        if area_counts_file.exists():
+            import csv
+            with open(area_counts_file, 'r', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    key = (row['area_slug'], row['registration_number'])
+                    area_property_counts[key] = int(row['property_count'])
+
         # Build area data
         area_list = []
         for slug, area_info in AREA_DEFINITIONS.items():
             area_postcodes = set(area_info['postcodes'])
             area_factors = []
-            
+
             for f in all_factors_for_areas:
                 factor_postcodes = set(p.strip() for p in (f.get('postcode_areas') or '').split(','))
                 if factor_postcodes & area_postcodes:
-                    area_factors.append(f)
-            
+                    # Create copy with regional property count
+                    f_copy = dict(f)
+                    f_copy['regional_property_count'] = area_property_counts.get(
+                        (slug, f['registration_number']), 0
+                    )
+                    area_factors.append(f_copy)
+
             if area_factors:
-                # Only count active commercial factors for consistency with area pages
-                active_commercial = [f for f in area_factors
-                                     if f['status'] == 'registered'
-                                     and f.get('factor_type') not in ('Registered Social Landlord', 'Local Authority')]
+                # Sort factors by regional property count (most to least)
+                area_factors.sort(key=lambda x: -(x.get('regional_property_count') or 0))
+                # Count all active factors (including RSL/LA)
+                active_factors = [f for f in area_factors if f['status'] == 'registered']
+                # Calculate regional total properties
+                regional_total = sum(f.get('regional_property_count') or 0 for f in active_factors)
                 area_list.append({
                     'slug': slug,
                     'name': area_info['name'],
-                    'factor_count': len(active_commercial),
-                    'property_count': sum(f['property_count'] or 0 for f in active_commercial),
+                    'factor_count': len(active_factors),
+                    'property_count': regional_total,
                     'factors': area_factors,
                 })
-        
+
+        # Sort areas by property count (most to least)
+        area_list.sort(key=lambda x: -x['property_count'])
+
         # Areas index
         if (CONFIG.template_dir / "areas_index.html").exists():
             template = env.get_template("areas_index.html")
             html = template.render(
-                areas=sorted(area_list, key=lambda x: -x['factor_count']),
+                areas=area_list,  # Already sorted by property count
                 generated_date=generated_date,
                 current_year=current_year,
             )
@@ -1386,23 +1428,23 @@ def step_9_generate_site():
                 area_dir = areas_dir / area['slug']
                 area_dir.mkdir(parents=True, exist_ok=True)
                 
-                # Calculate stats matching factors_listing.html
+                # Calculate stats matching factors_listing.html - active includes RSL/LA
                 all_area_factors = area['factors']
-                active_factors = [f for f in all_area_factors 
-                                  if f['status'] == 'registered' 
-                                  and f.get('factor_type') not in ('Registered Social Landlord', 'Local Authority')]
-                expired_count = sum(1 for f in all_area_factors if f['status'] != 'registered')
-                rsl_council_count = sum(1 for f in all_area_factors 
+                active_factors = [f for f in all_area_factors if f['status'] == 'registered']
+                expired_count = sum(1 for f in all_area_factors if f['status'] == 'expired')
+                inactive_count = sum(1 for f in all_area_factors if f['status'] == 'inactive')
+                rsl_council_count = sum(1 for f in all_area_factors
                                         if f.get('factor_type') in ('Registered Social Landlord', 'Local Authority'))
-                
+
                 html = template.render(
                     area=area,
                     factors=all_area_factors,
                     stats={
                         'active': len(active_factors),
                         'expired': expired_count,
+                        'inactive': inactive_count,
                         'rsl_council': rsl_council_count,
-                        'total_properties': sum(f['property_count'] or 0 for f in active_factors),
+                        'total_properties': sum(f.get('regional_property_count') or 0 for f in active_factors),
                         'with_reviews': sum(1 for f in active_factors if f.get('google_rating') or f.get('trustpilot_rating')),
                     },
                     generated_date=generated_date,
