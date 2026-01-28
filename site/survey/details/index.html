@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P9QSNCJEBQ"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-P9QSNCJEBQ');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<title>Survey Details | Compare Factors Scotland</title>
+<meta name="description" content="Help us build better benchmarks with additional details about your factoring costs.">
+<meta name="robots" content="noindex">
+<link rel="preload" href="/static/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/static/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Fraunces';font-style:normal;font-weight:400 700;font-display:swap;src:url('/static/fonts/fraunces-latin.woff2') format('woff2')}
+@font-face{font-family:'Source Sans 3';font-style:normal;font-weight:400 700;font-display:swap;src:url('/static/fonts/source-sans-3-latin.woff2') format('woff2')}
+:root{--navy-950:#0a0f1a;--navy-900:#0f172a;--navy-800:#1e293b;--slate-700:#334155;--slate-600:#475569;--slate-500:#64748b;--slate-400:#94a3b8;--slate-300:#cbd5e1;--slate-200:#e2e8f0;--slate-100:#f1f5f9;--slate-50:#f8fafc;--white:#ffffff;--green-700:#15803d;--green-600:#16a34a;--green-100:#dcfce7;--green-50:#f0fdf4;--blue-700:#1d4ed8;--blue-600:#2563eb;--blue-100:#dbeafe;--blue-50:#eff6ff;--amber-700:#b45309;--amber-100:#fef3c7;--amber-50:#fffbeb;--font-display:'Fraunces',Georgia,serif;--font-body:'Source Sans 3',-apple-system,BlinkMacSystemFont,sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);font-size:16px;line-height:1.6;color:var(--navy-800);background:var(--slate-50);-webkit-font-smoothing:antialiased}
+a{color:var(--blue-600);text-decoration:underline}a:hover{text-decoration:underline}
+
+.site-header{background:var(--white);border-bottom:1px solid var(--slate-200);position:sticky;top:0;z-index:100}
+.header-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:68px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:1.25rem;font-weight:600;color:var(--navy-950);text-decoration:none}.logo:hover{text-decoration:none}
+.logo-mark{width:32px;height:32px;background:var(--navy-950);border-radius:6px;display:flex;align-items:center;justify-content:center;color:white;font-size:0.75rem;font-weight:700}
+.nav{display:flex;align-items:center;gap:24px}
+.nav-link{font-size:0.9rem;font-weight:500;color:var(--slate-600);text-decoration:none;transition:color 0.15s}.nav-link:hover{color:var(--navy-950);text-decoration:none}
+.nav-cta{background:var(--navy-950);color:white;padding:8px 16px;border-radius:6px;font-size:0.9rem;font-weight:600;text-decoration:none;transition:background 0.15s}.nav-cta:hover{background:var(--navy-800);text-decoration:none}
+
+.burger{display:none;flex-direction:column;justify-content:center;gap:5px;width:28px;height:28px;background:none;border:none;cursor:pointer;padding:0}
+.burger span{display:block;width:100%;height:2px;background:var(--navy-800);border-radius:2px;transition:all 0.3s}
+.mobile-nav{display:none;position:absolute;top:68px;left:0;right:0;background:var(--white);border-bottom:1px solid var(--slate-200);padding:16px 24px;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+.mobile-nav.active{display:block}
+.mobile-nav a{display:block;padding:12px 0;color:var(--slate-600);text-decoration:none;font-size:1rem;font-weight:500;border-bottom:1px solid var(--slate-100)}
+.mobile-nav a:last-child{border-bottom:none}
+.mobile-nav a.nav-cta{color:white;background:var(--navy-950);margin-top:12px;padding:12px 16px;border-radius:8px;text-align:center;border-bottom:none}
+
+.page-container{max-width:640px;margin:0 auto;padding:48px 24px 96px}
+.page-title{font-family:var(--font-display);font-size:1.75rem;font-weight:700;color:var(--navy-950);margin:0 0 8px}
+.page-intro{font-size:1rem;color:var(--slate-600);margin:0 0 24px;line-height:1.6}
+
+.progress-bar{display:flex;align-items:center;gap:8px;margin-bottom:32px}
+.progress-step{flex:1;height:4px;background:var(--slate-200);border-radius:2px}
+.progress-step.active{background:var(--blue-600)}
+.progress-step.complete{background:var(--green-600)}
+.progress-label{font-size:0.8rem;color:var(--slate-500);white-space:nowrap}
+
+.success-box{background:var(--green-50);border:1px solid var(--green-100);border-radius:12px;padding:20px 24px;margin-bottom:28px}
+.success-box h3{font-family:var(--font-display);font-size:1rem;font-weight:600;color:var(--green-700);margin:0 0 6px;display:flex;align-items:center;gap:8px}
+.success-box p{font-size:0.9rem;color:var(--slate-600);margin:0}
+
+.example-box{background:var(--blue-50);border:1px solid var(--blue-100);border-radius:10px;padding:16px 20px;margin-bottom:24px}
+.example-box p{font-size:0.9rem;color:var(--slate-700);margin:0;line-height:1.6}
+.example-box strong{color:var(--navy-800)}
+
+.form-card{background:var(--white);border:1px solid var(--slate-200);border-radius:16px;padding:28px;margin-bottom:24px}
+.form-section-title{font-family:var(--font-display);font-size:1rem;font-weight:600;color:var(--navy-950);margin:0 0 20px;padding-bottom:12px;border-bottom:1px solid var(--slate-100)}
+
+.form-group{margin-bottom:24px}
+.form-group:last-child{margin-bottom:0}
+.form-label{display:block;font-size:0.95rem;font-weight:600;color:var(--navy-800);margin-bottom:8px}
+.form-hint{font-size:0.85rem;color:var(--slate-500);margin-bottom:10px;line-height:1.5}
+.form-input{width:100%;padding:12px 14px;border:1px solid var(--slate-200);border-radius:8px;font-size:1rem;font-family:var(--font-body);transition:border-color 0.15s,box-shadow 0.15s}
+.form-input:focus{outline:none;border-color:var(--blue-600);box-shadow:0 0 0 3px var(--blue-100)}
+.form-input-money{max-width:140px}
+.form-input-short{max-width:120px}
+
+.radio-group{display:flex;flex-direction:column;gap:10px}
+.radio-group.inline{flex-direction:row;flex-wrap:wrap;gap:16px}
+.radio-option{display:flex;align-items:center;gap:10px;cursor:pointer}
+.radio-option input{width:18px;height:18px;cursor:pointer;accent-color:var(--blue-600);flex-shrink:0}
+.radio-option span{font-size:0.95rem;color:var(--navy-800)}
+
+.checkbox-group{display:flex;flex-direction:column;gap:10px}
+.checkbox-option{display:flex;align-items:center;gap:10px;cursor:pointer}
+.checkbox-option input{width:18px;height:18px;cursor:pointer;accent-color:var(--blue-600);flex-shrink:0}
+.checkbox-option span{font-size:0.95rem;color:var(--navy-800)}
+
+.input-with-unit{display:flex;align-items:center;gap:8px}
+.input-unit{font-size:0.95rem;color:var(--slate-600)}
+
+.conditional-field{margin-top:12px;padding-left:28px;display:none}
+.conditional-field.visible{display:block}
+
+.btn-group{display:flex;gap:12px}
+.submit-btn{flex:1;padding:16px 24px;background:var(--navy-950);color:white;border:none;border-radius:8px;font-size:1rem;font-weight:600;font-family:var(--font-body);cursor:pointer;transition:background 0.15s}
+.submit-btn:hover{background:var(--navy-800)}
+.skip-btn{padding:16px 24px;background:var(--white);color:var(--slate-600);border:1px solid var(--slate-200);border-radius:8px;font-size:1rem;font-weight:500;font-family:var(--font-body);cursor:pointer;transition:all 0.15s;text-decoration:none;text-align:center}
+.skip-btn:hover{background:var(--slate-50);border-color:var(--slate-300);text-decoration:none}
+
+.privacy-note{font-size:0.8rem;color:var(--slate-500);text-align:center;margin-top:16px}
+
+.site-footer{background:var(--navy-950);color:rgba(255,255,255,0.7);padding:48px 24px 24px;margin-top:48px}
+.footer-inner{max-width:1200px;margin:0 auto}
+.footer-bottom{padding-top:24px;border-top:1px solid rgba(255,255,255,0.1);text-align:center;font-size:0.8rem;color:rgba(255,255,255,0.5)}
+
+@media(max-width:768px){
+    .nav{display:none}
+    .burger{display:flex}
+    .page-title{font-size:1.5rem}
+    .form-card{padding:20px}
+    .btn-group{flex-direction:column}
+}
+@media(max-width:480px){
+    .page-container{padding:32px 16px 64px}
+    .radio-group.inline{flex-direction:column;gap:10px}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <a href="/" class="logo"><div class="logo-mark">CF</div>Compare Factors</a>
+        <nav class="nav">
+            <a href="/factors/" class="nav-link">All Factors</a>
+            <a href="/areas/" class="nav-link">By Area</a>
+            <a href="/methodology/" class="nav-link">How We Score</a>
+            <a href="/get-quotes/" class="nav-link nav-cta">Get Quotes</a>
+        </nav>
+        <button class="burger" onclick="toggleMenu()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+    <div class="mobile-nav" id="mobileNav">
+        <a href="/factors/">All Factors</a>
+        <a href="/areas/">By Area</a>
+        <a href="/methodology/">How We Score</a>
+        <a href="/get-quotes/" class="nav-cta">Get Quotes</a>
+    </div>
+</header>
+
+<main class="page-container">
+    <div class="progress-bar">
+        <span class="progress-label">Step 2 of 2</span>
+        <div class="progress-step complete"></div>
+        <div class="progress-step active"></div>
+    </div>
+
+    <div class="success-box">
+        <h3>
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
+            Core data received
+        </h3>
+        <p>Your response is saved. Want to help us build better benchmarks? Add a few more details below.</p>
+    </div>
+
+    <h1 class="page-title">Additional Details (Optional)</h1>
+    <p class="page-intro">These questions help us understand cost breakdowns and build more accurate comparisons.</p>
+
+    <form name="cost-survey-details" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/survey/thanks/">
+        <input type="hidden" name="form-name" value="cost-survey-details">
+        <input type="hidden" name="submission_id" id="submissionId">
+        <p hidden><label>Don't fill this out: <input name="bot-field"></label></p>
+
+        <div class="form-card">
+            <h2 class="form-section-title">Cost Breakdown</h2>
+
+            <div class="form-group">
+                <label class="form-label">Which year are these costs from?</label>
+                <div class="radio-group inline">
+                    <label class="radio-option">
+                        <input type="radio" name="cost_year" value="2025" checked>
+                        <span>2025</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="cost_year" value="2024">
+                        <span>2024</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="cost_year" value="2023">
+                        <span>2023</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="cost_year" value="older">
+                        <span>Older</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">How often are you invoiced?</label>
+                <div class="radio-group inline">
+                    <label class="radio-option">
+                        <input type="radio" name="invoice_frequency" value="monthly">
+                        <span>Monthly</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="invoice_frequency" value="quarterly">
+                        <span>Quarterly</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="invoice_frequency" value="annually">
+                        <span>Annually</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="example-box">
+                <p><strong>Tip:</strong> If you pay quarterly, multiply by 4 for annual figures. E.g. £45/quarter = £180/year.</p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">YOUR annual management fee</label>
+                <p class="form-hint">The factor's admin charge only — not insurance or repairs.</p>
+                <div class="input-with-unit">
+                    <span class="input-unit">£</span>
+                    <input type="number" name="management_fee" class="form-input form-input-money" placeholder="0" min="0">
+                    <span class="input-unit">/year</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">YOUR annual buildings insurance</label>
+                <p class="form-hint">Your share of the block policy.</p>
+                <div class="input-with-unit">
+                    <span class="input-unit">£</span>
+                    <input type="number" name="insurance" class="form-input form-input-money" placeholder="0" min="0">
+                    <span class="input-unit">/year</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Has your factor disclosed insurance commission?</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="insurance_commission" value="yes_disclosed">
+                        <span>Yes — told me amount/percentage</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="insurance_commission" value="no">
+                        <span>No — never mentioned it</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="insurance_commission" value="no_commission">
+                        <span>They don't take commission</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Do you pay into a float or reserve fund?</label>
+                <p class="form-hint">Regular payments held for future repairs.</p>
+                <div class="radio-group inline">
+                    <label class="radio-option">
+                        <input type="radio" name="float_fund" value="yes" id="floatYes">
+                        <span>Yes</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="float_fund" value="no" id="floatNo">
+                        <span>No</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="float_fund" value="dont_know">
+                        <span>Don't know</span>
+                    </label>
+                </div>
+                <div class="conditional-field" id="floatAmount">
+                    <label class="form-label" style="font-weight:500;font-size:0.9rem;">Annual float contribution:</label>
+                    <div class="input-with-unit">
+                        <span class="input-unit">£</span>
+                        <input type="number" name="float_amount" id="floatAmountInput" class="form-input form-input-money" placeholder="0" min="0">
+                        <span class="input-unit">/year</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Repairs & maintenance (last 12 months)</label>
+                <p class="form-hint">YOUR share — cleaning, gardening, repairs, utilities.</p>
+                <div class="radio-group inline">
+                    <label class="radio-option">
+                        <input type="radio" name="repairs" value="under_200">
+                        <span>&lt;£200</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="repairs" value="200_500">
+                        <span>£200–500</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="repairs" value="500_1000">
+                        <span>£500–1k</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="repairs" value="1000_2000">
+                        <span>£1–2k</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="repairs" value="over_2000">
+                        <span>£2k+</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2 class="form-section-title">Your Experience</h2>
+
+            <div class="form-group">
+                <label class="form-label">What frustrates you most? (select all that apply)</label>
+                <div class="checkbox-group" id="frustrationGroup">
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="frustrations" value="communication">
+                        <span>Poor communication / slow responses</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="frustrations" value="costs">
+                        <span>High or unclear costs</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="frustrations" value="repairs">
+                        <span>Slow or poor quality repairs</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="frustrations" value="transparency">
+                        <span>Lack of transparency</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="frustrations" value="insurance">
+                        <span>Insurance issues / commission</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="frustrations" value="none" id="frustrationNone">
+                        <span>Nothing — I'm satisfied</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2 class="form-section-title">Contact (Optional)</h2>
+            <p class="form-hint" style="margin-top:-12px;margin-bottom:20px;">Get the benchmark results when published.</p>
+
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                <input type="email" id="email" name="email" class="form-input" placeholder="you@example.com">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="postcode">Postcode (first half only)</label>
+                <input type="text" id="postcode" name="postcode" class="form-input form-input-short" placeholder="e.g. EH6">
+                <p class="form-hint">Helps with regional analysis.</p>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <a href="/survey/thanks/" class="skip-btn">Skip</a>
+            <button type="submit" class="submit-btn">Submit Details</button>
+        </div>
+        <p class="privacy-note">All responses are anonymous and aggregated.</p>
+    </form>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-bottom">
+            <span>© 2026 Compare Factors Scotland</span>
+        </div>
+    </div>
+</footer>
+
+<script>
+function toggleMenu() {
+    document.querySelector('.burger').classList.toggle('active');
+    document.getElementById('mobileNav').classList.toggle('active');
+}
+
+// Get submission ID from URL or generate new one
+const urlParams = new URLSearchParams(window.location.search);
+const existingId = urlParams.get('id');
+document.getElementById('submissionId').value = existingId || Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+
+// Float fund conditional field
+document.querySelectorAll('input[name="float_fund"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const floatField = document.getElementById('floatAmount');
+        const floatInput = document.getElementById('floatAmountInput');
+        if (this.value === 'yes') {
+            floatField.classList.add('visible');
+        } else {
+            floatField.classList.remove('visible');
+            floatInput.value = ''; // Clear value when hidden
+        }
+    });
+});
+
+// Frustrations mutual exclusivity: "Nothing" clears others, others clear "Nothing"
+const frustrationNone = document.getElementById('frustrationNone');
+const otherFrustrations = document.querySelectorAll('#frustrationGroup input:not(#frustrationNone)');
+
+frustrationNone.addEventListener('change', function() {
+    if (this.checked) {
+        otherFrustrations.forEach(cb => cb.checked = false);
+    }
+});
+
+otherFrustrations.forEach(cb => {
+    cb.addEventListener('change', function() {
+        if (this.checked) {
+            frustrationNone.checked = false;
+        }
+    });
+});
+</script>
+<script src="/static/js/tracking.js"></script>
+</body>
+</html>

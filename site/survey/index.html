@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P9QSNCJEBQ"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-P9QSNCJEBQ');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<title>Scottish Factoring Cost Survey | Compare Factors Scotland</title>
+<meta name="description" content="Help build Scotland's first independent factoring cost benchmarks. Takes just 2 minutes.">
+<link rel="canonical" href="https://comparefactors.co.uk/survey/">
+<link rel="preload" href="/static/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/static/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Fraunces';font-style:normal;font-weight:400 700;font-display:swap;src:url('/static/fonts/fraunces-latin.woff2') format('woff2')}
+@font-face{font-family:'Source Sans 3';font-style:normal;font-weight:400 700;font-display:swap;src:url('/static/fonts/source-sans-3-latin.woff2') format('woff2')}
+:root{--navy-950:#0a0f1a;--navy-900:#0f172a;--navy-800:#1e293b;--slate-700:#334155;--slate-600:#475569;--slate-500:#64748b;--slate-400:#94a3b8;--slate-300:#cbd5e1;--slate-200:#e2e8f0;--slate-100:#f1f5f9;--slate-50:#f8fafc;--white:#ffffff;--green-700:#15803d;--green-600:#16a34a;--green-100:#dcfce7;--green-50:#f0fdf4;--blue-700:#1d4ed8;--blue-600:#2563eb;--blue-100:#dbeafe;--blue-50:#eff6ff;--amber-700:#b45309;--amber-100:#fef3c7;--amber-50:#fffbeb;--font-display:'Fraunces',Georgia,serif;--font-body:'Source Sans 3',-apple-system,BlinkMacSystemFont,sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);font-size:16px;line-height:1.6;color:var(--navy-800);background:var(--slate-50);-webkit-font-smoothing:antialiased}
+a{color:var(--blue-600);text-decoration:underline}a:hover{text-decoration:underline}
+
+.site-header{background:var(--white);border-bottom:1px solid var(--slate-200);position:sticky;top:0;z-index:100}
+.header-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:68px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:1.25rem;font-weight:600;color:var(--navy-950);text-decoration:none}.logo:hover{text-decoration:none}
+.logo-mark{width:32px;height:32px;background:var(--navy-950);border-radius:6px;display:flex;align-items:center;justify-content:center;color:white;font-size:0.75rem;font-weight:700}
+.nav{display:flex;align-items:center;gap:24px}
+.nav-link{font-size:0.9rem;font-weight:500;color:var(--slate-600);text-decoration:none;transition:color 0.15s}.nav-link:hover{color:var(--navy-950);text-decoration:none}
+.nav-cta{background:var(--navy-950);color:white;padding:8px 16px;border-radius:6px;font-size:0.9rem;font-weight:600;text-decoration:none;transition:background 0.15s}.nav-cta:hover{background:var(--navy-800);text-decoration:none}
+
+.burger{display:none;flex-direction:column;justify-content:center;gap:5px;width:28px;height:28px;background:none;border:none;cursor:pointer;padding:0}
+.burger span{display:block;width:100%;height:2px;background:var(--navy-800);border-radius:2px;transition:all 0.3s}
+.burger.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.burger.active span:nth-child(2){opacity:0}
+.burger.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.mobile-nav{display:none;position:absolute;top:68px;left:0;right:0;background:var(--white);border-bottom:1px solid var(--slate-200);padding:16px 24px;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+.mobile-nav.active{display:block}
+.mobile-nav a{display:block;padding:12px 0;color:var(--slate-600);text-decoration:none;font-size:1rem;font-weight:500;border-bottom:1px solid var(--slate-100)}
+.mobile-nav a:last-child{border-bottom:none}
+.mobile-nav a:hover{color:var(--navy-900)}
+.mobile-nav a.nav-cta{color:white;background:var(--navy-950);margin-top:12px;padding:12px 16px;border-radius:8px;text-align:center;border-bottom:none}
+
+.page-container{max-width:640px;margin:0 auto;padding:48px 24px 96px}
+.page-title{font-family:var(--font-display);font-size:2rem;font-weight:700;color:var(--navy-950);margin:0 0 12px}
+.page-intro{font-size:1.05rem;color:var(--slate-600);margin:0 0 24px;line-height:1.7}
+.page-intro strong{color:var(--navy-800)}
+
+.progress-bar{display:flex;align-items:center;gap:8px;margin-bottom:32px}
+.progress-step{flex:1;height:4px;background:var(--slate-200);border-radius:2px}
+.progress-step.active{background:var(--blue-600)}
+.progress-label{font-size:0.8rem;color:var(--slate-500);white-space:nowrap}
+
+.highlight-box{background:var(--amber-50);border:1px solid var(--amber-100);border-radius:10px;padding:14px 18px;margin-bottom:28px}
+.highlight-box p{font-size:0.9rem;color:var(--amber-700);margin:0;font-weight:500}
+
+.form-card{background:var(--white);border:1px solid var(--slate-200);border-radius:16px;padding:28px;margin-bottom:24px}
+
+.form-group{margin-bottom:24px}
+.form-group:last-child{margin-bottom:0}
+.form-label{display:block;font-size:0.95rem;font-weight:600;color:var(--navy-800);margin-bottom:8px}
+.form-hint{font-size:0.85rem;color:var(--slate-500);margin-bottom:10px;line-height:1.5}
+.form-input,.form-select{width:100%;padding:12px 14px;border:1px solid var(--slate-200);border-radius:8px;font-size:1rem;font-family:var(--font-body);transition:border-color 0.15s,box-shadow 0.15s}
+.form-input:focus,.form-select:focus{outline:none;border-color:var(--blue-600);box-shadow:0 0 0 3px var(--blue-100)}
+.form-input-money{max-width:140px}
+
+.radio-group{display:flex;flex-direction:column;gap:10px}
+.radio-group.inline{flex-direction:row;flex-wrap:wrap;gap:16px}
+.radio-option{display:flex;align-items:center;gap:10px;cursor:pointer}
+.radio-option input{width:18px;height:18px;cursor:pointer;accent-color:var(--blue-600);flex-shrink:0}
+.radio-option span{font-size:0.95rem;color:var(--navy-800)}
+
+.input-with-unit{display:flex;align-items:center;gap:8px}
+.input-unit{font-size:0.95rem;color:var(--slate-600)}
+
+.submit-btn{width:100%;padding:16px 24px;background:var(--navy-950);color:white;border:none;border-radius:8px;font-size:1rem;font-weight:600;font-family:var(--font-body);cursor:pointer;transition:background 0.15s}
+.submit-btn:hover{background:var(--navy-800)}
+
+.privacy-note{font-size:0.8rem;color:var(--slate-500);text-align:center;margin-top:16px;line-height:1.5}
+.privacy-note a{color:var(--slate-600)}
+
+.site-footer{background:var(--navy-950);color:rgba(255,255,255,0.7);padding:48px 24px 24px;margin-top:48px}
+.footer-inner{max-width:1200px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:32px}
+.footer-brand{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:1.25rem;font-weight:600;color:white;margin-bottom:12px;text-decoration:none}.footer-brand:hover{text-decoration:none}.footer-brand .logo-mark{background:white;color:var(--navy-950)}
+.footer-about{font-size:0.9rem;line-height:1.6;color:rgba(255,255,255,0.6)}
+.footer-col h4{font-family:var(--font-body);font-weight:600;color:white;font-size:0.9rem;margin-bottom:16px}
+.footer-col a{display:block;color:rgba(255,255,255,0.7);font-size:0.9rem;margin-bottom:10px;text-decoration:none}.footer-col a:hover{color:white;text-decoration:underline}
+.footer-bottom{padding-top:24px;border-top:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;color:rgba(255,255,255,0.5)}
+
+@media(max-width:768px){
+    .nav{display:none}
+    .burger{display:flex}
+    .page-title{font-size:1.6rem}
+    .form-card{padding:20px}
+    .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
+    .footer-bottom{flex-direction:column;gap:8px;text-align:center}
+}
+@media(max-width:480px){
+    .page-container{padding:32px 16px 64px}
+    .radio-group.inline{flex-direction:column;gap:10px}
+    .footer-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <a href="/" class="logo"><div class="logo-mark">CF</div>Compare Factors</a>
+        <nav class="nav">
+            <a href="/factors/" class="nav-link">All Factors</a>
+            <a href="/areas/" class="nav-link">By Area</a>
+            <a href="/methodology/" class="nav-link">How We Score</a>
+            <a href="/guides/" class="nav-link">Guides</a>
+            <a href="/contribute/" class="nav-link">Contribute</a>
+            <a href="/get-quotes/" class="nav-link nav-cta">Get Quotes</a>
+        </nav>
+        <button class="burger" onclick="toggleMenu()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+    <div class="mobile-nav" id="mobileNav">
+        <a href="/factors/">All Factors</a>
+        <a href="/areas/">By Area</a>
+        <a href="/methodology/">How We Score</a>
+        <a href="/guides/">Guides</a>
+        <a href="/contribute/">Contribute</a>
+        <a href="/get-quotes/" class="nav-cta">Get Quotes</a>
+    </div>
+</header>
+
+<main class="page-container">
+    <div class="progress-bar">
+        <span class="progress-label">Step 1 of 2</span>
+        <div class="progress-step active"></div>
+        <div class="progress-step"></div>
+    </div>
+
+    <h1 class="page-title">Scottish Factoring Cost Survey</h1>
+    <p class="page-intro">
+        <strong>Help build Scotland's first independent factoring cost benchmarks.</strong><br>
+        The Scottish Government doesn't collect this data. This 2-minute survey will change that.
+    </p>
+
+    <div class="highlight-box">
+        <p>All cost questions ask what YOU pay — your share, not the total for your building.</p>
+    </div>
+
+    <form name="cost-survey-core" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/survey/details/">
+        <input type="hidden" name="form-name" value="cost-survey-core">
+        <input type="hidden" name="submission_id" id="submissionId">
+        <p hidden><label>Don't fill this out: <input name="bot-field"></label></p>
+
+        <div class="form-card">
+            <div class="form-group">
+                <label class="form-label">What type of property do you own?</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="property_type" value="traditional_tenement" required>
+                        <span>Traditional tenement flat (pre-1919)</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="property_type" value="post_war">
+                        <span>Post-war flat (1945–1979)</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="property_type" value="modern">
+                        <span>Modern/new-build flat (1980+)</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="property_type" value="managed_estate">
+                        <span>House on a managed estate</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Where is your property?</label>
+                <div class="radio-group inline">
+                    <label class="radio-option">
+                        <input type="radio" name="location" value="edinburgh" required>
+                        <span>Edinburgh</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="location" value="glasgow">
+                        <span>Glasgow</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="location" value="aberdeen">
+                        <span>Aberdeen</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="location" value="dundee">
+                        <span>Dundee</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="location" value="other">
+                        <span>Other</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">How many properties are in your development?</label>
+                <p class="form-hint">Flats/houses that share common charges with you.</p>
+                <div class="radio-group inline">
+                    <label class="radio-option">
+                        <input type="radio" name="units" value="under_10" required>
+                        <span>&lt;10</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="units" value="10_30">
+                        <span>10–30</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="units" value="31_100">
+                        <span>31–100</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="units" value="over_100">
+                        <span>100+</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="units" value="dont_know">
+                        <span>?</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="factor_name">Who is your factor?</label>
+                <p class="form-hint">Start typing to search, or enter manually.</p>
+                <input type="text" id="factor_name" name="factor_name" class="form-input" placeholder="Factor name..." list="factorList" autocomplete="off">
+                <datalist id="factorList">
+                </datalist>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">What is YOUR total annual factoring cost?</label>
+                <p class="form-hint">Everything you pay: management + insurance + repairs + other charges. Check your last 4 quarterly invoices if unsure.</p>
+                <div class="input-with-unit">
+                    <span class="input-unit">£</span>
+                    <input type="number" name="total_cost" class="form-input form-input-money" placeholder="0" min="0" step="1" required>
+                    <span class="input-unit">per year</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Does this feel like fair value?</label>
+                <div class="radio-group inline">
+                    <label class="radio-option">
+                        <input type="radio" name="fair_value" value="yes" required>
+                        <span>Yes</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="fair_value" value="neutral">
+                        <span>Neutral</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="fair_value" value="no">
+                        <span>No</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="submit-btn">Continue →</button>
+        <p class="privacy-note">Your data is anonymous. <a href="/privacy/">Privacy policy</a></p>
+    </form>
+</main>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-grid">
+            <div>
+                <a href="/" class="footer-brand"><div class="logo-mark">CF</div>Compare Factors</a>
+                <p class="footer-about">Independent comparison of Scottish property factors based on tribunal records, reviews, and homeowner data.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Compare</h4>
+                <a href="/factors/">All Factors</a>
+                <a href="/areas/">By Area</a>
+                <a href="/compare/">Compare Tool</a>
+            </div>
+            <div class="footer-col">
+                <h4>Guides</h4>
+                <a href="/guides/how-to-switch-factors-scotland/">Switching Factors</a>
+                <a href="/guides/complaints/">Making Complaints</a>
+                <a href="/methodology/">How We Score</a>
+            </div>
+            <div class="footer-col">
+                <h4>About</h4>
+                <a href="/about/">About Us</a>
+                <a href="/contact/">Contact</a>
+                <a href="/privacy/">Privacy Policy</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 Compare Factors Scotland</span>
+            <span>Data updated January 2026</span>
+        </div>
+    </div>
+</footer>
+
+<script>
+function toggleMenu() {
+    document.querySelector('.burger').classList.toggle('active');
+    document.getElementById('mobileNav').classList.toggle('active');
+}
+
+// Generate unique submission ID to link core + detailed responses
+document.getElementById('submissionId').value = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+
+// Factor list (populated from database)
+const factors = ["34 Camphill Avenue Owners Association","4C Scotland Limited","7 Days Property","91BC Property Services Limited","A & K Property Management Services","A W Middleton","A&H Developments (Killin) Ltd","A+ Property Management","ABE Factors Ltd","ABZ Property Investment Leasing Ltd","AGM Property Management","AJM Property Management Services Ltd","ALAN A HAXTON","ANCHO Ltd","ASC Asset Management (EK) Ltd","Abacus Property Factors Ltd","Abba Land and Property Limited","Abbey Construction (Scotland) Ltd","Abbey Forth Property Management Limited","Aberdeen City Council","Aberdeenshire Council","Abertay Housing Association Ltd","AboveBoard Homes Ltd","Acre Lettings Ltd","Afton Builders Limited","Ainsley Smith & Co Ltd","Alan Gebbie","Alderglen Factor Association","Alison Bruce Property Management Ltd","Almond Housing Association Limited","Angus Housing Association Limited","Anne Gordon","Aquila Management Services Property Factoring Ltd","Archerfield House Hotel Management Limited","Ardenglen Housing Association Ltd","Argyll Community Housing Association Limited","Argyll Letting Services Limited","Atrium Initiatives Limited","Avongreen Abodes Ltd","Ayrshire Housing","Barrhead Housing Association Limited","Bastion Property Management Ltd","Bell Ingram LLP","BeneFactors Property Management Limited","Bield Housing & Care","Blairtummock Housing Association Limited","Blochairn Housing Association Ltd","Block Property Management Ltd","Blosshome Property Management Ltd","Blythswood Property Management Ltd","Bowman Rebecchi Limited","Bridgewater Housing Association Limited","Brio Retirement Living (Chapelton) Limited","Brio Retirement Living (Holdings) Limited","Bute Factors Ltd","C-urb 6 Ltd","Cadder Housing Association","Cairn Housing Association Ltd","Calderwood Community Services Limited","Caledonia Housing Association Limited","Calvay Housing Association Ltd","Cassiltoun Housing Association Limited","Castlehill Housing Association Limited","Cathcart and District Housing Association Limited","Cernach Housing Association Limited","Chapelton Community Interest Company","Charles White Limited","Chesnutt Skeoch Ltd","Christopher Moore","Cloch Housing Association Ltd","Clyde Valley Property Services Limited","Clydebank Housing Association Limited","Clydeport Properties Ltd","Clydesdale Housing Association Ltd","Colonsay Community Development Company","Communities Housing Trust","Cordale Housing Association Limited","Cowiesburn Asset Management LLP","Craigdale Housing Association Ltd","Cullen Property Limited","Cumming Turner & Watt","Cunninghame Housing Association Limited","D & I Scott Property Management","DJM Property Services & Contracts Ltd","Dalmuir Park Housing Association Limited","David Robin Wardhaugh","Davidson & Robertson Limited","Denise Baykal","Direct Lettings (Scotland) Ltd","Duffield Morgan Limited","Dumfries and Galloway Homes Limited","Dunbritton Housing Association Limited","Dundee City Council","East Ayrshire Council","East Lothian Housing Association Ltd","East Renfrewshire Council","Easthall Park Housing Association Limited","Edinburgh Block Management Ltd","Edwin Thompson LLP","Eildon Housing Association Ltd","Elderpark Housing Association Limited","Ethical Maintenance C.I.C","FBR Seed Limited","FIRSTPORT PROPERTY SERVICES NO.17 LIMITED","Facilities Management Scotland Limited","Factors Direct Limited","Factotum (Scotland) Ltd","Falkirk Council","Fife Council","Fife Housing Association Limited","Fior Asset and Property Limited","FirstPort Property Services Scotland Limited","Fleming House Factors Limited","Forgewood Housing Co-operative Ltd","Forth Housing Association Ltd","Fyne Homes Ltd","G M Thomson & Co","Gadloch Limited","Galloway and Ayrshire Properties Ltd","Gardeen Housing Association Limited","Gardiner Waters Limited","Garrion People's Housing Co-operative Limited","Gilmour Property Services Ltd","Glasgow Harbour Management Ltd","Glasgow West Enterprises Limited","Glen Oaks Housing Association Ltd","Globe Housing (Scotland) Limited","Goldmont Thompson Ltd","Gordon McTavish","Govanhill Housing Association Limited","Grampian Housing Association Limited","Greenbelt Group Limited","Grierson Property Management Ltd","HLM Management (Scotland) Limited","Hacking & Paterson Management Services Limited","Hanover (Scotland) Housing Association Limited","Harbour Homes Scotland Limited","Hebridean Housing Partnership Limited","Highland Club Management Company Limited","Highland Residential (Inverness) Limited","Hillcrest Homes (Scotland) Ltd","Hjaltland Housing Association Limited","Home Group Scotland","Homes for Life Housing Partnership","Homesbook Factoring Limited","Horizon Housing Association Limited","Indigo Square Property Ltd","Individually Designed Homes Ltd","Integro Property Management Ltd","Irvine Housing Association Limited","J S CAMPBELL MRICS","J&E Shepherd","J. B. & G Forsyth Property Management Services","JFK Facility Services Ltd","James Gibb Property Management Ltd","Jamie McBride","Joseph Curley","Kingdom Housing Association Ltd","Kingdom Initiatives Limited","Klin Facilities Management Limited","Knowes Housing Association Ltd","LAR Housing Trust","LAR Operations C.I.C.","Ladysbridge Village Ltd","Lanarkshire Housing Association Ltd","Langstane Housing Association Limited","Larkfield Housing Association Limited","Linstone Housing Association Limited","Linthouse Housing Association Limited","Loch Tay Highland Lodge Park Ltd","Lochaber Housing Association Ltd","Lochaber Housing Association Property Services CIC","Lochalsh & Skye Housing Association","Lochfield Park Housing Association Limited","Lomond Property Factors Ltd","Loreburn Housing Association Limited","Loretto Housing Association Ltd","Lorimer Property Group Ltd","Lowther Homes Limited","MBM Property Management (Scotland) Limited","MXM Property Solutions Limited","Macfie & Co Management Services Ltd","Managing Estates Limited","Manor Estates Associates Ltd","Manor Estates Housing Association Ltd","Maroco Limited","Martin Jack Limited","Maryhill Housing Association Ltd","McCarthy & Stone Management Services Limited","McKenzie Accountants Ltd","McNeill Maguire & McCreath Surveyors Limited","Melville Housing Association Limited","Metropole Glasgow Limited","Mezzino Limited","Miller Property Management Ltd","Milnbank Property Services Ltd","Molendinar Park Housing Association","Myreside Management Limited","NG Property (Scotland) Limited","NRV Management Glasgow Limited","Naver Ltd","New Gorbals Housing Association Limited","Newton Property Management Ltd","North Ayrshire Council","North Lanarkshire Council","North View Housing Association Limited","Northwood Edinburgh Ltd","Oak Tree Housing Association Limited","Ochil View Housing Association Ltd","On Tranquil Shores Ltd","Ore Valley Housing Association Ltd","Orkney Housing Association Ltd","Orkney Islands Property Developments Limited","PLS Rural Limited","PMC Property Management & Lettings Ltd","Pada Vastu Ltd","Paisley South Property Services Limited","Palms Property Management Ltd","Pamsco Ltd","Paragon Housing Association Ltd","Park Property Management Limited","Parkhead Housing Association Limited","Partick Works Limited","Pavillion Properties (Assets) Limited","Pavillion Properties Limited","Pentland Community Enterprises Limited","Perth & Kinross Council","Peter Cusack Property Consultancy Limited","Philip Bald Accountancy Limited","Pineview Housing Association Ltd","Piper Lettings Ltd","Premier Properties Perth Limited","Prospect Community Housing Ltd","Provanhall Housing Association","Quarriers","Queens Cross Factoring Limited","Redpath Bruce Property Management Limited","Regent Factor Ltd","Reidvale Housing Association","Rendall and Rittner Limited","Renfrewshire Council","Rentolease Property Management Ltd","Residential Management Group Scotland Limited","Ritchie Leasing Limited","River Clyde Homes","Robert Smith","Robertson Property Management Limited","Rockford Properties Ltd","Rosehill Housing Co-operative Limited","Ross & Liddell Ltd","Ruchazie Housing Association Limited","Rural Stirling Housing Association","Rutherglen and Cambuslang Housing Association Ltd","Sanctuary Scotland Housing Association Ltd","Scott Woods","Scottish Borders Housing Association","Scottish Woodlands Ltd","Select Premier Letting Ltd","Sentry Management Ltd","Shafaatulla Property Management Limited","Shettleston Housing Association Limited","Shire Housing Association Limited","Simply Factors Limited","South Lanarkshire Council","Southside Housing Association Limited","Speirs Gumley Property Management Limited","Spire View Housing Association Limited","Staffin Community Trust Ltd","THA Park Ecovillage Findhorn Limited","THE PROPERTY FACTORING COMPANY LTD","THE TENEMENT COMPANY (SCOTLAND) LTD","Taylor Martin Property Management Ltd","The City of Edinburgh Council","The Element Factors Ltd","The Estates Office Limited","The Highland Council","The Water Row Company Ltd","Thenue Housing Association Limited","Thomson & Company Property Management Services Ltd","Thomsons UK Limited","Tollcross Housing Association Limited","Tomintoul and Glenlivet Development Trust","Toner and McCartney LLP","Tornagrain Services Limited","Touchstone Corporate Property Services Limited","Town Property Management Ltd","Trafalgar Housing Association Limited","Trinity Factoring Services Ltd","Troon Property Factoring Services Ltd","Trust Housing Association Ltd","Viewpoint Housing Association Limited","Vista Properties and Development Ltd","WS Property Management Limited","Walker Sandford Property Management Limited","Wanrobe Investments Limited","Waverley Housing","Waverley Property Maintenance Limited","Wellhouse Housing Association Ltd","West Dunbartonshire Council","West Highland Housing Association Ltd","West Lothian Council","West One Property Management & Factoring Ltd","Westburn Services Ltd","Westscot Living Limited","Wheatley Homes East Limited","Wheatley Homes Glasgow Limited","Wheatley Homes South Limited","Williamsburgh Housing Association Ltd","Xenia Estates Ltd","Yoker Housing Association Ltd","Yorkhill Housing Association Ltd","Your Local Factor Limited","YourLife Management Services Limited","Yourplace Property Management Limited","effectiv Facilities Management Limited","fairpricefactorfees","xFactors Ltd"];
+
+// Populate datalist
+const datalist = document.getElementById('factorList');
+factors.forEach(f => {
+    const opt = document.createElement('option');
+    opt.value = f;
+    datalist.appendChild(opt);
+});
+</script>
+<script src="/static/js/tracking.js"></script>
+</body>
+</html>
