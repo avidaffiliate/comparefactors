@@ -296,40 +296,6 @@ a{color:var(--blue-600);text-decoration:underline}a:hover{text-decoration:underl
         </div>
 
         <div class="form-card">
-            <h2 class="form-section-title">Your Experience</h2>
-
-            <div class="form-group">
-                <label class="form-label">What frustrates you most? (select all that apply)</label>
-                <div class="checkbox-group" id="frustrationGroup">
-                    <label class="checkbox-option">
-                        <input type="checkbox" name="frustrations" value="communication">
-                        <span>Poor communication / slow responses</span>
-                    </label>
-                    <label class="checkbox-option">
-                        <input type="checkbox" name="frustrations" value="costs">
-                        <span>High or unclear costs</span>
-                    </label>
-                    <label class="checkbox-option">
-                        <input type="checkbox" name="frustrations" value="repairs">
-                        <span>Slow or poor quality repairs</span>
-                    </label>
-                    <label class="checkbox-option">
-                        <input type="checkbox" name="frustrations" value="transparency">
-                        <span>Lack of transparency</span>
-                    </label>
-                    <label class="checkbox-option">
-                        <input type="checkbox" name="frustrations" value="insurance">
-                        <span>Insurance issues / commission</span>
-                    </label>
-                    <label class="checkbox-option">
-                        <input type="checkbox" name="frustrations" value="none" id="frustrationNone">
-                        <span>Nothing — I'm satisfied</span>
-                    </label>
-                </div>
-            </div>
-        </div>
-
-        <div class="form-card">
             <h2 class="form-section-title">Contact (Optional)</h2>
             <p class="form-hint" style="margin-top:-12px;margin-bottom:20px;">Get the benchmark results when published.</p>
 
@@ -367,10 +333,9 @@ function toggleMenu() {
     document.getElementById('mobileNav').classList.toggle('active');
 }
 
-// Get submission ID from URL or generate new one
-const urlParams = new URLSearchParams(window.location.search);
-const existingId = urlParams.get('id');
-document.getElementById('submissionId').value = existingId || Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+// Get submission ID from localStorage (set by page 1) or generate new one
+const storedId = localStorage.getItem('survey_submission_id');
+document.getElementById('submissionId').value = storedId || Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
 
 // Float fund conditional field
 document.querySelectorAll('input[name="float_fund"]').forEach(radio => {
@@ -386,23 +351,6 @@ document.querySelectorAll('input[name="float_fund"]').forEach(radio => {
     });
 });
 
-// Frustrations mutual exclusivity: "Nothing" clears others, others clear "Nothing"
-const frustrationNone = document.getElementById('frustrationNone');
-const otherFrustrations = document.querySelectorAll('#frustrationGroup input:not(#frustrationNone)');
-
-frustrationNone.addEventListener('change', function() {
-    if (this.checked) {
-        otherFrustrations.forEach(cb => cb.checked = false);
-    }
-});
-
-otherFrustrations.forEach(cb => {
-    cb.addEventListener('change', function() {
-        if (this.checked) {
-            frustrationNone.checked = false;
-        }
-    });
-});
 </script>
 <script src="/static/js/tracking.js"></script>
 </body>
