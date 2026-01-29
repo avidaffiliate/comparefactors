@@ -2114,7 +2114,7 @@
         <div class="header-main">
             <a href="/factors/pf000195/" class="back-link">← Residential Management Group Limited</a>
             <h1>Tribunal Record</h1>
-            <p class="last-updated">2021–2026 · Updated 2026-01-26</p>
+            <p class="last-updated">2021–2026 · Updated 2026-01-28</p>
         </div>
     </header>
 
@@ -2147,7 +2147,7 @@
                     <div class="summary-stat">
                         <span class="stat-value stat-worse">100%</span>
                         <span class="stat-label">Upheld</span>
-                        <span class="stat-benchmark">(avg: 71%)</span>
+                        <span class="stat-benchmark">(avg: 69%)</span>
                     </div>
                     <div class="summary-stat">
                         <span class="stat-value stat-worse">10.0</span>
@@ -2266,6 +2266,23 @@
 
     <!-- COMPLAINT PATTERNS -->
     
+    <section class="section">
+        <h2 class="section-title">Complaint Types</h2>
+        <p class="section-intro">Based on 1 analysed case.</p>
+        <div class="category-chart">
+            
+            
+            <div class="category-row">
+                <span class="category-name">Governance</span>
+                <div class="category-bar-container">
+                    <div class="category-bar cat-governance" style="width: 100.0%"></div>
+                </div>
+                <span class="category-stats">1</span>
+            </div>
+            
+        </div>
+    </section>
+    
 
     <!-- CODE BREACHES -->
     
@@ -2323,7 +2340,7 @@
                     
                 </div>
                 
-                <p class="notable-summary">The tribunal found the factor breached the Code of Conduct, proposed a PFEO for £100 compensation to each homeowner, and later issued the PFEO.  The factor complied with the order.</p>
+                <p class="notable-summary">The tribunal found the factor had breached the Code and proposed a PFEO. The PFEO was made and required the factor to pay each applicant £100. The factor subsequently complied with the order.</p>
                 
                 
                 
@@ -2353,8 +2370,14 @@
                     
                 </div>
                 
-                <p class="notable-summary">The tribunal found the factor had breached the Code of Conduct and issued a PFEO. The factor subsequently complied with all aspects of the PFEO.</p>
+                <p class="notable-summary">The Tribunal previously found the factor in breach and issued a PFEO. This decision confirms the factor complied with the PFEO, so no further action was needed.</p>
                 
+                
+                <div class="notable-categories">
+                    
+                    <span class="category-tag tag-governance">Governance</span>
+                    
+                </div>
                 
                 
                 <blockquote class="notable-quote">"The Tribunal has determined that the Factor has complied in full with the terms of the Property Factor Enforcement Order (“PFEO”) issued on 25 May 2021 therefore no further action is required."</blockquote>
@@ -2404,6 +2427,16 @@
                     <option value="factor-won">Factor Won</option>
                     <option value="procedural">Procedural</option>
                     <option value="withdrawn">Withdrawn/Settled</option>
+                </select>
+            </label>
+            
+            <label>
+                <span>Complaint:</span>
+                <select id="filter-complaint">
+                    <option value="">All Types</option>
+                    
+                    <option value="governance">Governance</option>
+                    
                 </select>
             </label>
             
@@ -2457,7 +2490,7 @@
                     <tr class="case-row"
                         data-year="2021"
                         data-outcome="breach"
-                        data-complaint=""
+                        data-complaint="governance"
                         data-case-id="FTS-HPC-PF-19-3399">
                         <td>2021-03-03</td>
                         <td><code>FTS/HPC/PF/19/3399</code></td>
@@ -2523,7 +2556,7 @@
                 </div>
 
                 
-                <p class="case-summary">The tribunal found the factor breached the Code of Conduct, proposed a PFEO for £100 compensation to each homeowner, and later issued the PFEO.  The factor complied with the order.</p>
+                <p class="case-summary">The tribunal found the factor had breached the Code and proposed a PFEO. The PFEO was made and required the factor to pay each applicant £100. The factor subsequently complied with the order.</p>
                 
 
                 
@@ -2548,7 +2581,7 @@
                  id="case-FTS-HPC-PF-19-3399"
                  data-year="2021"
                  data-outcome="breach"
-                 data-complaint="">
+                 data-complaint="governance">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/PF/19/3399</code>
@@ -2566,9 +2599,15 @@
                 </div>
 
                 
-                <p class="case-summary">The tribunal found the factor had breached the Code of Conduct and issued a PFEO. The factor subsequently complied with all aspects of the PFEO.</p>
+                <p class="case-summary">The Tribunal previously found the factor in breach and issued a PFEO. This decision confirms the factor complied with the PFEO, so no further action was needed.</p>
                 
 
+                
+                <div class="case-categories">
+                    
+                    <span class="category-tag tag-governance">Governance</span>
+                    
+                </div>
                 
 
                 
@@ -2626,7 +2665,7 @@
 
                 <h3>Data Updates</h3>
                 <ul>
-                    <li><strong>Last updated:</strong> 2026-01-26</li>
+                    <li><strong>Last updated:</strong> 2026-01-28</li>
                     <li><strong>Next update:</strong> </li>
                 </ul>
                 <p>We update quarterly. For the latest decisions, <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions" target="_blank" rel="noopener">search the HPC directly →</a></p>
@@ -3103,5 +3142,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     })();
     </script>
+    <script src="/static/js/tracking.js"></script>
 </body>
 </html>

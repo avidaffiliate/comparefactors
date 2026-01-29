@@ -430,9 +430,10 @@ def validate_extraction(ai_response: dict) -> List[str]:
         errors.append("breach_found=false but PFEO fields are true")
     
     # Rule 3: PFEO compliance/breach requires PFEO to exist
-    if pfeo_complied and not pfeo_issued:
-        errors.append("pfeo_complied=true but pfeo_issued=false")
-    
+    # Note: pfeo_complied only requires pfeo_proposed (compliance can happen before formal issuance)
+    if pfeo_complied and not pfeo_proposed:
+        errors.append("pfeo_complied=true but pfeo_proposed=false")
+
     if pfeo_breached and not pfeo_issued:
         errors.append("pfeo_breached=true but pfeo_issued=false")
     

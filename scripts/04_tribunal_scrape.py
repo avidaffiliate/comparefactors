@@ -60,7 +60,7 @@ import time
 from collections import defaultdict
 from urllib.parse import urljoin
 from dataclasses import dataclass, field
-from typing import Optional, Set
+from typing import Optional, Set, List
 from pathlib import Path
 
 try:
@@ -379,43 +379,51 @@ class PropertyFactorsScraper:
         search_param = quote(self.search_term) if self.search_term else ""
         url = f"{DECISIONS_URL}?search_api_fulltext={search_param}&page={page_num}"
         print(f"  Scraping page {page_num + 1}...")
-        
+
         response = self.session.get(url)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
-        
-        decisions = []
+
+        raw_decisions = []
         skipped = 0
         skipped_old = 0
         table = soup.select_one("table.tablesaw")
         if not table:
             print(f"    ⚠️ No table found on page {page_num}")
-            return decisions, 0, 0, 0
-        
+            return [], 0, 0, 0
+
         rows = table.select("tbody tr")
         for row in rows:
             decision = self._parse_row(row)
             if decision:
-                # Check if we already have this case
-                if skip_existing and self.existing_case_refs:
-                    is_existing = any(ref in self.existing_case_refs for ref in decision.case_references)
-                    if is_existing:
-                        skipped += 1
-                        continue
-                
-                # Filter by year if min_year is set
-                if self.min_year:
-                    case_year = self._get_case_year(decision.hearing_date)
-                    if case_year and case_year < self.min_year:
-                        skipped_old += 1
-                        continue
-                
-                # Match to our database
-                reg_num, method = self._match_factor(decision)
-                decision.matched_registration_number = reg_num
-                decision.match_method = method
-                decisions.append(decision)
-        
+                raw_decisions.append(decision)
+
+        # Merge decisions that share case references (captures all PDFs)
+        merged_decisions = self._merge_duplicate_decisions(raw_decisions)
+
+        # Now filter and match
+        decisions = []
+        for decision in merged_decisions:
+            # Check if we already have this case
+            if skip_existing and self.existing_case_refs:
+                is_existing = any(ref in self.existing_case_refs for ref in decision.case_references)
+                if is_existing:
+                    skipped += 1
+                    continue
+
+            # Filter by year if min_year is set
+            if self.min_year:
+                case_year = self._get_case_year(decision.hearing_date)
+                if case_year and case_year < self.min_year:
+                    skipped_old += 1
+                    continue
+
+            # Match to our database
+            reg_num, method = self._match_factor(decision)
+            decision.matched_registration_number = reg_num
+            decision.match_method = method
+            decisions.append(decision)
+
         matched = sum(1 for d in decisions if d.matched_registration_number)
         status_parts = [f"Found {len(decisions)} new decisions ({matched} matched)"]
         if skipped > 0:
@@ -423,7 +431,7 @@ class PropertyFactorsScraper:
         if skipped_old > 0:
             status_parts.append(f"skipped {skipped_old} pre-{self.min_year}")
         print(f"    {', '.join(status_parts)}")
-        
+
         return decisions, len(decisions), skipped, skipped_old
     
     def _get_case_year(self, hearing_date: str) -> Optional[int]:
@@ -502,7 +510,88 @@ class PropertyFactorsScraper:
         decision.outcome, decision.pfeo_resolved, decision.outcome_type = self._determine_outcome(decision.pdf_files)
         
         return decision
-    
+
+    def _merge_duplicate_decisions(self, decisions: List[Decision]) -> List[Decision]:
+        """
+        Merge decisions that share case references.
+
+        The HPC website sometimes lists the same case in multiple rows (e.g., when
+        there are multiple PDFs or updates). This method ensures we capture ALL
+        PDFs for a case by merging rows that share any case reference.
+
+        Returns a deduplicated list with combined PDF files.
+        """
+        if not decisions:
+            return decisions
+
+        # Build a mapping from case reference to decisions
+        ref_to_decisions = {}
+        for decision in decisions:
+            for ref in decision.case_references:
+                if ref not in ref_to_decisions:
+                    ref_to_decisions[ref] = []
+                ref_to_decisions[ref].append(decision)
+
+        # Use union-find to group decisions that share any case reference
+        decision_to_group = {id(d): id(d) for d in decisions}
+
+        def find(d_id):
+            if decision_to_group[d_id] != d_id:
+                decision_to_group[d_id] = find(decision_to_group[d_id])
+            return decision_to_group[d_id]
+
+        def union(d1_id, d2_id):
+            root1, root2 = find(d1_id), find(d2_id)
+            if root1 != root2:
+                decision_to_group[root1] = root2
+
+        # Union decisions that share case references
+        for ref, decs in ref_to_decisions.items():
+            if len(decs) > 1:
+                first_id = id(decs[0])
+                for dec in decs[1:]:
+                    union(first_id, id(dec))
+
+        # Group decisions by their root
+        groups = {}
+        for decision in decisions:
+            root = find(id(decision))
+            if root not in groups:
+                groups[root] = []
+            groups[root].append(decision)
+
+        # Merge each group into a single decision
+        merged = []
+        for group_decisions in groups.values():
+            if len(group_decisions) == 1:
+                merged.append(group_decisions[0])
+            else:
+                # Merge: combine case refs, PDFs, and URLs; keep first for other fields
+                base = group_decisions[0]
+                all_refs = set(base.case_references)
+                all_urls = set(base.case_urls)
+                all_pdfs = {p['url']: p for p in base.pdf_files}
+
+                for other in group_decisions[1:]:
+                    all_refs.update(other.case_references)
+                    all_urls.update(other.case_urls)
+                    for pdf in other.pdf_files:
+                        if pdf['url'] not in all_pdfs:
+                            all_pdfs[pdf['url']] = pdf
+
+                base.case_references = list(all_refs)
+                base.case_urls = list(all_urls)
+                base.pdf_files = list(all_pdfs.values())
+
+                # Re-determine outcome with complete PDF set
+                base.outcome, base.pfeo_resolved, base.outcome_type = self._determine_outcome(base.pdf_files)
+                merged.append(base)
+
+        if len(merged) < len(decisions):
+            print(f"    📎 Merged {len(decisions)} rows into {len(merged)} unique decisions")
+
+        return merged
+
     def _determine_outcome(self, pdf_files: list) -> tuple:
         """
         Determine the case outcome using a state machine approach.

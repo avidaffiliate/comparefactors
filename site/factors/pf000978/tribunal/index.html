@@ -2114,7 +2114,7 @@
         <div class="header-main">
             <a href="/factors/pf000978/" class="back-link">← Avongreen Abodes Ltd</a>
             <h1>Tribunal Record</h1>
-            <p class="last-updated">2021–2026 · Updated 2026-01-26</p>
+            <p class="last-updated">2021–2026 · Updated 2026-01-28</p>
         </div>
     </header>
 
@@ -2147,7 +2147,7 @@
                     <div class="summary-stat">
                         <span class="stat-value stat-worse">100%</span>
                         <span class="stat-label">Upheld</span>
-                        <span class="stat-benchmark">(avg: 71%)</span>
+                        <span class="stat-benchmark">(avg: 69%)</span>
                     </div>
                     <div class="summary-stat">
                         <span class="stat-value stat-worse">2000.0</span>
@@ -2266,6 +2266,23 @@
 
     <!-- COMPLAINT PATTERNS -->
     
+    <section class="section">
+        <h2 class="section-title">Complaint Types</h2>
+        <p class="section-intro">Based on 1 analysed case.</p>
+        <div class="category-chart">
+            
+            
+            <div class="category-row">
+                <span class="category-name">Financial</span>
+                <div class="category-bar-container">
+                    <div class="category-bar cat-financial" style="width: 100.0%"></div>
+                </div>
+                <span class="category-stats">1</span>
+            </div>
+            
+        </div>
+    </section>
+    
 
     <!-- CODE BREACHES -->
     
@@ -2323,8 +2340,14 @@
                     
                 </div>
                 
-                <p class="notable-summary">The tribunal found the factor had breached the Code of Conduct. They proposed a PFEO, requiring the factor to pay compensation, and this was later issued and complied with.</p>
+                <p class="notable-summary">The tribunal found that the factor breached the Code of Conduct by incorrectly allocating costs.  A PFEO was issued, and the factor subsequently complied with it.</p>
                 
+                
+                <div class="notable-categories">
+                    
+                    <span class="category-tag tag-financial">Financial</span>
+                    
+                </div>
                 
                 
                 <blockquote class="notable-quote">"The Tribunal proposes to make a PFEO in accordance with the Section 19(1)(a) Notice attached to this Decision."</blockquote>
@@ -2377,6 +2400,16 @@
                 </select>
             </label>
             
+            <label>
+                <span>Complaint:</span>
+                <select id="filter-complaint">
+                    <option value="">All Types</option>
+                    
+                    <option value="financial">Financial</option>
+                    
+                </select>
+            </label>
+            
             <button type="button" id="clear-filters" class="clear-filters-btn" style="display: none;">Clear filters</button>
         </div>
 
@@ -2405,7 +2438,7 @@
                     <tr class="case-row"
                         data-year="2023"
                         data-outcome="breach"
-                        data-complaint=""
+                        data-complaint="financial"
                         data-case-id="FTS-HPC-PF-23-0080">
                         <td>2023-03-21</td>
                         <td><code>FTS/HPC/PF/23/0080</code></td>
@@ -2453,7 +2486,7 @@
                  id="case-FTS-HPC-PF-23-0080"
                  data-year="2023"
                  data-outcome="breach"
-                 data-complaint="">
+                 data-complaint="financial">
                 <div class="case-detail-header">
                     <div class="case-detail-title">
                         <code class="case-ref">FTS/HPC/PF/23/0080</code>
@@ -2471,9 +2504,15 @@
                 </div>
 
                 
-                <p class="case-summary">The tribunal found the factor had breached the Code of Conduct. They proposed a PFEO, requiring the factor to pay compensation, and this was later issued and complied with.</p>
+                <p class="case-summary">The tribunal found that the factor breached the Code of Conduct by incorrectly allocating costs.  A PFEO was issued, and the factor subsequently complied with it.</p>
                 
 
+                
+                <div class="case-categories">
+                    
+                    <span class="category-tag tag-financial">Financial</span>
+                    
+                </div>
                 
 
                 
@@ -2531,7 +2570,7 @@
 
                 <h3>Data Updates</h3>
                 <ul>
-                    <li><strong>Last updated:</strong> 2026-01-26</li>
+                    <li><strong>Last updated:</strong> 2026-01-28</li>
                     <li><strong>Next update:</strong> </li>
                 </ul>
                 <p>We update quarterly. For the latest decisions, <a href="https://housingandpropertychamber.scot/apply-tribunal/property-factors/property-factors-decisions" target="_blank" rel="noopener">search the HPC directly →</a></p>
@@ -3008,5 +3047,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     })();
     </script>
+    <script src="/static/js/tracking.js"></script>
 </body>
 </html>
