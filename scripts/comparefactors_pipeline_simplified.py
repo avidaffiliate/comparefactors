@@ -1259,13 +1259,22 @@ def step_9_generate_site():
             
             # Get stats
             stats_row = conn.execute("""
-                SELECT 
+                SELECT
                     COUNT(*) as total,
                     SUM(CASE WHEN status = 'registered' THEN 1 ELSE 0 END) as active,
                     SUM(COALESCE(property_count, 0)) as properties,
                     SUM(COALESCE(total_review_count, 0)) as reviews
                 FROM factors
             """).fetchone()
+
+            # Get deduplicated property count from properties database if available
+            properties_db = CONFIG.project_root / "property detail" / "pfr_properties.db"
+            if properties_db.exists():
+                prop_conn = sqlite3.connect(properties_db)
+                distinct_props = prop_conn.execute("SELECT COUNT(DISTINCT address) FROM properties").fetchone()[0]
+                prop_conn.close()
+            else:
+                distinct_props = stats_row['properties']  # Fall back to sum
             # Only count 2021+ cases (year is embedded in case_reference as /YY/)
             tribunal_count = conn.execute("""
                 SELECT COUNT(*) FROM tribunal_cases
@@ -1292,7 +1301,7 @@ def step_9_generate_site():
                 stats={
                     'total_factors': stats_row['total'],
                     'active_factors': stats_row['active'],
-                    'total_properties': stats_row['properties'],
+                    'total_properties': distinct_props,
                     'tribunal_cases': tribunal_count,
                     'total_reviews': stats_row['reviews']
                 },
