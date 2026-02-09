@@ -134,7 +134,7 @@ v2.5 CHANGES:
 
 v2.4 CHANGES:
 - Fixed property count fallback from 1 to 2000 for factors with unknown size
-- This prevents massively inflated case rates for councils and factors without FOI data
+- This prevents massively inflated case rates for councils and factors without property data
 - Added property_count_estimated flag to score output
 
 v2.3 CHANGES:
@@ -179,7 +179,7 @@ DIRECTORY STRUCTURE (expected):
     ├── data/
     │   ├── csv/                        # Input CSVs
     │   │   ├── factors_register.csv    # From Scottish Gov registry
-    │   │   ├── factors_postcodes.csv   # FOI postcode coverage
+    │   │   ├── factors_property_coverage.csv  # From property scrape
     │   │   ├── tribunal_cases.csv      # Matched tribunal cases
     │   │   ├── google_reviews.csv      # Google Places aggregate data
     │   │   ├── google_reviews_text.csv # Individual reviews with text
@@ -207,7 +207,7 @@ DIRECTORY STRUCTURE (expected):
 
 STEPS:
     1. Initialize Database Schema
-    2. Import Core Factor Data (registry + FOI postcodes)
+    2. Import Core Factor Data (registry + property coverage)
     3. Import Tribunal Data (cases + AI extractions)
     4. Import Review Data (Google + Trustpilot)
     5. Import Companies House Data
@@ -233,6 +233,11 @@ from datetime import datetime, date
 from typing import Optional, Dict, List, Any, Tuple
 from dataclasses import dataclass
 from contextlib import contextmanager
+
+# Fix Windows console encoding for emoji output
+if sys.platform == 'win32':
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
 
 # Try to import optional dependencies
 try:
@@ -277,7 +282,7 @@ class Config:
     
     # CSV file names (within csv_dir)
     factors_csv: str = "factors_register.csv"
-    factors_postcodes_csv: str = "factors_postcodes.csv"
+    factors_property_coverage_csv: str = "factors_property_coverage.csv"  # From property scrape
     factors_enriched_csv: str = "factors_enriched.csv"  # In data/tribunal/, not csv
     tribunal_csv: str = "tribunal_cases.csv"
     tribunal_enriched_csv: str = "tribunal_enriched.csv"  # Fallback if no .db
@@ -452,12 +457,14 @@ def parse_date(date_str: Any) -> Optional[str]:
 
 
 def normalize_registration_status(raw_status: str) -> str:
-    """Normalize registration status to 'registered' or 'expired'."""
+    """Normalize registration status to 'registered', 'expired', or 'inactive'."""
     if not raw_status:
         return 'registered'
     raw_lower = raw_status.lower().strip()
     if 'expired' in raw_lower:
         return 'expired'
+    if 'inactive' in raw_lower:
+        return 'inactive'
     if 'active' in raw_lower or 'registered' in raw_lower:
         return 'registered'
     return 'registered'
@@ -593,11 +600,10 @@ CREATE TABLE IF NOT EXISTS factors (
     -- Accreditation flags
     tpi_member INTEGER DEFAULT 0,
     
-    -- FOI postcode coverage data
-    postcode_areas TEXT,
-    postcode_count INTEGER DEFAULT 0,
-    geographic_reach TEXT,
-    foi_cities TEXT,
+    -- Property coverage data (from scraped property register)
+    postcode_areas TEXT,  -- Comma-separated districts (EH1,EH2,G41,G42)
+    postcode_count INTEGER DEFAULT 0,  -- Number of unique districts
+    geographic_reach TEXT,  -- national/regional/local
     coverage_areas TEXT,  -- For template compatibility
     
     -- Tribunal aggregates (populated in Step 7)
@@ -910,7 +916,7 @@ def step_1_init_database(reset: bool = False):
 # =============================================================================
 
 def step_2_import_factors():
-    """Import factors from registry CSV and FOI postcodes."""
+    """Import factors from registry CSV and property coverage data."""
     LOG.step(2, "Import Core Factor Data")
     
     # Import main registry
@@ -947,8 +953,8 @@ def step_2_import_factors():
             raw_type = find_csv_column(row, ['factor_type', 'type', 'Type'])
             factor_type = detect_factor_type(name, raw_type)
             
-            # Get coverage areas for template
-            coverage = find_csv_column(row, ['coverage_areas', 'foi_cities', 'cities', 'areas'])
+            # Get coverage areas for template (will be overwritten by property coverage data)
+            coverage = find_csv_column(row, ['coverage_areas', 'cities', 'areas'])
             
             conn.execute("""
                 INSERT INTO factors (
@@ -988,45 +994,65 @@ def step_2_import_factors():
         conn.commit()
     
     LOG.success(f"Imported {imported} factors from registry")
-    
-    # Import FOI postcode coverage
-    foi_path = CONFIG.csv_dir / CONFIG.factors_postcodes_csv
-    if foi_path.exists():
-        LOG.info(f"Reading FOI data: {foi_path}")
-        
-        with open(foi_path, 'r', encoding='utf-8-sig') as f:
+
+    # Import property coverage from scraped property data (replaces FOI data)
+    property_coverage_path = CONFIG.csv_dir / CONFIG.factors_property_coverage_csv
+    if property_coverage_path.exists():
+        LOG.info(f"Reading property coverage data: {property_coverage_path}")
+
+        with open(property_coverage_path, 'r', encoding='utf-8-sig') as f:
             rows = list(csv.DictReader(f))
-        
+
         updated = 0
         with get_db() as conn:
             for row in rows:
-                pf = normalize_pf_number(find_csv_column(row, ['registration_number']))
+                pf = normalize_pf_number(row.get('registration_number'))
                 if not pf:
                     continue
-                
+
+                # Update with scraped property data
+                # property_count from scrape is authoritative (overrides registry estimate)
                 conn.execute("""
                     UPDATE factors SET
+                        property_count = ?,
                         postcode_areas = ?,
                         postcode_count = ?,
                         geographic_reach = ?,
-                        foi_cities = ?,
-                        coverage_areas = COALESCE(coverage_areas, ?),
                         updated_at = CURRENT_TIMESTAMP
                     WHERE registration_number = ?
                 """, [
-                    find_csv_column(row, ['postcode_areas']),
-                    parse_int(find_csv_column(row, ['postcode_count'])),
-                    find_csv_column(row, ['geographic_reach']),
-                    find_csv_column(row, ['cities', 'foi_cities']),
-                    find_csv_column(row, ['cities', 'foi_cities']),  # Also use for coverage_areas
+                    parse_int(row.get('property_count')),
+                    row.get('postcode_districts'),  # Full districts like "EH1,EH2,G41,G42"
+                    parse_int(row.get('postcode_district_count')),
+                    row.get('geographic_reach'),
                     pf,
                 ])
                 updated += 1
             conn.commit()
-        LOG.success(f"Updated {updated} factors with FOI postcode coverage")
+        LOG.success(f"Updated {updated} factors with scraped property coverage")
+
+        # Mark factors without scraped properties as 'inactive'
+        # These are registered but not managing any properties in the property register
+        with get_db() as conn:
+            # Update factors without property data to inactive
+            # Only affects factors that are currently 'registered' (not already expired)
+            result = conn.execute("""
+                UPDATE factors
+                SET registration_status = 'inactive',
+                    status = 'inactive'
+                WHERE (property_count IS NULL OR property_count = 0)
+                AND (registration_status = 'Registered'
+                     OR registration_status = 'registered'
+                     OR status = 'registered')
+            """)
+            inactive_count = result.rowcount
+            conn.commit()
+
+        if inactive_count > 0:
+            LOG.info(f"Marked {inactive_count} factors as inactive (no scraped properties)")
     else:
-        LOG.skip(f"FOI postcodes CSV not found")
-    
+        LOG.skip(f"Property coverage CSV not found - run extract_property_coverage.py first")
+
     # Import pre-calculated tribunal outcome counts from enrichment
     # This provides case-based adverse/positive outcome counts
     enriched_path = CONFIG.data_dir / "tribunal" / "factors_enriched.csv"

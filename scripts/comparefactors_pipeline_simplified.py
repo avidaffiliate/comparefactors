@@ -230,7 +230,7 @@ COMPLAINT_CATEGORY_KEYWORDS = {
         'written statement', 'wss', 'transparency', 'provide information'
     ],
     'health_safety': [
-        'health', 'safety', 'fire', 'hazard', 'risk', 'emergency',
+        'health', 'safety', 'fire', 'hazard', 'risk',
         'dangerous', 'unsafe', 'asbestos', 'legionella'
     ],
     'debt_recovery': [
@@ -1571,9 +1571,6 @@ def _generate_comparison_page(conn, site_dir: Path, area_list, generated_date: s
                     cats = json.loads(c['complaint_categories']) if isinstance(c['complaint_categories'], str) else c['complaint_categories']
                 except:
                     pass
-            # Fall back to extracting from summary
-            if not cats and c['summary']:
-                cats = extract_complaint_categories(c['summary'])
             for cat in (cats or []):
                 category_counts[cat] = category_counts.get(cat, 0) + 1
         top_issues = sorted(category_counts.items(), key=lambda x: -x[1])[:3]
@@ -2071,16 +2068,15 @@ def _generate_factor_profiles(conn, env, template, output_dir: Path) -> int:
             case['case_ref'] = case.get('case_reference')
             # Add display_ref for combined cases (shows all refs, falls back to case_ref)
             case['display_ref'] = case.get('all_case_references') or case['case_ref']
-            # Parse complaint categories from DB (JSON string) or extract from summary as fallback
+            # Parse complaint categories from DB (JSON string) - no inference fallback
             stored_cats = case.get('complaint_categories')
             if stored_cats:
                 try:
                     case['complaint_categories'] = json.loads(stored_cats) if isinstance(stored_cats, str) else stored_cats
                 except (json.JSONDecodeError, TypeError):
-                    case['complaint_categories'] = extract_complaint_categories(case.get('summary', ''))
+                    case['complaint_categories'] = []
             else:
-                # Fallback: extract from summary if no stored categories
-                case['complaint_categories'] = extract_complaint_categories(case.get('summary', ''))
+                case['complaint_categories'] = []
         
         # Filter to 5-year horizon (consistent with risk band calculation)
         cases = [

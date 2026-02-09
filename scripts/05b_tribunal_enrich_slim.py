@@ -152,6 +152,10 @@ Return ONLY valid JSON (no markdown, no explanation):
     "key_findings": {
         "key_quote": "<most significant tribunal finding, max 50 words, verbatim>",
         "summary": "<1-2 sentences: what happened and what did the tribunal decide?>"
+    },
+
+    "property": {
+        "postcode": "<full UK postcode of the property, e.g. 'G42 8AA' or 'EH6 5AB', or empty string if not found>"
     }
 }
 
@@ -624,6 +628,9 @@ class CaseEnrichment:
     key_quote: str = ""
     summary: str = ""
 
+    # Property
+    property_postcode: str = ""
+
     # Metadata
     decision_date: str = ""
     pdf_url: str = ""
@@ -686,6 +693,9 @@ def init_database(db_path: Path) -> sqlite3.Connection:
             key_quote TEXT,
             summary TEXT,
 
+            -- Property
+            property_postcode TEXT,
+
             -- Metadata
             decision_date TEXT,
             pdf_url TEXT,
@@ -700,11 +710,16 @@ def init_database(db_path: Path) -> sqlite3.Connection:
         )
     """)
 
-    # Add all_case_references column if it doesn't exist (for existing databases)
-    try:
-        conn.execute("ALTER TABLE cases ADD COLUMN all_case_references TEXT")
-    except sqlite3.OperationalError:
-        pass  # Column already exists
+    # Add columns if they don't exist (for existing databases)
+    migrations = [
+        "ALTER TABLE cases ADD COLUMN all_case_references TEXT",
+        "ALTER TABLE cases ADD COLUMN property_postcode TEXT",
+    ]
+    for migration in migrations:
+        try:
+            conn.execute(migration)
+        except sqlite3.OperationalError:
+            pass  # Column already exists
 
     conn.commit()
     return conn
@@ -730,11 +745,11 @@ def save_case(conn: sqlite3.Connection, enrichment: CaseEnrichment, full_text: s
             application_dismissed, application_withdrawn, breach_found,
             pfeo_proposed, pfeo_issued, pfeo_complied, pfeo_breached,
             compensation_awarded, refund_ordered,
-            key_quote, summary,
+            key_quote, summary, property_postcode,
             decision_date, pdf_url,
             extraction_success, extraction_error, validation_errors,
             pdf_hash, extracted_at, full_text
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, [
         enrichment.case_reference,
         enrichment.all_case_references,
@@ -762,6 +777,7 @@ def save_case(conn: sqlite3.Connection, enrichment: CaseEnrichment, full_text: s
         enrichment.refund_ordered,
         enrichment.key_quote,
         enrichment.summary,
+        enrichment.property_postcode,
         enrichment.decision_date,
         enrichment.pdf_url,
         1 if enrichment.extraction_success else 0,
@@ -895,8 +911,43 @@ def extract_with_ai(model: GenerativeModel, pdf_text: str) -> Dict[str, Any]:
     findings['key_quote'] = str(findings.get('key_quote', ''))[:500]
     findings['summary'] = str(findings.get('summary', ''))[:500]
     result['key_findings'] = findings
-    
+
+    # Normalize property postcode
+    property_data = result.get('property', {})
+    postcode = str(property_data.get('postcode', '')).upper().strip()
+    # Ensure proper format (add space if missing)
+    if postcode and len(postcode) > 4 and ' ' not in postcode:
+        postcode = postcode[:-3] + ' ' + postcode[-3:]
+    property_data['postcode'] = postcode
+    result['property'] = property_data
+
     return result
+
+
+# =============================================================================
+# POSTCODE EXTRACTION FALLBACK
+# =============================================================================
+
+def extract_postcode_from_text(pdf_text: str) -> str:
+    """
+    Extract Scottish/UK postcode from PDF text as fallback.
+    Searches the first 3000 characters where property address usually appears.
+    """
+    # Scottish postcode pattern: 1-2 letters, 1-2 digits, optional space, digit, 2 letters
+    # e.g., G42 8AA, EH1 1AA, AB10 1AB, FK1 4DS
+    postcode_pattern = r'\b([A-Z]{1,2}\d{1,2}\s?\d[A-Z]{2})\b'
+
+    # Search in first 3000 chars (property address usually near start)
+    matches = re.findall(postcode_pattern, pdf_text[:3000].upper())
+
+    if matches:
+        # Return first match, normalized with space
+        pc = matches[0]
+        if len(pc) > 4 and ' ' not in pc:
+            pc = pc[:-3] + ' ' + pc[-3:]
+        return pc
+
+    return ""
 
 
 # =============================================================================
@@ -992,7 +1043,14 @@ def process_case(
         findings = ai_result.get('key_findings', {})
         enrichment.key_quote = findings.get('key_quote', '')
         enrichment.summary = findings.get('summary', '')
-        
+
+        # Property postcode (AI extraction with fallback to regex)
+        property_data = ai_result.get('property', {})
+        enrichment.property_postcode = property_data.get('postcode', '')
+        if not enrichment.property_postcode:
+            # Fallback: extract from PDF text using regex
+            enrichment.property_postcode = extract_postcode_from_text(pdf_text)
+
         # Validate
         validation_errors = validate_extraction(ai_result)
         enrichment.validation_errors = json.dumps(validation_errors)
@@ -1029,22 +1087,22 @@ def process_case(
 def export_to_csv(conn: sqlite3.Connection, output_path: Path):
     """Export cases table to CSV."""
     cursor = conn.execute("""
-        SELECT 
+        SELECT
             case_reference, matched_registration_number,
             extracted_factor_name, extracted_registration_number, extraction_confidence,
             outcome, outcome_reasoning,
             application_dismissed, application_withdrawn, breach_found,
             pfeo_proposed, pfeo_issued, pfeo_complied, pfeo_breached,
             compensation_awarded, refund_ordered,
-            key_quote, summary,
+            key_quote, summary, property_postcode,
             decision_date, pdf_url,
             extraction_success, validation_errors
         FROM cases
         ORDER BY decision_date DESC
     """)
-    
+
     rows = cursor.fetchall()
-    
+
     with open(output_path, 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
         writer.writerow([
@@ -1054,32 +1112,32 @@ def export_to_csv(conn: sqlite3.Connection, output_path: Path):
             'application_dismissed', 'application_withdrawn', 'breach_found',
             'pfeo_proposed', 'pfeo_issued', 'pfeo_complied', 'pfeo_breached',
             'compensation_awarded', 'refund_ordered',
-            'key_quote', 'summary',
+            'key_quote', 'summary', 'property_postcode',
             'decision_date', 'pdf_url',
             'extraction_success', 'validation_errors'
         ])
-        
+
         for row in rows:
             writer.writerow(row)
-    
+
     print(f"📄 Exported {len(rows)} cases to {output_path}")
 
 
 def validate_existing_data(conn: sqlite3.Connection):
     """Validate existing data in database and report issues."""
     print("\n🔍 Validating existing data...")
-    
+
     cursor = conn.execute("""
         SELECT case_reference, validation_errors, outcome,
                application_dismissed, breach_found, compensation_awarded
         FROM cases
         WHERE extraction_success = 1
     """)
-    
+
     total = 0
     with_errors = 0
     error_types = {}
-    
+
     for row in cursor:
         total += 1
         errors = json.loads(row[1] or '[]')
@@ -1087,15 +1145,15 @@ def validate_existing_data(conn: sqlite3.Connection):
             with_errors += 1
             for e in errors:
                 error_types[e] = error_types.get(e, 0) + 1
-    
+
     print(f"\n   Total cases: {total}")
     print(f"   Cases with validation errors: {with_errors}")
-    
+
     if error_types:
         print("\n   Error breakdown:")
         for error, count in sorted(error_types.items(), key=lambda x: -x[1]):
             print(f"     {count}x {error}")
-    
+
     # Outcome distribution
     print("\n   Outcome distribution:")
     for row in conn.execute("""
@@ -1104,6 +1162,46 @@ def validate_existing_data(conn: sqlite3.Connection):
         GROUP BY outcome ORDER BY cnt DESC
     """):
         print(f"     {row[0]}: {row[1]}")
+
+    # Postcode coverage
+    print("\n   Postcode coverage:")
+    postcode_stats = conn.execute("""
+        SELECT
+            COUNT(*) as total,
+            SUM(CASE WHEN property_postcode IS NOT NULL AND property_postcode != '' THEN 1 ELSE 0 END) as with_postcode
+        FROM cases
+        WHERE extraction_success = 1
+    """).fetchone()
+
+    if postcode_stats and postcode_stats[0] > 0:
+        total_cases = postcode_stats[0]
+        with_postcode = postcode_stats[1] or 0
+        coverage_pct = (with_postcode / total_cases) * 100
+        print(f"     {with_postcode}/{total_cases} cases have postcodes ({coverage_pct:.1f}%)")
+
+        # Breakdown by postcode area (first 1-2 chars)
+        area_cursor = conn.execute("""
+            SELECT
+                SUBSTR(property_postcode, 1,
+                    CASE
+                        WHEN SUBSTR(property_postcode, 2, 1) GLOB '[0-9]' THEN 1
+                        ELSE 2
+                    END
+                ) as area,
+                COUNT(*) as cnt
+            FROM cases
+            WHERE extraction_success = 1
+              AND property_postcode IS NOT NULL
+              AND property_postcode != ''
+            GROUP BY area
+            ORDER BY cnt DESC
+            LIMIT 10
+        """)
+        areas = area_cursor.fetchall()
+        if areas:
+            print("     Top areas:")
+            for area, count in areas:
+                print(f"       {area}: {count}")
 
 
 # =============================================================================
