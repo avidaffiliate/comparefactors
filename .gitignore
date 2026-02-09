@@ -5,6 +5,19 @@ data/
 # PDFs (tribunal documents)
 *.pdf
 
+# Database files
+*.db
+
+# Archives and backups
+_archive/
+_backup_jan23/
+
+# Exploratory / one-off work
+property detail/
+posts/
+nul
+site.zip
+
 # Python
 __pycache__/
 *.pyc
