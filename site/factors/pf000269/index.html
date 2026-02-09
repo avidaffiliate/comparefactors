@@ -83,7 +83,7 @@
           "name": "Has George Watt had any tribunal cases?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes, George Watt has had 6 tribunal cases in the last 5 years, with 100% of complaints upheld."
+            "text": "Yes, George Watt has had 6 tribunal cases in the last 5 years, with 50% of complaints upheld."
           }
         },
         {
@@ -1023,6 +1023,8 @@
             <nav class="nav">
                 <a href="/factors/" class="nav-link">All Factors</a>
                 <a href="/areas/" class="nav-link">By Area</a>
+                <a href="/map/" class="nav-link">Map</a>
+                <a href="/tribunal/" class="nav-link">Tribunal</a>
                 <a href="/methodology/" class="nav-link">How We Score</a>
                 <a href="/guides/" class="nav-link">Guides</a>
                 <a href="/contribute/" class="nav-link">Contribute</a>
@@ -1037,6 +1039,8 @@
         <div class="mobile-nav" id="mobileNav">
             <a href="/factors/">All Factors</a>
             <a href="/areas/">By Area</a>
+            <a href="/map/">Map</a>
+            <a href="/tribunal/">Tribunal</a>
             <a href="/methodology/">How We Score</a>
             <a href="/guides/">Guides</a>
             <a href="/contribute/">Contribute</a>
@@ -1171,7 +1175,7 @@
                     <ul class="source-list">
                         <li class="source-item">
                             <svg class="" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                            <a href="https://www.propertyfactorregister.gov.scot/property-factor/PF000269" target="_blank" rel="noopener">View on Official Register</a>
+                            <a href="https://www.gov.scot/publications/property-factor-register/pages/pf000269/" target="_blank" rel="noopener">View on Official Register</a>
                         </li>
                         
                         <li class="source-item">
@@ -1289,19 +1293,19 @@
                         </div>
                         <div class="data-item">
                             
-                            <div class="data-value red">
-                                100%
+                            <div class="data-value green">
+                                50%
                             </div>
                             <div class="data-label">Upheld</div>
-                            <div class="data-benchmark">(avg: 69%)</div>
+                            <div class="data-benchmark">(avg: 52%)</div>
                         </div>
                         <div class="data-item">
                             
-                            <div class="data-value red">
+                            <div class="data-value green">
                                 15.0
                             </div>
                             <div class="data-label">Rate/10k</div>
-                            <div class="data-benchmark">(avg: 4.8)</div>
+                            <div class="data-benchmark">(avg: 47.0)</div>
                         </div>
                         <div class="data-item">
                             <div class="data-value red">3</div>
@@ -1315,7 +1319,7 @@
                         </div>
                         
                         <div class="data-item">
-                            <div class="data-value" style="font-size: var(--text-sm);">Financial</div>
+                            <div class="data-value" style="font-size: var(--text-sm);">Communication</div>
                             <div class="data-label">Top Issue</div>
                             <div class="data-benchmark">3 cases</div>
                         </div>
@@ -1329,12 +1333,36 @@
                     <div style="font-size: var(--text-xs); font-weight: 600; color: var(--navy-800); margin-bottom: var(--space-sm); text-transform: uppercase; letter-spacing: 0.05em;">All Complaint Types</div>
                     <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs);">
                         
-                        <span class="complaint-tag tag-financial">
-                            Financial <span style="opacity: 0.7;">(3)</span>
+                        <span class="complaint-tag tag-communication">
+                            Communication <span style="opacity: 0.7;">(3)</span>
                         </span>
                         
-                        <span class="complaint-tag tag-disclosure">
-                            Disclosure <span style="opacity: 0.7;">(2)</span>
+                        <span class="complaint-tag tag-financial">
+                            Financial <span style="opacity: 0.7;">(2)</span>
+                        </span>
+                        
+                        <span class="complaint-tag tag-other">
+                            Other <span style="opacity: 0.7;">(2)</span>
+                        </span>
+                        
+                        <span class="complaint-tag tag-complaints_handling">
+                            Complaints Handling <span style="opacity: 0.7;">(2)</span>
+                        </span>
+                        
+                        <span class="complaint-tag tag-insurance">
+                            Insurance <span style="opacity: 0.7;">(1)</span>
+                        </span>
+                        
+                        <span class="complaint-tag tag-maintenance">
+                            Maintenance <span style="opacity: 0.7;">(1)</span>
+                        </span>
+                        
+                        <span class="complaint-tag tag-debt_recovery">
+                            Debt Recovery <span style="opacity: 0.7;">(1)</span>
+                        </span>
+                        
+                        <span class="complaint-tag tag-consultation">
+                            Consultation <span style="opacity: 0.7;">(1)</span>
                         </span>
                         
                     </div>
@@ -1377,8 +1405,7 @@
             
             
             
-            <span class="case-outcome neutral">Rejected - Procedural</span>
-            
+            <span class="case-outcome neutral">Dismissed</span>
             
         </div>
     </div>
@@ -1396,6 +1423,10 @@
     <div class="case-categories">
         
         <span class="category-tag">Financial</span>
+        
+        <span class="category-tag">Insurance</span>
+        
+        <span class="category-tag">Communication</span>
         
     </div>
     
@@ -1434,6 +1465,22 @@
     <div class="case-quote">"Within 28 days of intimation of the PFEO, the Property Factor must make payment to the Homeowner of the sum of £1,500.00 in respect of the Property Factor’s failure to comply with sections 1, 2.5, 3.3, 4.1, 4.3, 6.1, 6.9 and 7.1 of the Code of Conduct for Property Factors"</div>
     
 
+    
+    <div class="case-categories">
+        
+        <span class="category-tag">Communication</span>
+        
+        <span class="category-tag">Financial</span>
+        
+        <span class="category-tag">Maintenance</span>
+        
+        <span class="category-tag">Debt Recovery</span>
+        
+        <span class="category-tag">Other</span>
+        
+        <span class="category-tag">Complaints Handling</span>
+        
+    </div>
     
 
     
@@ -1482,7 +1529,7 @@
     
     <div class="case-categories">
         
-        <span class="category-tag">Financial</span>
+        <span class="category-tag">Other</span>
         
     </div>
     
@@ -1515,27 +1562,20 @@
             
             
             
-            <span class="case-outcome neutral">Rejected - Procedural</span>
-            
+            <span class="case-outcome neutral">Rejected</span>
             
         </div>
     </div>
     
     
     
-    <div class="case-summary-full">The Tribunal rejected the homeowner's application because the homeowner did not provide necessary documentation as requested.</div>
+    <div class="case-summary-full">The Tribunal rejected the homeowner&#39;s application because the homeowner did not provide necessary documentation as requested.</div>
     
     
     
     <div class="case-quote">"The basis of the decision is that the Applicant has failed to comply with Rule 5 and Rule 43 and Section 17 of the 2011 Act."</div>
     
 
-    
-    <div class="case-categories">
-        
-        <span class="category-tag">Disclosure</span>
-        
-    </div>
     
 
     
@@ -1575,7 +1615,11 @@
     
     <div class="case-categories">
         
-        <span class="category-tag">Financial</span>
+        <span class="category-tag">Communication</span>
+        
+        <span class="category-tag">Consultation</span>
+        
+        <span class="category-tag">Complaints Handling</span>
         
     </div>
     
@@ -1669,7 +1713,7 @@
                         <summary>Has George Watt had any tribunal cases?</summary>
                         <div class="faq-answer">
                             
-                            Yes, George Watt has had 6 tribunal cases in the last 5 years, with 100% of complaints upheld.
+                            Yes, George Watt has had 6 tribunal cases in the last 5 years, with 50% of complaints upheld.
                             
                         </div>
                     </details>
@@ -1712,6 +1756,8 @@
                     <h4>Explore</h4>
                     <a href="/factors/">All Factors</a>
                     <a href="/areas/">By Area</a>
+                    <a href="/map/">Map</a>
+                    <a href="/tribunal/">Tribunal Cases</a>
                 </div>
                 <div class="footer-col">
                     <h4>Guides</h4>

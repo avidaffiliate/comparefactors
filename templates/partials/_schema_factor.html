@@ -60,7 +60,7 @@
 
       "priceRange": "££",
 
-      {% set total_reviews = (profile.google_review_count|default(0)) + (profile.trustpilot_review_count|default(0)) %}
+      {% set total_reviews = (profile.google_review_count or 0) + (profile.trustpilot_review_count or 0) %}
       {% if profile.combined_rating and total_reviews > 0 %}
       "aggregateRating": {
         "@type": "AggregateRating",

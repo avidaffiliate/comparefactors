@@ -39,7 +39,7 @@
 {% macro verdict_box(profile, at_a_glance, band, tribunal_stats=none, complaint_categories=none, wss=none, sector_avg=2.1, current_year=2025, override_text=none) %}
 {% set band_lower = band|lower %}
 {% set stats = tribunal_stats or {} %}
-{% set total_reviews = (profile.google_review_count|default(0)) + (profile.trustpilot_review_count|default(0)) %}
+{% set total_reviews = (profile.google_review_count or 0) + (profile.trustpilot_review_count or 0) %}
 {% set top_categories = (complaint_categories[:2]) if complaint_categories else [] %}
 
 <div class="verdict-box {{ band_lower }}">

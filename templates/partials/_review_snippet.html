@@ -90,7 +90,7 @@
 
 {# Combined rating explanation box #}
 {% macro rating_explanation(combined_rating, google_count, trustpilot_count) %}
-{% set total_reviews = (google_count|default(0)) + (trustpilot_count|default(0)) %}
+{% set total_reviews = (google_count or 0) + (trustpilot_count or 0) %}
 {% if combined_rating and total_reviews > 0 %}
 <div class="rating-explanation">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>

@@ -253,7 +253,7 @@ Required data context:
                 </h2>
             </div>
             <div class="card-body">
-                {% set total_reviews = (profile.google_review_count|default(0)) + (profile.trustpilot_review_count|default(0)) %}
+                {% set total_reviews = (profile.google_review_count or 0) + (profile.trustpilot_review_count or 0) %}
                 
                 <!-- Combined Rating Explanation -->
                 {{ rating_explanation(profile.combined_rating, profile.google_review_count, profile.trustpilot_review_count) }}
