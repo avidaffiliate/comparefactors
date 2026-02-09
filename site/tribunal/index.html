@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-P9QSNCJEBQ"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-P9QSNCJEBQ');</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tribunal Case Search | Compare Factors Scotland</title>
+    <meta name="description" content="Search and filter Scottish property factor tribunal cases by outcome, compensation, factor, PFEO status, and more.">
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" href="/favicon-48x48.png" sizes="48x48">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="canonical" href="https://comparefactors.co.uk/tribunal/">
+
+    <meta property="og:title" content="Tribunal Case Search | Compare Factors Scotland">
+    <meta property="og:description" content="Search Scottish property factor tribunal cases by outcome, compensation, and more">
+    <meta property="og:type" content="website">
+
+    <link rel="preload" href="/static/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/static/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
+
+    <style>
+        @font-face { font-family: 'Fraunces'; src: url('/static/fonts/fraunces-latin.woff2') format('woff2'); font-weight: 400 700; font-display: swap; }
+        @font-face { font-family: 'Source Sans 3'; src: url('/static/fonts/source-sans-3-latin.woff2') format('woff2'); font-weight: 400 600; font-display: swap; }
+        :root {
+            --font-display: 'Fraunces', Georgia, serif;
+            --font-body: 'Source Sans 3', system-ui, sans-serif;
+            --navy-950: #0a1628; --navy-900: #0f2137; --navy-800: #1a3a5c;
+            --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0;
+            --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155;
+            --green-600: #16a34a; --red-600: #dc2626; --amber-600: #d97706;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        body { margin: 0; font-family: var(--font-body); font-size: 16px; line-height: 1.6; color: var(--slate-700); background: var(--slate-50); }
+        a { color: var(--navy-900); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* Header */
+        .site-header { background: white; border-bottom: 1px solid var(--slate-200); position: sticky; top: 0; z-index: 100; }
+        .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+        .logo { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: var(--navy-950); }
+        .logo:hover { text-decoration: none; }
+        .logo-mark { width: 32px; height: 32px; background: var(--navy-950); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: 700; }
+        .nav { display: flex; align-items: center; gap: 24px; }
+        .nav-link { font-size: 0.9rem; font-weight: 500; color: var(--slate-600); }
+        .nav-link:hover { color: var(--navy-950); text-decoration: none; }
+        .nav-link.active { color: var(--navy-950); font-weight: 600; }
+        .nav-cta { background: var(--navy-950); color: white !important; padding: 8px 16px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; }
+        .nav-cta:hover { background: var(--navy-800); text-decoration: none; }
+        .burger { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 28px; height: 28px; background: none; border: none; cursor: pointer; padding: 0; }
+        .burger span { display: block; width: 100%; height: 2px; background: var(--navy-900); border-radius: 2px; transition: all 0.3s; }
+        .burger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+        .mobile-nav { display: none; position: absolute; top: 64px; left: 0; right: 0; background: white; border-bottom: 1px solid var(--slate-200); padding: 16px 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 99; }
+        .mobile-nav.active { display: block; }
+        .mobile-nav a { display: block; padding: 12px 0; color: var(--slate-700); font-size: 1rem; font-weight: 500; border-bottom: 1px solid var(--slate-100); }
+        .mobile-nav a:last-child { border-bottom: none; }
+        .mobile-nav a:hover { color: var(--navy-950); text-decoration: none; }
+        .mobile-nav a.nav-cta { display: block; margin-top: 12px; padding: 12px 16px; text-align: center; border-bottom: none; }
+
+        /* Main */
+        .main { max-width: 1200px; margin: 0 auto; padding: 32px 24px 64px; }
+        .page-header { margin-bottom: 32px; }
+        .page-title { font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--navy-950); margin: 0 0 8px; }
+        .page-desc { color: var(--slate-600); margin: 0; }
+
+        /* Filters */
+        .filters-panel { background: white; border: 1px solid var(--slate-200); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+        .filters-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+        .filter-group { display: flex; flex-direction: column; gap: 6px; }
+        .filter-label { font-size: 0.8rem; font-weight: 600; color: var(--slate-600); text-transform: uppercase; letter-spacing: 0.5px; }
+        .filter-input, .filter-select { padding: 10px 12px; border: 1px solid var(--slate-200); border-radius: 6px; font-size: 0.9rem; font-family: inherit; }
+        .filter-input:focus, .filter-select:focus { outline: none; border-color: var(--navy-800); box-shadow: 0 0 0 3px rgba(15,33,55,0.1); }
+        .filter-checkboxes { display: flex; flex-wrap: wrap; gap: 8px; }
+        .filter-checkbox { display: flex; align-items: center; gap: 6px; padding: 6px 10px; background: var(--slate-100); border-radius: 4px; font-size: 0.85rem; cursor: pointer; transition: background 0.2s; }
+        .filter-checkbox:hover { background: var(--slate-200); }
+        .filter-checkbox input { margin: 0; }
+        .filter-checkbox.checked { background: var(--navy-900); color: white; }
+        .filter-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+        .filter-row .filter-group { flex: 1; min-width: 150px; }
+        .btn-reset { padding: 10px 16px; background: var(--slate-100); border: 1px solid var(--slate-200); border-radius: 6px; font-size: 0.9rem; cursor: pointer; }
+        .btn-reset:hover { background: var(--slate-200); }
+
+        /* Results */
+        .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+        .results-count { font-size: 0.95rem; color: var(--slate-600); }
+        .results-count strong { color: var(--navy-950); }
+        .sort-select { padding: 8px 12px; border: 1px solid var(--slate-200); border-radius: 6px; font-size: 0.85rem; }
+
+        /* Case Cards */
+        .case-list { display: flex; flex-direction: column; gap: 16px; }
+        .case-card { background: white; border: 1px solid var(--slate-200); border-radius: 10px; padding: 20px; transition: box-shadow 0.2s; }
+        .case-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .case-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+        .case-ref { font-family: monospace; font-size: 0.85rem; color: var(--slate-500); }
+        .case-factor { font-weight: 600; color: var(--navy-950); font-size: 1.05rem; }
+        .case-factor a { color: inherit; }
+        .case-meta { display: flex; gap: 12px; flex-wrap: wrap; }
+        .case-date { font-size: 0.85rem; color: var(--slate-500); }
+        .case-postcode { font-size: 0.85rem; color: var(--slate-500); background: var(--slate-100); padding: 2px 8px; border-radius: 4px; }
+
+        .case-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+        /* Primary outcome badges */
+        .badge-adverse { background: #fee2e2; color: #991b1b; }
+        .badge-dismissed { background: #dcfce7; color: #166534; }
+        .badge-withdrawn { background: #f3f4f6; color: #4b5563; }
+        .badge-complied { background: #dbeafe; color: #1e40af; }
+        .badge-other { background: #f3f4f6; color: #4b5563; }
+        /* PFEO status badges */
+        .badge-pfeo-proposed { background: #fef3c7; color: #92400e; }
+        .badge-pfeo-issued { background: #ffedd5; color: #9a3412; }
+        .badge-pfeo-breached { background: #fecaca; color: #7f1d1d; }
+        /* Category badge */
+        .badge-category { background: #ede9fe; color: #5b21b6; }
+        /* Compensation badge */
+        .badge-compensation { background: #ecfdf5; color: #047857; }
+
+        .case-summary { font-size: 0.9rem; color: var(--slate-600); line-height: 1.6; margin-bottom: 12px; }
+        .case-quote { font-size: 0.85rem; font-style: italic; color: var(--slate-500); border-left: 3px solid var(--slate-200); padding-left: 12px; margin-bottom: 12px; }
+
+        .case-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--slate-100); }
+        .case-link { font-size: 0.85rem; color: var(--navy-900); font-weight: 500; }
+        .case-awards { display: flex; gap: 16px; font-size: 0.85rem; }
+        .award-item { display: flex; align-items: center; gap: 4px; }
+        .award-item svg { width: 16px; height: 16px; color: var(--green-600); }
+
+        /* Pagination */
+        .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 32px; }
+        .page-btn { padding: 8px 14px; border: 1px solid var(--slate-200); border-radius: 6px; background: white; cursor: pointer; font-size: 0.9rem; }
+        .page-btn:hover { background: var(--slate-50); }
+        .page-btn.active { background: var(--navy-950); color: white; border-color: var(--navy-950); }
+        .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Footer */
+        .site-footer { background: var(--navy-950); color: rgba(255,255,255,0.7); padding: 48px 0 24px; margin-top: 64px; }
+        .footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 32px; }
+        .footer-brand { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: white; margin-bottom: 8px; }
+        .footer-desc { font-size: 0.9rem; line-height: 1.6; }
+        .footer-title { font-weight: 600; color: white; margin-bottom: 12px; font-size: 0.9rem; }
+        .footer-links { list-style: none; padding: 0; margin: 0; }
+        .footer-links li { margin-bottom: 8px; }
+        .footer-links a { color: rgba(255,255,255,0.7); font-size: 0.9rem; }
+        .footer-links a:hover { color: white; }
+        .footer-bottom { padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; font-size: 0.8rem; }
+
+        /* No results */
+        .no-results { text-align: center; padding: 48px 24px; color: var(--slate-500); }
+        .no-results h3 { color: var(--navy-950); margin-bottom: 8px; }
+
+        /* Loading */
+        .loading { text-align: center; padding: 48px; color: var(--slate-500); }
+
+        @media (max-width: 768px) {
+            .nav { display: none; }
+            .burger { display: flex; }
+            .filters-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+            .footer-bottom { flex-direction: column; gap: 8px; }
+            .case-header { flex-direction: column; }
+            .case-footer { flex-direction: column; gap: 12px; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="/" class="logo"><div class="logo-mark">CF</div>Compare Factors</a>
+            <nav class="nav">
+                <a href="/factors/" class="nav-link">All Factors</a>
+                <a href="/areas/" class="nav-link">By Area</a>
+                <a href="/map/" class="nav-link">Map</a>
+                <a href="/tribunal/" class="nav-link active">Tribunal</a>
+                <a href="/get-quotes/" class="nav-cta">Get Quotes</a>
+            </nav>
+            <button class="burger" aria-label="Menu" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div class="mobile-nav" id="mobileNav">
+            <a href="/factors/">All Factors</a>
+            <a href="/areas/">By Area</a>
+            <a href="/map/">Map</a>
+            <a href="/tribunal/">Tribunal</a>
+            <a href="/get-quotes/" class="nav-cta">Get Quotes</a>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="page-header">
+            <h1 class="page-title">Tribunal Case Search</h1>
+            <p class="page-desc">Search and filter Housing and Property Chamber decisions against Scottish property factors.</p>
+        </div>
+
+        <div class="filters-panel">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Factor</label>
+                    <select id="filter-factor" class="filter-select">
+                        <option value="">All Factors</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Outcome</label>
+                    <select id="filter-outcome" class="filter-select">
+                        <option value="">All Outcomes</option>
+                        <option value="Upheld">Upheld (Homeowner Won)</option>
+                        <option value="Partially Upheld">Partially Upheld</option>
+                        <option value="Dismissed">Dismissed (Factor Won)</option>
+                        <option value="Withdrawn">Withdrawn</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Complaint Type</label>
+                    <select id="filter-breach-cat" class="filter-select">
+                        <option value="">All Types</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Postcode Area</label>
+                    <input type="text" id="filter-postcode" class="filter-input" placeholder="e.g. EH, G, AB...">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Year</label>
+                    <select id="filter-year" class="filter-select">
+                        <option value="">All Years</option>
+                        <option value="2026">2026</option>
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020 &amp; earlier</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="margin-top: 16px;">
+                <label class="filter-label">PFEO Status</label>
+                <div class="filter-checkboxes" style="margin-top: 8px;">
+                    <label class="filter-checkbox"><input type="checkbox" id="pfeo-proposed"> Proposed</label>
+                    <label class="filter-checkbox"><input type="checkbox" id="pfeo-issued"> Issued</label>
+                    <label class="filter-checkbox"><input type="checkbox" id="pfeo-complied"> Complied</label>
+                    <label class="filter-checkbox"><input type="checkbox" id="pfeo-breached"> Breached</label>
+                </div>
+            </div>
+
+            <div class="filter-row" style="margin-top: 16px;">
+                <div class="filter-group" style="flex: 0 0 auto;">
+                    <label class="filter-label">Min Compensation</label>
+                    <input type="number" id="filter-comp-min" class="filter-input" placeholder="£0" min="0" style="width: 120px;">
+                </div>
+                <div class="filter-group" style="flex: 0 0 auto;">
+                    <label class="filter-label">Max Compensation</label>
+                    <input type="number" id="filter-comp-max" class="filter-input" placeholder="Any" min="0" style="width: 120px;">
+                </div>
+                <div class="filter-group" style="flex: 0 0 auto;">
+                    <label class="filter-checkbox" style="margin-top: 24px;"><input type="checkbox" id="filter-substantive"> Substantive only</label>
+                </div>
+                <div style="flex: 1;"></div>
+                <button class="btn-reset" onclick="resetFilters()">Reset Filters</button>
+            </div>
+        </div>
+
+        <div class="results-header">
+            <div class="results-count">Showing <strong id="results-showing">0</strong> of <strong id="results-total">0</strong> cases</div>
+            <select id="sort-select" class="sort-select">
+                <option value="date-desc">Newest first</option>
+                <option value="date-asc">Oldest first</option>
+                <option value="comp-desc">Highest compensation</option>
+                <option value="factor-asc">Factor A-Z</option>
+            </select>
+        </div>
+
+        <div id="case-list" class="case-list">
+            <div class="loading">Loading cases...</div>
+        </div>
+
+        <div id="pagination" class="pagination"></div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-grid">
+                <div>
+                    <div class="footer-brand">Compare Factors</div>
+                    <p class="footer-desc">Independent comparison of Scottish property factors. Helping homeowners make informed decisions.</p>
+                </div>
+                <div>
+                    <div class="footer-title">Explore</div>
+                    <ul class="footer-links">
+                        <li><a href="/factors/">All Factors</a></li>
+                        <li><a href="/areas/">By Area</a></li>
+                        <li><a href="/map/">Map</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="footer-title">Resources</div>
+                    <ul class="footer-links">
+                        <li><a href="/guides/">Guides</a></li>
+                        <li><a href="/tribunal/">Tribunal Search</a></li>
+                        <li><a href="/methodology/">Methodology</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="footer-title">About</div>
+                    <ul class="footer-links">
+                        <li><a href="/about/">About Us</a></li>
+                        <li><a href="/contact/">Contact</a></li>
+                        <li><a href="/privacy/">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div>&copy; 2026 Compare Factors Scotland. Not affiliated with the Scottish Government.</div>
+                <div>Data sources: Property Factor Register, Housing &amp; Property Chamber</div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="cases_data.js"></script>
+    <script>
+        let filteredCases = [];
+        let currentPage = 1;
+        const perPage = 20;
+
+        // Populate dropdowns
+        function populateDropdowns() {
+            // Factors
+            const factorSelect = document.getElementById('filter-factor');
+            FACTORS.forEach(f => {
+                const opt = document.createElement('option');
+                opt.value = f.pf;
+                opt.textContent = f.name;
+                factorSelect.appendChild(opt);
+            });
+
+            // Breach categories
+            const catSelect = document.getElementById('filter-breach-cat');
+            const catLabels = {
+                'communication': 'Communication',
+                'financial_management': 'Financial',
+                'maintenance': 'Maintenance/Repairs',
+                'response_times': 'Response Times',
+                'consultation': 'Consultation',
+                'complaints_handling': 'Complaints Handling',
+                'insurance': 'Insurance',
+                'governance': 'Governance',
+                'transparency': 'Transparency/Disclosure',
+                'authority': 'Authority Exceeded',
+                'code_breach': 'Code of Conduct',
+                'multiple': 'Multiple Issues'
+            };
+            BREACH_CATEGORIES.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.textContent = catLabels[cat] || cat;
+                catSelect.appendChild(opt);
+            });
+        }
+
+        // Filter cases
+        function filterCases() {
+            const factor = document.getElementById('filter-factor').value;
+            const outcome = document.getElementById('filter-outcome').value;
+            const breachCat = document.getElementById('filter-breach-cat').value;
+            const postcode = document.getElementById('filter-postcode').value.toUpperCase();
+            const year = document.getElementById('filter-year').value;
+            const compMin = parseFloat(document.getElementById('filter-comp-min').value) || 0;
+            const compMax = parseFloat(document.getElementById('filter-comp-max').value) || Infinity;
+            const substantive = document.getElementById('filter-substantive').checked;
+
+            const pfeoProposed = document.getElementById('pfeo-proposed').checked;
+            const pfeoIssued = document.getElementById('pfeo-issued').checked;
+            const pfeoComplied = document.getElementById('pfeo-complied').checked;
+            const pfeoBreached = document.getElementById('pfeo-breached').checked;
+            const anyPfeo = pfeoProposed || pfeoIssued || pfeoComplied || pfeoBreached;
+
+            filteredCases = CASES.filter(c => {
+                if (factor && c.pf !== factor) return false;
+                if (outcome && c.outcome !== outcome) return false;
+                if (breachCat && c.breach_cat !== breachCat) return false;
+                if (postcode && !c.postcode.startsWith(postcode)) return false;
+
+                if (year) {
+                    const caseYear = c.date.substring(0, 4);
+                    if (year === '2020') {
+                        if (parseInt(caseYear) > 2020) return false;
+                    } else {
+                        if (caseYear !== year) return false;
+                    }
+                }
+
+                const totalAward = (c.compensation || 0) + (c.refund || 0);
+                if (totalAward < compMin) return false;
+                if (compMax !== Infinity && totalAward > compMax) return false;
+
+                if (substantive && !c.substantive) return false;
+
+                if (anyPfeo) {
+                    let match = false;
+                    if (pfeoProposed && c.pfeo_proposed) match = true;
+                    if (pfeoIssued && c.pfeo_issued) match = true;
+                    if (pfeoComplied && c.pfeo_complied) match = true;
+                    if (pfeoBreached && c.pfeo_breached) match = true;
+                    if (!match) return false;
+                }
+
+                return true;
+            });
+
+            sortCases();
+            currentPage = 1;
+            renderCases();
+            updateURL();
+        }
+
+        // Sort cases
+        function sortCases() {
+            const sort = document.getElementById('sort-select').value;
+            filteredCases.sort((a, b) => {
+                switch(sort) {
+                    case 'date-desc': return (b.date || '').localeCompare(a.date || '');
+                    case 'date-asc': return (a.date || '').localeCompare(b.date || '');
+                    case 'comp-desc': return ((b.compensation || 0) + (b.refund || 0)) - ((a.compensation || 0) + (a.refund || 0));
+                    case 'factor-asc': return (a.factor || '').localeCompare(b.factor || '');
+                    default: return 0;
+                }
+            });
+        }
+
+        // Render cases
+        function renderCases() {
+            const list = document.getElementById('case-list');
+            const start = (currentPage - 1) * perPage;
+            const end = start + perPage;
+            const pageCases = filteredCases.slice(start, end);
+
+            document.getElementById('results-showing').textContent = filteredCases.length > 0 ?
+                `${start + 1}-${Math.min(end, filteredCases.length)}` : '0';
+            document.getElementById('results-total').textContent = filteredCases.length;
+
+            if (pageCases.length === 0) {
+                list.innerHTML = '<div class="no-results"><h3>No cases found</h3><p>Try adjusting your filters</p></div>';
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+
+            list.innerHTML = pageCases.map(c => {
+                const totalAward = (c.compensation || 0) + (c.refund || 0);
+
+                // Build badges - avoid duplication
+                let badges = '';
+
+                // Primary outcome badge
+                if (c.outcome === 'Upheld' || c.outcome === 'Partially Upheld') {
+                    badges += `<span class="badge badge-adverse">${c.outcome}</span>`;
+                } else if (c.outcome === 'Dismissed') {
+                    badges += '<span class="badge badge-dismissed">Dismissed</span>';
+                } else if (c.outcome === 'Withdrawn') {
+                    badges += '<span class="badge badge-withdrawn">Withdrawn</span>';
+                } else {
+                    badges += `<span class="badge badge-other">${c.outcome || 'Unknown'}</span>`;
+                }
+
+                // PFEO status badge - show the most significant one only
+                if (c.pfeo_breached) {
+                    badges += '<span class="badge badge-pfeo-breached">PFEO Breached</span>';
+                } else if (c.pfeo_issued) {
+                    badges += '<span class="badge badge-pfeo-issued">PFEO Issued</span>';
+                } else if (c.pfeo_proposed) {
+                    badges += '<span class="badge badge-pfeo-proposed">PFEO Proposed</span>';
+                }
+
+                // Breach category badge
+                if (c.breach_cat) {
+                    const catLabels = {
+                        'communication': 'Communication',
+                        'financial_management': 'Financial',
+                        'maintenance': 'Repairs',
+                        'response_times': 'Response Times',
+                        'consultation': 'Consultation',
+                        'complaints_handling': 'Complaints',
+                        'insurance': 'Insurance',
+                        'governance': 'Governance',
+                        'transparency': 'Disclosure',
+                        'authority': 'Authority',
+                        'code_breach': 'Code Breach',
+                        'multiple': 'Multiple'
+                    };
+                    badges += `<span class="badge badge-category">${catLabels[c.breach_cat] || c.breach_cat}</span>`;
+                }
+
+                // Compensation badge
+                if (totalAward > 0) badges += `<span class="badge badge-compensation">£${totalAward.toLocaleString()}</span>`;
+
+                const factorLink = c.pf ? `/factors/${c.pf.toLowerCase()}/` : '#';
+
+                return `
+                    <div class="case-card">
+                        <div class="case-header">
+                            <div>
+                                <div class="case-ref">${c.ref}</div>
+                                <div class="case-factor"><a href="${factorLink}">${c.factor}</a></div>
+                            </div>
+                            <div class="case-meta">
+                                <span class="case-date">${formatDate(c.date)}</span>
+                                ${c.postcode ? `<span class="case-postcode">${c.postcode}</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="case-badges">${badges}</div>
+                        ${c.summary ? `<div class="case-summary">${truncate(c.summary, 300)}</div>` : ''}
+                        ${c.quote ? `<div class="case-quote">"${truncate(c.quote, 200)}"</div>` : ''}
+                        <div class="case-footer">
+                            ${c.pdf ? `<a href="${c.pdf}" target="_blank" class="case-link">View full decision &rarr;</a>` : '<span></span>'}
+                            <div class="case-awards">
+                                ${c.compensation > 0 ? `<span class="award-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> £${c.compensation.toLocaleString()} compensation</span>` : ''}
+                                ${c.refund > 0 ? `<span class="award-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h18M3 14h18"/></svg> £${c.refund.toLocaleString()} refund</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            renderPagination();
+        }
+
+        // Pagination
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredCases.length / perPage);
+            if (totalPages <= 1) {
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            html += `<button class="page-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>&laquo; Prev</button>`;
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    html += '<span style="padding: 8px;">...</span>';
+                }
+            }
+
+            html += `<button class="page-btn" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next &raquo;</button>`;
+            document.getElementById('pagination').innerHTML = html;
+        }
+
+        function goToPage(page) {
+            const totalPages = Math.ceil(filteredCases.length / perPage);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderCases();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Helpers
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        function truncate(str, len) {
+            if (!str) return '';
+            return str.length > len ? str.substring(0, len) + '...' : str;
+        }
+
+        // URL state
+        function updateURL() {
+            const params = new URLSearchParams();
+            const factor = document.getElementById('filter-factor').value;
+            const outcome = document.getElementById('filter-outcome').value;
+            const postcode = document.getElementById('filter-postcode').value;
+            const year = document.getElementById('filter-year').value;
+
+            if (factor) params.set('factor', factor);
+            if (outcome) params.set('outcome', outcome);
+            if (postcode) params.set('postcode', postcode);
+            if (year) params.set('year', year);
+
+            const url = params.toString() ? `?${params.toString()}` : window.location.pathname;
+            history.replaceState(null, '', url);
+        }
+
+        function loadFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('factor')) document.getElementById('filter-factor').value = params.get('factor');
+            if (params.get('outcome')) document.getElementById('filter-outcome').value = params.get('outcome');
+            if (params.get('postcode')) document.getElementById('filter-postcode').value = params.get('postcode');
+            if (params.get('year')) document.getElementById('filter-year').value = params.get('year');
+        }
+
+        function resetFilters() {
+            document.getElementById('filter-factor').value = '';
+            document.getElementById('filter-outcome').value = '';
+            document.getElementById('filter-breach-cat').value = '';
+            document.getElementById('filter-postcode').value = '';
+            document.getElementById('filter-year').value = '';
+            document.getElementById('filter-comp-min').value = '';
+            document.getElementById('filter-comp-max').value = '';
+            document.getElementById('filter-substantive').checked = false;
+            document.getElementById('pfeo-proposed').checked = false;
+            document.getElementById('pfeo-issued').checked = false;
+            document.getElementById('pfeo-complied').checked = false;
+            document.getElementById('pfeo-breached').checked = false;
+            filterCases();
+        }
+
+        // Event listeners
+        document.getElementById('filter-factor').addEventListener('change', filterCases);
+        document.getElementById('filter-outcome').addEventListener('change', filterCases);
+        document.getElementById('filter-breach-cat').addEventListener('change', filterCases);
+        document.getElementById('filter-postcode').addEventListener('input', debounce(filterCases, 300));
+        document.getElementById('filter-year').addEventListener('change', filterCases);
+        document.getElementById('filter-comp-min').addEventListener('input', debounce(filterCases, 300));
+        document.getElementById('filter-comp-max').addEventListener('input', debounce(filterCases, 300));
+        document.getElementById('filter-substantive').addEventListener('change', filterCases);
+        document.getElementById('pfeo-proposed').addEventListener('change', filterCases);
+        document.getElementById('pfeo-issued').addEventListener('change', filterCases);
+        document.getElementById('pfeo-complied').addEventListener('change', filterCases);
+        document.getElementById('pfeo-breached').addEventListener('change', filterCases);
+        document.getElementById('sort-select').addEventListener('change', () => { sortCases(); renderCases(); });
+
+        function debounce(fn, delay) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => fn.apply(this, args), delay);
+            };
+        }
+
+        function toggleMenu() {
+            document.querySelector('.burger').classList.toggle('active');
+            document.getElementById('mobileNav').classList.toggle('active');
+        }
+
+        // Init
+        populateDropdowns();
+        loadFromURL();
+        filterCases();
+    </script>
+</body>
+</html>
