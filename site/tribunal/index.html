@@ -353,18 +353,18 @@
             // Breach categories
             const catSelect = document.getElementById('filter-breach-cat');
             const catLabels = {
-                'communication': 'Communication',
-                'financial_management': 'Financial',
-                'maintenance': 'Maintenance/Repairs',
-                'response_times': 'Response Times',
-                'consultation': 'Consultation',
-                'complaints_handling': 'Complaints Handling',
-                'insurance': 'Insurance',
-                'governance': 'Governance',
-                'transparency': 'Transparency/Disclosure',
                 'authority': 'Authority Exceeded',
                 'code_breach': 'Code of Conduct',
-                'multiple': 'Multiple Issues'
+                'communication': 'Communication',
+                'complaints_handling': 'Complaints Handling',
+                'consultation': 'Consultation',
+                'debt_recovery': 'Debt Recovery',
+                'disclosure': 'Disclosure',
+                'financial': 'Financial',
+                'governance': 'Governance',
+                'insurance': 'Insurance',
+                'maintenance': 'Maintenance/Repairs',
+                'other': 'Other'
             };
             BREACH_CATEGORIES.forEach(cat => {
                 const opt = document.createElement('option');
@@ -394,7 +394,7 @@
             filteredCases = CASES.filter(c => {
                 if (factor && c.pf !== factor) return false;
                 if (outcome && c.outcome !== outcome) return false;
-                if (breachCat && c.breach_cat !== breachCat) return false;
+                if (breachCat && !(c.complaint_cats && c.complaint_cats.includes(breachCat)) && c.breach_cat !== breachCat) return false;
                 if (postcode && !c.postcode.startsWith(postcode)) return false;
 
                 if (year) {
@@ -487,22 +487,30 @@
                     badges += '<span class="badge badge-pfeo-proposed">PFEO Proposed</span>';
                 }
 
-                // Breach category badge
-                if (c.breach_cat) {
-                    const catLabels = {
-                        'communication': 'Communication',
-                        'financial_management': 'Financial',
-                        'maintenance': 'Repairs',
-                        'response_times': 'Response Times',
-                        'consultation': 'Consultation',
-                        'complaints_handling': 'Complaints',
-                        'insurance': 'Insurance',
-                        'governance': 'Governance',
-                        'transparency': 'Disclosure',
-                        'authority': 'Authority',
-                        'code_breach': 'Code Breach',
-                        'multiple': 'Multiple'
-                    };
+                // Complaint category badges
+                const catLabels = {
+                    'communication': 'Communication',
+                    'financial': 'Financial',
+                    'financial_management': 'Financial',
+                    'maintenance': 'Repairs',
+                    'response_times': 'Response Times',
+                    'consultation': 'Consultation',
+                    'complaints_handling': 'Complaints',
+                    'insurance': 'Insurance',
+                    'governance': 'Governance',
+                    'disclosure': 'Disclosure',
+                    'transparency': 'Disclosure',
+                    'authority': 'Authority',
+                    'debt_recovery': 'Debt Recovery',
+                    'code_breach': 'Code Breach',
+                    'multiple': 'Multiple',
+                    'other': 'Other'
+                };
+                if (c.complaint_cats && c.complaint_cats.length > 0) {
+                    c.complaint_cats.forEach(cat => {
+                        badges += `<span class="badge badge-category">${catLabels[cat] || cat}</span>`;
+                    });
+                } else if (c.breach_cat) {
                     badges += `<span class="badge badge-category">${catLabels[c.breach_cat] || c.breach_cat}</span>`;
                 }
 
