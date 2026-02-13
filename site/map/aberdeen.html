@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aberdeen Property Factor Map | Compare Factors Scotland</title>
+    <meta name="description" content="Interactive map showing which property factors dominate each Aberdeen postcode district">
+    
+    <meta property="og:title" content="Aberdeen Property Factor Map">
+    <meta property="og:description" content="See which property management companies dominate each area of Aberdeen">
+    <meta property="og:type" content="website">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        #map { position: absolute; top: 0; bottom: 0; left: 0; right: 0; }
+        
+        #top-bar {
+            position: fixed; top: 0; left: 0; right: 0;
+            background: white; padding: 12px 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            z-index: 1000; display: flex; align-items: center; gap: 16px;
+        }
+        #top-bar h1 {
+            font-size: 18px; font-weight: 600; color: #1a1a1a;
+        }
+        #top-bar .subtitle {
+            font-size: 13px; color: #666; margin-left: auto;
+        }
+        
+        #search-box {
+            padding: 8px 14px; border: 1px solid #ddd; border-radius: 6px;
+            font-size: 14px; width: 200px;
+        }
+        #search-box:focus { outline: 2px solid #2563eb; border-color: transparent; }
+        
+        #search-results {
+            position: fixed; top: 56px; left: 20px; width: 200px;
+            background: white; border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            max-height: 240px; overflow-y: auto; display: none; z-index: 1001;
+        }
+        .search-result {
+            padding: 10px 14px; cursor: pointer; font-size: 13px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .search-result:hover { background: #f5f5f5; }
+        
+        #hover-panel {
+            position: fixed; top: 70px; left: 20px; width: 300px;
+            background: white; border-radius: 12px; padding: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12); z-index: 1000;
+            display: none; border-left: 5px solid #2563eb;
+        }
+        #hover-panel.visible { display: block; }
+        #hover-panel.locked { border-left-width: 8px; }
+        #hover-panel h3 { font-size: 22px; margin-bottom: 4px; color: #1a1a1a; }
+        #hover-panel .lock-hint { font-size: 11px; color: #888; margin-bottom: 10px; display: none; }
+        #hover-panel.locked .lock-hint { display: block; }
+        #hover-panel .total { font-size: 13px; color: #666; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #eee; }
+        
+        .factor-row { display: flex; align-items: center; margin: 8px 0; font-size: 13px; }
+        .factor-rank {
+            width: 22px; height: 22px; border-radius: 50%; background: #e5e7eb;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 600; color: #374151; margin-right: 10px;
+        }
+        .factor-rank.rank-1 { background: #fbbf24; color: #1a1a1a; }
+        .factor-color { width: 14px; height: 14px; border-radius: 4px; margin-right: 10px; }
+        .factor-name { flex-grow: 1; color: #333; }
+        .factor-stats { text-align: right; color: #666; font-size: 12px; }
+        .factor-share { font-weight: 600; color: #1a1a1a; }
+        
+        #legend-panel {
+            position: fixed; bottom: 20px; right: 20px; width: 280px;
+            background: white; border-radius: 12px; padding: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12); z-index: 1000;
+            max-height: calc(100vh - 100px); overflow-y: auto;
+        }
+        #legend-panel h2 { font-size: 15px; font-weight: 600; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid #eee; }
+        .stats-row { display: flex; gap: 12px; margin-bottom: 14px; }
+        .stat { text-align: center; flex: 1; padding: 10px; background: #f5f5f5; border-radius: 8px; }
+        .stat-value { font-size: 18px; font-weight: 700; color: #1a1a1a; }
+        .stat-label { font-size: 10px; color: #666; margin-top: 2px; }
+        
+        #legend-items { margin-top: 12px; }
+        .legend-item {
+            display: flex; align-items: center; margin: 8px 0; font-size: 12px;
+        }
+        .legend-color {
+            width: 16px; height: 16px; border-radius: 4px; margin-right: 10px;
+            flex-shrink: 0; border: 1px solid rgba(0,0,0,0.1);
+        }
+        .legend-label { flex-grow: 1; color: #333; }
+        .legend-count { color: #666; font-size: 11px; }
+        
+        .panel-drag-handle, .panel-close { display: none; }
+
+        .loading {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center; z-index: 2000;
+            background: white; padding: 30px 40px;
+            border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        .loading.hidden { display: none; }
+        .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid #e5e7eb; border-top-color: #2563eb;
+            border-radius: 50%; animation: spin 1s linear infinite;
+            margin: 0 auto 12px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Mobile */
+        @media (max-width: 640px) {
+            #top-bar {
+                flex-wrap: wrap; padding: 8px 12px; gap: 8px;
+            }
+            #top-bar h1 { font-size: 15px; }
+            #top-bar .subtitle { display: none; }
+            #search-box { width: 100%; order: 3; }
+            #search-results { left: 12px; right: 12px; width: auto; top: 80px; }
+
+            #hover-panel {
+                position: fixed; top: auto; bottom: 0; left: 0; right: 0;
+                width: 100%; border-radius: 16px 16px 0 0; padding: 14px 16px;
+                max-height: 45vh; overflow-y: auto;
+                border-left: none; border-top: 4px solid #2563eb;
+            }
+            #hover-panel.locked { border-left: none; border-top-width: 6px; }
+            #hover-panel h3 { font-size: 18px; }
+            .panel-drag-handle, .panel-close { display: block; }
+            .panel-drag-handle {
+                width: 36px; height: 4px; background: #ccc; border-radius: 2px;
+                margin: 0 auto 10px;
+            }
+            .panel-close {
+                position: absolute; top: 12px; right: 14px;
+                background: none; border: none; font-size: 22px; color: #999;
+                cursor: pointer; line-height: 1; padding: 4px;
+            }
+
+            #legend-panel {
+                position: fixed; bottom: 0; left: 0; right: 0;
+                width: 100%; border-radius: 16px 16px 0 0;
+                max-height: 40vh; padding: 12px 16px;
+                transform: translateY(calc(100% - 48px));
+                transition: transform 0.3s ease;
+            }
+            #legend-panel.expanded { transform: translateY(0); }
+            #legend-panel h2:first-child {
+                cursor: pointer; position: relative; padding-right: 24px;
+            }
+            #legend-panel h2:first-child::after {
+                content: '\25B2'; position: absolute; right: 0; top: 0;
+                font-size: 12px; color: #666;
+                transition: transform 0.3s ease;
+            }
+            #legend-panel.expanded h2:first-child::after {
+                transform: rotate(180deg);
+            }
+
+            /* Hide legend when hover panel is open */
+            #hover-panel.visible ~ #legend-panel { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div id="top-bar">
+        <h1>🏴󠁧󠁢󠁳󠁣󠁴󠁿 Aberdeen Property Factor Map</h1>
+        <input type="text" id="search-box" placeholder="Search postcode...">
+        <div id="search-results"></div>
+        <div class="subtitle">Click any district for details</div>
+    </div>
+    
+    <div id="map"></div>
+    
+    <div id="hover-panel">
+        <div class="panel-drag-handle"></div>
+        <button class="panel-close" onclick="unlockDistrict()" aria-label="Close">&times;</button>
+        <h3 id="district-name"></h3>
+        <div class="lock-hint">Tap elsewhere or press Esc to close</div>
+        <div class="total" id="district-total"></div>
+        <div id="factor-list"></div>
+    </div>
+    
+    <div id="legend-panel">
+        <h2>Market Overview</h2>
+        <div class="stats-row">
+            <div class="stat">
+                <div class="stat-value" id="stat-districts">-</div>
+                <div class="stat-label">Districts</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="stat-properties">-</div>
+                <div class="stat-label">Properties</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="stat-factors">-</div>
+                <div class="stat-label">Factors</div>
+            </div>
+        </div>
+        <h2>Top Factors</h2>
+        <div id="legend-items"></div>
+    </div>
+    
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div>Loading map...</div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const DISTRICT_DATA = {"AB10":{"total":2694,"factor":"James Gibb Property Management Ltd","count":910,"share":34,"topFactors":[{"factor":"James Gibb Property Management Ltd","count":910,"share":34},{"factor":"Newton Property Management Ltd","count":790,"share":29},{"factor":"PMC Property Management & Lettings Ltd","count":327,"share":12},{"factor":"Grampian Housing Association Limited","count":227,"share":8},{"factor":"Aberdeen City Council","count":201,"share":7}],"allFactors":[{"factor":"James Gibb Property Management Ltd","count":910,"share":34},{"factor":"Newton Property Management Ltd","count":790,"share":29},{"factor":"PMC Property Management & Lettings Ltd","count":327,"share":12},{"factor":"Grampian Housing Association Limited","count":227,"share":8},{"factor":"Aberdeen City Council","count":201,"share":7},{"factor":"Trinity Factoring Services Ltd","count":162,"share":6},{"factor":"BeneFactors Property Management Limited","count":33,"share":1},{"factor":"JFK Facility Services Ltd","count":30,"share":1},{"factor":"Castlehill Housing Association Limited","count":8,"share":0},{"factor":"Greenbelt Group Limited","count":6,"share":0}]},"AB11":{"total":2985,"factor":"Newton Property Management Ltd","count":1673,"share":56,"topFactors":[{"factor":"Newton Property Management Ltd","count":1673,"share":56},{"factor":"PMC Property Management & Lettings Ltd","count":429,"share":14},{"factor":"Aberdeen City Council","count":260,"share":9},{"factor":"James Gibb Property Management Ltd","count":234,"share":8},{"factor":"Grampian Housing Association Limited","count":170,"share":6}],"allFactors":[{"factor":"Newton Property Management Ltd","count":1673,"share":56},{"factor":"PMC Property Management & Lettings Ltd","count":429,"share":14},{"factor":"Aberdeen City Council","count":260,"share":9},{"factor":"James Gibb Property Management Ltd","count":234,"share":8},{"factor":"Grampian Housing Association Limited","count":170,"share":6},{"factor":"FirstPort Property Services Scotland Limited","count":83,"share":3},{"factor":"Trinity Factoring Services Ltd","count":50,"share":2},{"factor":"Hillcrest Homes (Scotland) Ltd","count":48,"share":2},{"factor":"BeneFactors Property Management Limited","count":29,"share":1},{"factor":"JFK Facility Services Ltd","count":9,"share":0}]},"AB12":{"total":2416,"factor":"James Gibb Property Management Ltd","count":1690,"share":70,"topFactors":[{"factor":"James Gibb Property Management Ltd","count":1690,"share":70},{"factor":"PMC Property Management & Lettings Ltd","count":203,"share":8},{"factor":"Greenbelt Group Limited","count":194,"share":8},{"factor":"Grampian Housing Association Limited","count":139,"share":6},{"factor":"Ross & Liddell Ltd","count":67,"share":3}],"allFactors":[{"factor":"James Gibb Property Management Ltd","count":1690,"share":70},{"factor":"PMC Property Management & Lettings Ltd","count":203,"share":8},{"factor":"Greenbelt Group Limited","count":194,"share":8},{"factor":"Grampian Housing Association Limited","count":139,"share":6},{"factor":"Ross & Liddell Ltd","count":67,"share":3},{"factor":"Newton Property Management Ltd","count":62,"share":3},{"factor":"Aberdeen City Council","count":52,"share":2},{"factor":"Hillcrest Homes (Scotland) Ltd","count":9,"share":0}]},"AB13":{"total":319,"factor":"James Gibb Property Management Ltd","count":318,"share":100,"topFactors":[{"factor":"James Gibb Property Management Ltd","count":318,"share":100},{"factor":"Greenbelt Group Limited","count":1,"share":0}],"allFactors":[{"factor":"James Gibb Property Management Ltd","count":318,"share":100},{"factor":"Greenbelt Group Limited","count":1,"share":0}]},"AB14":{"total":282,"factor":"Newton Property Management Ltd","count":242,"share":86,"topFactors":[{"factor":"Newton Property Management Ltd","count":242,"share":86},{"factor":"James Gibb Property Management Ltd","count":27,"share":10},{"factor":"Castlehill Housing Association Limited","count":12,"share":4},{"factor":"Greenbelt Group Limited","count":1,"share":0}],"allFactors":[{"factor":"Newton Property Management Ltd","count":242,"share":86},{"factor":"James Gibb Property Management Ltd","count":27,"share":10},{"factor":"Castlehill Housing Association Limited","count":12,"share":4},{"factor":"Greenbelt Group Limited","count":1,"share":0}]},"AB15":{"total":4885,"factor":"James Gibb Property Management Ltd","count":2202,"share":45,"topFactors":[{"factor":"James Gibb Property Management Ltd","count":2202,"share":45},{"factor":"PMC Property Management & Lettings Ltd","count":847,"share":17},{"factor":"Newton Property Management Ltd","count":632,"share":13},{"factor":"Hillcrest Homes (Scotland) Ltd","count":259,"share":5},{"factor":"Aberdeen City Council","count":184,"share":4}],"allFactors":[{"factor":"James Gibb Property Management Ltd","count":2202,"share":45},{"factor":"PMC Property Management & Lettings Ltd","count":847,"share":17},{"factor":"Newton Property Management Ltd","count":632,"share":13},{"factor":"Hillcrest Homes (Scotland) Ltd","count":259,"share":5},{"factor":"Aberdeen City Council","count":184,"share":4},{"factor":"FirstPort Property Services Scotland Limited","count":166,"share":3},{"factor":"Greenbelt Group Limited","count":165,"share":3},{"factor":"Trinity Factoring Services Ltd","count":158,"share":3},{"factor":"Grampian Housing Association Limited","count":120,"share":2},{"factor":"McCarthy & Stone Management Services Limited","count":44,"share":1},{"factor":"YourLife Management Services Limited","count":42,"share":1},{"factor":"Castlehill Housing Association Limited","count":33,"share":1},{"factor":"BeneFactors Property Management Limited","count":33,"share":1}]},"AB16":{"total":790,"factor":"Aberdeen City Council","count":538,"share":68,"topFactors":[{"factor":"Aberdeen City Council","count":538,"share":68},{"factor":"Grampian Housing Association Limited","count":252,"share":32}],"allFactors":[{"factor":"Aberdeen City Council","count":538,"share":68},{"factor":"Grampian Housing Association Limited","count":252,"share":32}]},"AB21":{"total":4021,"factor":"James Gibb Property Management Ltd","count":2011,"share":50,"topFactors":[{"factor":"James Gibb Property Management Ltd","count":2011,"share":50},{"factor":"PMC Property Management & Lettings Ltd","count":1187,"share":30},{"factor":"Hacking & Paterson Management Services Limited","count":247,"share":6},{"factor":"Newton Property Management Ltd","count":224,"share":6},{"factor":"Grampian Housing Association Limited","count":213,"share":5}],"allFactors":[{"factor":"James Gibb Property Management Ltd","count":2011,"share":50},{"factor":"PMC Property Management & Lettings Ltd","count":1187,"share":30},{"factor":"Hacking & Paterson Management Services Limited","count":247,"share":6},{"factor":"Newton Property Management Ltd","count":224,"share":6},{"factor":"Grampian Housing Association Limited","count":213,"share":5},{"factor":"Trinity Factoring Services Ltd","count":54,"share":1},{"factor":"Hillcrest Homes (Scotland) Ltd","count":50,"share":1},{"factor":"Touchstone Corporate Property Services Limited","count":35,"share":1}]},"AB22":{"total":1054,"factor":"James Gibb Property Management Ltd","count":530,"share":50,"topFactors":[{"factor":"James Gibb Property Management Ltd","count":530,"share":50},{"factor":"Trinity Factoring Services Ltd","count":307,"share":29},{"factor":"PMC Property Management & Lettings Ltd","count":117,"share":11},{"factor":"Ross & Liddell Ltd","count":61,"share":6},{"factor":"Newton Property Management Ltd","count":33,"share":3}],"allFactors":[{"factor":"James Gibb Property Management Ltd","count":530,"share":50},{"factor":"Trinity Factoring Services Ltd","count":307,"share":29},{"factor":"PMC Property Management & Lettings Ltd","count":117,"share":11},{"factor":"Ross & Liddell Ltd","count":61,"share":6},{"factor":"Newton Property Management Ltd","count":33,"share":3},{"factor":"Hillcrest Homes (Scotland) Ltd","count":6,"share":1}]},"AB23":{"total":1246,"factor":"James Gibb Property Management Ltd","count":703,"share":56,"topFactors":[{"factor":"James Gibb Property Management Ltd","count":703,"share":56},{"factor":"PMC Property Management & Lettings Ltd","count":316,"share":25},{"factor":"Greenbelt Group Limited","count":117,"share":9},{"factor":"Newton Property Management Ltd","count":62,"share":5},{"factor":"Hillcrest Homes (Scotland) Ltd","count":20,"share":2}],"allFactors":[{"factor":"James Gibb Property Management Ltd","count":703,"share":56},{"factor":"PMC Property Management & Lettings Ltd","count":316,"share":25},{"factor":"Greenbelt Group Limited","count":117,"share":9},{"factor":"Newton Property Management Ltd","count":62,"share":5},{"factor":"Hillcrest Homes (Scotland) Ltd","count":20,"share":2},{"factor":"Trinity Factoring Services Ltd","count":18,"share":1},{"factor":"Grampian Housing Association Limited","count":10,"share":1}]},"AB24":{"total":5193,"factor":"PMC Property Management & Lettings Ltd","count":1548,"share":30,"topFactors":[{"factor":"PMC Property Management & Lettings Ltd","count":1548,"share":30},{"factor":"James Gibb Property Management Ltd","count":1336,"share":26},{"factor":"Aberdeen City Council","count":1278,"share":25},{"factor":"Newton Property Management Ltd","count":460,"share":9},{"factor":"Grampian Housing Association Limited","count":195,"share":4}],"allFactors":[{"factor":"PMC Property Management & Lettings Ltd","count":1548,"share":30},{"factor":"James Gibb Property Management Ltd","count":1336,"share":26},{"factor":"Aberdeen City Council","count":1278,"share":25},{"factor":"Newton Property Management Ltd","count":460,"share":9},{"factor":"Grampian Housing Association Limited","count":195,"share":4},{"factor":"FirstPort Property Services Scotland Limited","count":112,"share":2},{"factor":"Sanctuary Scotland Housing Association Ltd","count":85,"share":2},{"factor":"Trinity Factoring Services Ltd","count":61,"share":1},{"factor":"BeneFactors Property Management Limited","count":39,"share":1},{"factor":"THE PROPERTY FACTORING COMPANY LTD","count":22,"share":0},{"factor":"Greenbelt Group Limited","count":21,"share":0},{"factor":"Castlehill Housing Association Limited","count":20,"share":0},{"factor":"Mezzino Limited","count":10,"share":0},{"factor":"Ethical Maintenance C.I.C","count":6,"share":0}]},"AB25":{"total":3125,"factor":"Newton Property Management Ltd","count":909,"share":29,"topFactors":[{"factor":"Newton Property Management Ltd","count":909,"share":29},{"factor":"Aberdeen City Council","count":642,"share":21},{"factor":"James Gibb Property Management Ltd","count":531,"share":17},{"factor":"PMC Property Management & Lettings Ltd","count":367,"share":12},{"factor":"Trinity Factoring Services Ltd","count":348,"share":11}],"allFactors":[{"factor":"Newton Property Management Ltd","count":909,"share":29},{"factor":"Aberdeen City Council","count":642,"share":21},{"factor":"James Gibb Property Management Ltd","count":531,"share":17},{"factor":"PMC Property Management & Lettings Ltd","count":367,"share":12},{"factor":"Trinity Factoring Services Ltd","count":348,"share":11},{"factor":"Grampian Housing Association Limited","count":190,"share":6},{"factor":"Lorimer Property Group Ltd","count":62,"share":2},{"factor":"Langstane Housing Association Limited","count":62,"share":2},{"factor":"JFK Facility Services Ltd","count":14,"share":0}]},"AB30":{"total":509,"factor":"Ross & Liddell Ltd","count":249,"share":49,"topFactors":[{"factor":"Ross & Liddell Ltd","count":249,"share":49},{"factor":"Greenbelt Group Limited","count":241,"share":47},{"factor":"Trinity Factoring Services Ltd","count":13,"share":3},{"factor":"Castlehill Housing Association Limited","count":6,"share":1}],"allFactors":[{"factor":"Ross & Liddell Ltd","count":249,"share":49},{"factor":"Greenbelt Group Limited","count":241,"share":47},{"factor":"Trinity Factoring Services Ltd","count":13,"share":3},{"factor":"Castlehill Housing Association Limited","count":6,"share":1}]},"AB31":{"total":740,"factor":"James Gibb Property Management Ltd","count":296,"share":40,"topFactors":[{"factor":"James Gibb Property Management Ltd","count":296,"share":40},{"factor":"PMC Property Management & Lettings Ltd","count":218,"share":29},{"factor":"Newton Property Management Ltd","count":89,"share":12},{"factor":"BeneFactors Property Management Limited","count":53,"share":7},{"factor":"Trinity Factoring Services Ltd","count":45,"share":6}],"allFactors":[{"factor":"James Gibb Property Management Ltd","count":296,"share":40},{"factor":"PMC Property Management & Lettings Ltd","count":218,"share":29},{"factor":"Newton Property Management Ltd","count":89,"share":12},{"factor":"BeneFactors Property Management Limited","count":53,"share":7},{"factor":"Trinity Factoring Services Ltd","count":45,"share":6},{"factor":"FirstPort Property Services Scotland Limited","count":22,"share":3},{"factor":"Ethical Maintenance C.I.C","count":9,"share":1},{"factor":"Castlehill Housing Association Limited","count":8,"share":1}]},"AB32":{"total":1436,"factor":"Greenbelt Group Limited","count":647,"share":45,"topFactors":[{"factor":"Greenbelt Group Limited","count":647,"share":45},{"factor":"James Gibb Property Management Ltd","count":499,"share":35},{"factor":"Newton Property Management Ltd","count":181,"share":13},{"factor":"PMC Property Management & Lettings Ltd","count":81,"share":6},{"factor":"Hillcrest Homes (Scotland) Ltd","count":20,"share":1}],"allFactors":[{"factor":"Greenbelt Group Limited","count":647,"share":45},{"factor":"James Gibb Property Management Ltd","count":499,"share":35},{"factor":"Newton Property Management Ltd","count":181,"share":13},{"factor":"PMC Property Management & Lettings Ltd","count":81,"share":6},{"factor":"Hillcrest Homes (Scotland) Ltd","count":20,"share":1},{"factor":"Grampian Housing Association Limited","count":8,"share":1}]},"AB33":{"total":416,"factor":"James Gibb Property Management Ltd","count":287,"share":69,"topFactors":[{"factor":"James Gibb Property Management Ltd","count":287,"share":69},{"factor":"PMC Property Management & Lettings Ltd","count":121,"share":29},{"factor":"Newton Property Management Ltd","count":8,"share":2}],"allFactors":[{"factor":"James Gibb Property Management Ltd","count":287,"share":69},{"factor":"PMC Property Management & Lettings Ltd","count":121,"share":29},{"factor":"Newton Property Management Ltd","count":8,"share":2}]},"AB34":{"total":222,"factor":"Ethical Maintenance C.I.C","count":147,"share":66,"topFactors":[{"factor":"Ethical Maintenance C.I.C","count":147,"share":66},{"factor":"Newton Property Management Ltd","count":55,"share":25},{"factor":"Castlehill Housing Association Limited","count":12,"share":5},{"factor":"PMC Property Management & Lettings Ltd","count":8,"share":4}],"allFactors":[{"factor":"Ethical Maintenance C.I.C","count":147,"share":66},{"factor":"Newton Property Management Ltd","count":55,"share":25},{"factor":"Castlehill Housing Association Limited","count":12,"share":5},{"factor":"PMC Property Management & Lettings Ltd","count":8,"share":4}]},"AB35":{"total":69,"factor":"Newton Property Management Ltd","count":31,"share":45,"topFactors":[{"factor":"Newton Property Management Ltd","count":31,"share":45},{"factor":"Taylor Martin Property Management Ltd","count":25,"share":36},{"factor":"Trinity Factoring Services Ltd","count":13,"share":19}],"allFactors":[{"factor":"Newton Property Management Ltd","count":31,"share":45},{"factor":"Taylor Martin Property Management Ltd","count":25,"share":36},{"factor":"Trinity Factoring Services Ltd","count":13,"share":19}]},"AB37":{"total":12,"factor":"Tomintoul and Glenlivet Development Trust","count":12,"share":100,"topFactors":[{"factor":"Tomintoul and Glenlivet Development Trust","count":12,"share":100}],"allFactors":[{"factor":"Tomintoul and Glenlivet Development Trust","count":12,"share":100}]},"AB38":{"total":40,"factor":"FirstPort Property Services Scotland Limited","count":40,"share":100,"topFactors":[{"factor":"FirstPort Property Services Scotland Limited","count":40,"share":100}],"allFactors":[{"factor":"FirstPort Property Services Scotland Limited","count":40,"share":100}]},"AB39":{"total":1632,"factor":"PMC Property Management & Lettings Ltd","count":664,"share":41,"topFactors":[{"factor":"PMC Property Management & Lettings Ltd","count":664,"share":41},{"factor":"Newton Property Management Ltd","count":377,"share":23},{"factor":"James Gibb Property Management Ltd","count":210,"share":13},{"factor":"Brio Retirement Living (Holdings) Limited","count":94,"share":6},{"factor":"BeneFactors Property Management Limited","count":74,"share":5}],"allFactors":[{"factor":"PMC Property Management & Lettings Ltd","count":664,"share":41},{"factor":"Newton Property Management Ltd","count":377,"share":23},{"factor":"James Gibb Property Management Ltd","count":210,"share":13},{"factor":"Brio Retirement Living (Holdings) Limited","count":94,"share":6},{"factor":"BeneFactors Property Management Limited","count":74,"share":5},{"factor":"Greenbelt Group Limited","count":45,"share":3},{"factor":"Residential Management Group Scotland Limited","count":37,"share":2},{"factor":"Brio Retirement Living (Chapelton) Limited","count":26,"share":2},{"factor":"Ethical Maintenance C.I.C","count":21,"share":1},{"factor":"Chapelton Community Interest Company","count":21,"share":1},{"factor":"Trinity Factoring Services Ltd","count":20,"share":1},{"factor":"Grampian Housing Association Limited","count":17,"share":1},{"factor":"Hillcrest Homes (Scotland) Ltd","count":11,"share":1},{"factor":"Ritchie Leasing Limited","count":9,"share":1},{"factor":"Castlehill Housing Association Limited","count":6,"share":0}]},"AB41":{"total":1017,"factor":"James Gibb Property Management Ltd","count":438,"share":43,"topFactors":[{"factor":"James Gibb Property Management Ltd","count":438,"share":43},{"factor":"Newton Property Management Ltd","count":211,"share":21},{"factor":"Greenbelt Group Limited","count":130,"share":13},{"factor":"PMC Property Management & Lettings Ltd","count":114,"share":11},{"factor":"FirstPort Property Services Scotland Limited","count":50,"share":5}],"allFactors":[{"factor":"James Gibb Property Management Ltd","count":438,"share":43},{"factor":"Newton Property Management Ltd","count":211,"share":21},{"factor":"Greenbelt Group Limited","count":130,"share":13},{"factor":"PMC Property Management & Lettings Ltd","count":114,"share":11},{"factor":"FirstPort Property Services Scotland Limited","count":50,"share":5},{"factor":"Ethical Maintenance C.I.C","count":33,"share":3},{"factor":"Trinity Factoring Services Ltd","count":28,"share":3},{"factor":"Grampian Housing Association Limited","count":12,"share":1},{"factor":"Davidson & Robertson Limited","count":1,"share":0}]},"AB42":{"total":1712,"factor":"James Gibb Property Management Ltd","count":485,"share":28,"topFactors":[{"factor":"James Gibb Property Management Ltd","count":485,"share":28},{"factor":"Greenbelt Group Limited","count":474,"share":28},{"factor":"PMC Property Management & Lettings Ltd","count":310,"share":18},{"factor":"Trinity Factoring Services Ltd","count":188,"share":11},{"factor":"Newton Property Management Ltd","count":129,"share":8}],"allFactors":[{"factor":"James Gibb Property Management Ltd","count":485,"share":28},{"factor":"Greenbelt Group Limited","count":474,"share":28},{"factor":"PMC Property Management & Lettings Ltd","count":310,"share":18},{"factor":"Trinity Factoring Services Ltd","count":188,"share":11},{"factor":"Newton Property Management Ltd","count":129,"share":8},{"factor":"Ross & Liddell Ltd","count":116,"share":7},{"factor":"Langstane Housing Association Limited","count":9,"share":1},{"factor":"Davidson & Robertson Limited","count":1,"share":0}]},"AB43":{"total":543,"factor":"Greenbelt Group Limited","count":253,"share":47,"topFactors":[{"factor":"Greenbelt Group Limited","count":253,"share":47},{"factor":"Your Local Factor Limited","count":194,"share":36},{"factor":"PMC Property Management & Lettings Ltd","count":62,"share":11},{"factor":"James Gibb Property Management Ltd","count":20,"share":4},{"factor":"Newton Property Management Ltd","count":14,"share":3}],"allFactors":[{"factor":"Greenbelt Group Limited","count":253,"share":47},{"factor":"Your Local Factor Limited","count":194,"share":36},{"factor":"PMC Property Management & Lettings Ltd","count":62,"share":11},{"factor":"James Gibb Property Management Ltd","count":20,"share":4},{"factor":"Newton Property Management Ltd","count":14,"share":3}]},"AB44":{"total":51,"factor":"Taylor Martin Property Management Ltd","count":51,"share":100,"topFactors":[{"factor":"Taylor Martin Property Management Ltd","count":51,"share":100}],"allFactors":[{"factor":"Taylor Martin Property Management Ltd","count":51,"share":100}]},"AB45":{"total":274,"factor":"Your Local Factor Limited","count":138,"share":50,"topFactors":[{"factor":"Your Local Factor Limited","count":138,"share":50},{"factor":"Taylor Martin Property Management Ltd","count":94,"share":34},{"factor":"Ladysbridge Village Ltd","count":19,"share":7},{"factor":"Trinity Factoring Services Ltd","count":14,"share":5},{"factor":"Newton Property Management Ltd","count":9,"share":3}],"allFactors":[{"factor":"Your Local Factor Limited","count":138,"share":50},{"factor":"Taylor Martin Property Management Ltd","count":94,"share":34},{"factor":"Ladysbridge Village Ltd","count":19,"share":7},{"factor":"Trinity Factoring Services Ltd","count":14,"share":5},{"factor":"Newton Property Management Ltd","count":9,"share":3}]},"AB51":{"total":4209,"factor":"PMC Property Management & Lettings Ltd","count":1317,"share":31,"topFactors":[{"factor":"PMC Property Management & Lettings Ltd","count":1317,"share":31},{"factor":"James Gibb Property Management Ltd","count":1300,"share":31},{"factor":"Greenbelt Group Limited","count":1154,"share":27},{"factor":"Newton Property Management Ltd","count":175,"share":4},{"factor":"Grampian Housing Association Limited","count":147,"share":3}],"allFactors":[{"factor":"PMC Property Management & Lettings Ltd","count":1317,"share":31},{"factor":"James Gibb Property Management Ltd","count":1300,"share":31},{"factor":"Greenbelt Group Limited","count":1154,"share":27},{"factor":"Newton Property Management Ltd","count":175,"share":4},{"factor":"Grampian Housing Association Limited","count":147,"share":3},{"factor":"FirstPort Property Services Scotland Limited","count":55,"share":1},{"factor":"Ethical Maintenance C.I.C","count":24,"share":1},{"factor":"Castlehill Housing Association Limited","count":17,"share":0},{"factor":"Trinity Factoring Services Ltd","count":14,"share":0},{"factor":"Aberdeenshire Council","count":6,"share":0}]},"AB52":{"total":364,"factor":"Greenbelt Group Limited","count":190,"share":52,"topFactors":[{"factor":"Greenbelt Group Limited","count":190,"share":52},{"factor":"Newton Property Management Ltd","count":70,"share":19},{"factor":"James Gibb Property Management Ltd","count":68,"share":19},{"factor":"Ethical Maintenance C.I.C","count":25,"share":7},{"factor":"PMC Property Management & Lettings Ltd","count":11,"share":3}],"allFactors":[{"factor":"Greenbelt Group Limited","count":190,"share":52},{"factor":"Newton Property Management Ltd","count":70,"share":19},{"factor":"James Gibb Property Management Ltd","count":68,"share":19},{"factor":"Ethical Maintenance C.I.C","count":25,"share":7},{"factor":"PMC Property Management & Lettings Ltd","count":11,"share":3}]},"AB53":{"total":141,"factor":"Greenbelt Group Limited","count":128,"share":91,"topFactors":[{"factor":"Greenbelt Group Limited","count":128,"share":91},{"factor":"Newton Property Management Ltd","count":9,"share":6},{"factor":"Castlehill Housing Association Limited","count":4,"share":3}],"allFactors":[{"factor":"Greenbelt Group Limited","count":128,"share":91},{"factor":"Newton Property Management Ltd","count":9,"share":6},{"factor":"Castlehill Housing Association Limited","count":4,"share":3}]},"AB54":{"total":75,"factor":"Greenbelt Group Limited","count":65,"share":87,"topFactors":[{"factor":"Greenbelt Group Limited","count":65,"share":87},{"factor":"Castlehill Housing Association Limited","count":10,"share":13}],"allFactors":[{"factor":"Greenbelt Group Limited","count":65,"share":87},{"factor":"Castlehill Housing Association Limited","count":10,"share":13}]},"AB55":{"total":14,"factor":"Taylor Martin Property Management Ltd","count":14,"share":100,"topFactors":[{"factor":"Taylor Martin Property Management Ltd","count":14,"share":100}],"allFactors":[{"factor":"Taylor Martin Property Management Ltd","count":14,"share":100}]},"AB56":{"total":424,"factor":"Taylor Martin Property Management Ltd","count":403,"share":95,"topFactors":[{"factor":"Taylor Martin Property Management Ltd","count":403,"share":95},{"factor":"Newton Property Management Ltd","count":15,"share":4},{"factor":"PMC Property Management & Lettings Ltd","count":6,"share":1}],"allFactors":[{"factor":"Taylor Martin Property Management Ltd","count":403,"share":95},{"factor":"Newton Property Management Ltd","count":15,"share":4},{"factor":"PMC Property Management & Lettings Ltd","count":6,"share":1}]}};
+        const FACTOR_TOTALS = {"James Gibb Property Management Ltd":14095,"Newton Property Management Ltd":6460,"PMC Property Management & Lettings Ltd":8253,"Grampian Housing Association Limited":1700,"Aberdeen City Council":3155,"Trinity Factoring Services Ltd":1493,"BeneFactors Property Management Limited":261,"JFK Facility Services Ltd":53,"Castlehill Housing Association Limited":136,"Greenbelt Group Limited":3832,"FirstPort Property Services Scotland Limited":528,"Hillcrest Homes (Scotland) Ltd":423,"Ross & Liddell Ltd":493,"McCarthy & Stone Management Services Limited":44,"YourLife Management Services Limited":42,"Hacking & Paterson Management Services Limited":247,"Touchstone Corporate Property Services Limited":35,"Sanctuary Scotland Housing Association Ltd":85,"THE PROPERTY FACTORING COMPANY LTD":22,"Mezzino Limited":10,"Ethical Maintenance C.I.C":265,"Lorimer Property Group Ltd":62,"Langstane Housing Association Limited":71,"Taylor Martin Property Management Ltd":587,"Tomintoul and Glenlivet Development Trust":12,"Brio Retirement Living (Holdings) Limited":94,"Residential Management Group Scotland Limited":37,"Brio Retirement Living (Chapelton) Limited":26,"Chapelton Community Interest Company":21,"Ritchie Leasing Limited":9,"Davidson & Robertson Limited":2,"Your Local Factor Limited":332,"Ladysbridge Village Ltd":19,"Aberdeenshire Council":6};
+        
+        const COLORS = [
+            '#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00',
+            '#a65628', '#f781bf', '#66c2a5', '#fc8d62', '#8da0cb',
+            '#e78ac3', '#a6d854', '#ffd92f', '#e5c494', '#b3b3b3'
+        ];
+        
+        let map, geojsonLayer, allFeatures = [];
+        let factorColors = {};
+        let lockedDistrict = null;
+        const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        
+        function hashString(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                hash = hash & hash;
+            }
+            return Math.abs(hash);
+        }
+        
+        function assignColors() {
+            const sorted = Object.entries(FACTOR_TOTALS).sort((a, b) => b[1] - a[1]);
+            sorted.forEach((entry, i) => {
+                if (i < COLORS.length) {
+                    factorColors[entry[0]] = COLORS[i];
+                } else {
+                    factorColors[entry[0]] = COLORS[hashString(entry[0]) % COLORS.length];
+                }
+            });
+        }
+        
+        function truncate(str, len) {
+            return str.length > len ? str.substring(0, len) + '...' : str;
+        }
+        
+        function styleFeature(feature) {
+            const data = feature.properties.data;
+            let fillColor, fillOpacity;
+            
+            if (data.share >= 50) {
+                fillColor = factorColors[data.factor] || '#ccc';
+                fillOpacity = 0.8;
+            } else if (data.share >= 25) {
+                fillColor = factorColors[data.factor] || '#ccc';
+                fillOpacity = 0.55;
+            } else {
+                fillColor = '#aaaaaa';
+                fillOpacity = 0.4;
+            }
+            
+            return {
+                fillColor,
+                fillOpacity,
+                weight: 1.5,
+                color: '#444',
+                opacity: 1
+            };
+        }
+        
+        function highlightFeature(layer) {
+            layer.setStyle({ weight: 3, color: '#000', fillOpacity: 0.9 });
+            showPanel(layer.feature.properties);
+        }
+        
+        function resetHighlight(layer) {
+            if (lockedDistrict !== layer.feature.properties.district) {
+                layer.setStyle(styleFeature(layer.feature));
+                if (!lockedDistrict) {
+                    document.getElementById('hover-panel').classList.remove('visible');
+                }
+            }
+        }
+        
+        function showPanel(props) {
+            const panel = document.getElementById('hover-panel');
+            document.getElementById('district-name').textContent = props.district;
+            document.getElementById('district-total').textContent = `${props.data.total.toLocaleString()} properties managed`;
+            
+            const list = document.getElementById('factor-list');
+            list.innerHTML = props.data.topFactors.slice(0, 5).map((f, i) => `
+                <div class="factor-row">
+                    <div class="factor-rank ${i === 0 ? 'rank-1' : ''}">${i + 1}</div>
+                    <div class="factor-color" style="background: ${factorColors[f.factor] || '#ccc'}"></div>
+                    <div class="factor-name">${truncate(f.factor, 22)}</div>
+                    <div class="factor-stats">
+                        <span class="factor-share">${f.share}%</span>
+                        (${f.count.toLocaleString()})
+                    </div>
+                </div>
+            `).join('');
+            
+            panel.classList.add('visible');
+        }
+        
+        function lockDistrict(layer) {
+            if (lockedDistrict) {
+                geojsonLayer.eachLayer(l => {
+                    if (l.feature.properties.district === lockedDistrict) l.setStyle(styleFeature(l.feature));
+                });
+            }
+            lockedDistrict = layer.feature.properties.district;
+            highlightFeature(layer);
+            document.getElementById('hover-panel').classList.add('locked');
+        }
+        
+        function unlockDistrict() {
+            if (lockedDistrict) {
+                geojsonLayer.eachLayer(l => {
+                    if (l.feature.properties.district === lockedDistrict) l.setStyle(styleFeature(l.feature));
+                });
+            }
+            lockedDistrict = null;
+            document.getElementById('hover-panel').classList.remove('visible', 'locked');
+        }
+        
+        function updateStats() {
+            const bounds = map.getBounds();
+            const visible = {};
+            let districtCount = 0;
+            
+            geojsonLayer.eachLayer(layer => {
+                if (bounds.intersects(layer.getBounds())) {
+                    districtCount++;
+                    const data = layer.feature.properties.data;
+                    for (const f of data.allFactors || []) {
+                        visible[f.factor] = (visible[f.factor] || 0) + f.count;
+                    }
+                }
+            });
+            
+            const totalProps = Object.values(visible).reduce((s, c) => s + c, 0);
+            document.getElementById('stat-districts').textContent = districtCount;
+            document.getElementById('stat-properties').textContent = totalProps.toLocaleString();
+            document.getElementById('stat-factors').textContent = Object.keys(visible).length;
+            
+            const sorted = Object.entries(visible).sort((a, b) => b[1] - a[1]).slice(0, 10);
+            document.getElementById('legend-items').innerHTML = sorted.map(([factor, count]) => `
+                <div class="legend-item">
+                    <div class="legend-color" style="background: ${factorColors[factor] || '#999'}"></div>
+                    <div class="legend-label">${truncate(factor, 20)}</div>
+                    <div class="legend-count">${count.toLocaleString()}</div>
+                </div>
+            `).join('');
+        }
+        
+        function setupSearch() {
+            const input = document.getElementById('search-box');
+            const results = document.getElementById('search-results');
+            
+            input.addEventListener('input', e => {
+                const q = e.target.value.toUpperCase().trim();
+                if (q.length < 1) { results.style.display = 'none'; return; }
+                
+                const matches = allFeatures.filter(f => f.properties.district.toUpperCase().startsWith(q)).slice(0, 8);
+                if (matches.length === 0) { results.style.display = 'none'; return; }
+                
+                results.innerHTML = matches.map(m => `<div class="search-result" data-district="${m.properties.district}">${m.properties.district}</div>`).join('');
+                results.style.display = 'block';
+            });
+            
+            results.addEventListener('click', e => {
+                const district = e.target.dataset.district;
+                if (district) {
+                    geojsonLayer.eachLayer(layer => {
+                        if (layer.feature.properties.district === district) {
+                            map.fitBounds(layer.getBounds(), { maxZoom: 13 });
+                            lockDistrict(layer);
+                        }
+                    });
+                    results.style.display = 'none';
+                    input.value = '';
+                }
+            });
+            
+            document.addEventListener('click', e => {
+                if (!e.target.closest('#search-box') && !e.target.closest('#search-results')) {
+                    results.style.display = 'none';
+                }
+            });
+        }
+        
+        async function loadBoundaries() {
+            try {
+                
+            const response = await fetch('https://raw.githubusercontent.com/missinglink/uk-postcode-polygons/master/geojson/AB.geojson');
+            const geojson = await response.json();
+            
+            allFeatures = geojson.features.filter(f => {
+                const district = f.properties?.name || f.properties?.Name;
+                return district && DISTRICT_DATA[district];
+            }).map(f => {
+                const district = f.properties?.name || f.properties?.Name;
+                f.properties.district = district;
+                f.properties.data = DISTRICT_DATA[district];
+                return f;
+            });
+                
+                geojsonLayer = L.geoJSON({ type: 'FeatureCollection', features: allFeatures }, {
+                    style: styleFeature,
+                    onEachFeature: (feature, layer) => {
+                        layer.on({
+                            mouseover: () => { if (!isTouch && !lockedDistrict) highlightFeature(layer); },
+                            mouseout: () => { if (!isTouch) resetHighlight(layer); },
+                            click: () => {
+                                if (lockedDistrict === feature.properties.district) unlockDistrict();
+                                else lockDistrict(layer);
+                            }
+                        });
+                    }
+                }).addTo(map);
+                
+                map.fitBounds(geojsonLayer.getBounds(), { padding: [50, 50] });
+                updateStats();
+                document.getElementById('loading').classList.add('hidden');
+                
+            } catch (e) {
+                console.error('Failed to load boundaries:', e);
+                document.getElementById('loading').innerHTML = '<div>Failed to load map data</div>';
+            }
+        }
+        
+        async function init() {
+            map = L.map('map', {
+                center: [57.15, -2.1],
+                zoom: 10,
+                zoomControl: true
+            });
+            
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap, &copy; CARTO'
+            }).addTo(map);
+            
+            assignColors();
+            setupSearch();
+            await loadBoundaries();
+            
+            map.on('moveend', updateStats);
+            document.addEventListener('keydown', e => { if (e.key === 'Escape') unlockDistrict(); });
+
+            // Mobile: toggle legend panel
+            const legendPanel = document.getElementById('legend-panel');
+            const legendTitle = legendPanel.querySelector('h2');
+            if (legendTitle) {
+                legendTitle.addEventListener('click', () => {
+                    legendPanel.classList.toggle('expanded');
+                });
+            }
+        }
+        
+        init();
+    </script>
+</body>
+</html>

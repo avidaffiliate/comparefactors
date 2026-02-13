@@ -264,34 +264,37 @@
         }
         
         @media (max-width: 768px) {
-            /* Toolbar */
-            #top-toolbar { left: 10px; right: 10px; flex-direction: row; flex-wrap: wrap; gap: 6px; }
-            #search-share-group { margin-left: 0; width: 100%; margin-top: 4px; }
-            #search-input { width: 140px; flex-grow: 1; }
-            
-            /* Bigger touch targets */
-            .toolbar-btn { padding: 10px 14px; min-height: 40px; }
-            #filter-panel select { padding: 10px 12px; min-height: 40px; }
-            #search-input { padding: 10px 12px; min-height: 40px; }
-            
+            /* Compact toolbar: hide title, keep controls in one row */
+            #top-toolbar { top: 68px; left: 8px; right: 8px; gap: 6px; }
+            #title-panel { display: none; }
+            #search-share-group { margin-left: auto; }
+            #search-input { width: 120px; }
+            #btn-share { display: none; }
+
+            .toolbar-btn { padding: 8px 12px; min-height: 38px; font-size: 11px; }
+            #filter-panel select { padding: 8px 10px; min-height: 38px; font-size: 12px; min-width: 130px; }
+            #search-input { padding: 8px 10px; min-height: 38px; font-size: 12px; }
+
             /* Bottom sheet for hover info */
             #hover-info {
-                left: 10px;
-                right: 10px;
-                width: auto;
-                top: auto;
-                bottom: 12px;
-                max-height: 42vh;
+                left: 0; right: 0; width: 100%;
+                top: auto; bottom: 0;
+                max-height: 40vh;
                 overflow-y: auto;
-                border-radius: 12px;
-                padding-bottom: calc(14px + env(safe-area-inset-bottom));
+                border-radius: 14px 14px 0 0;
+                border-left: none;
+                border-top: 4px solid #377eb8;
+                padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
             }
-            
+            #hover-info.locked { border-left: none; border-top-width: 5px; }
+            #hover-info h3 { font-size: 18px; }
+
             /* Collapsible legend */
             #legend-panel {
-                width: 260px;
-                max-height: 50vh;
-                bottom: 60px;
+                left: 10px; right: 10px; width: auto;
+                max-height: 45vh;
+                bottom: 54px;
                 transition: transform 0.3s ease, opacity 0.3s ease;
             }
             #legend-panel.collapsed {
@@ -300,17 +303,20 @@
                 pointer-events: none;
             }
             #legend-toggle { display: block; }
-            
-            /* Mobile hint */
+
+            /* Hide legend + toggle when district panel is open */
+            #hover-info.visible ~ #legend-panel,
+            #hover-info.visible ~ #legend-toggle { opacity: 0; pointer-events: none; }
+
             .mobile-hint { display: block; }
             .mobile-hint.hidden { display: none; }
         }
-        
+
         @media (max-width: 480px) {
-            #title-panel h1 { font-size: 14px; }
-            #title-panel .subtitle { display: none; }
-            .toolbar-btn { padding: 8px 10px; font-size: 11px; }
-            #legend-panel { width: calc(100vw - 20px); left: 10px; right: 10px; }
+            /* Hide city shortcuts on small phones */
+            #top-toolbar > div:nth-child(2) { display: none; }
+            #filter-panel select { min-width: 110px; }
+            #search-input { width: 100px; }
         }
     </style>
 </head>
@@ -448,6 +454,7 @@
         let allFeatures = [];
         let factorColors = {};
         let lockedDistrict = null;
+        const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
         let currentView = 'scotland';
         let currentFactorFilter = 'all';
         
@@ -693,8 +700,8 @@
         
         function onEachFeature(feature, layer) {
             layer.on({
-                mouseover: (e) => { if (!lockedDistrict) highlightFeature(e); },
-                mouseout: (e) => { if (!lockedDistrict) resetHighlight(e); },
+                mouseover: (e) => { if (!isTouch && !lockedDistrict) highlightFeature(e); },
+                mouseout: (e) => { if (!isTouch) resetHighlight(e); },
                 click: handleClick
             });
         }
