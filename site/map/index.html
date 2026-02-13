@@ -604,7 +604,10 @@
         // INITIALIZATION
         // =====================================================
         async function init() {
-            map = L.map('map', { center: [56.5, -4.0], zoom: 7, zoomControl: true });
+            map = L.map('map', { center: [56.5, -4.0], zoom: 7, zoomControl: false });
+            if (!('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
+                L.control.zoom({ position: 'topleft' }).addTo(map);
+            }
             
             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
                 maxZoom: 19,
